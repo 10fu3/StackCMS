@@ -1,0 +1,28 @@
+package store
+
+import "StackCMS/model"
+
+type Roles interface {
+	GetAllRole() []model.Role
+	CreateRole(role model.Role)
+	UpdateRole(role model.Role)
+	DeleteRole(role model.Role)
+}
+
+func (d *Db) GetAllRole() []model.Role {
+	var r []model.Role
+	d.Db.Select(&r, "SELECT * FROM roles")
+	return r
+}
+
+func (d *Db) CreateRole(role model.Role) {
+	d.Db.Exec("INSERT INTO roles (role_id,role_name) VALUES (?,?)", role.Id, role.Name)
+}
+
+func (d *Db) UpdateRole(role model.Role) {
+	d.Db.Exec("UPDATE roles SET role_name = ? WHERE role_id = ?", role.Name, role.Id)
+}
+
+func (d *Db) DeleteRole(role model.Role) {
+	d.Db.Exec("DELETE FROM roles WHERE role_id = ?", role.Id)
+}
