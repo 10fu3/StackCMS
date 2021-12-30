@@ -5,6 +5,7 @@ import "StackCMS/model"
 type Users interface {
 	GetUsersAll() []model.User
 	GetUserById(id string) *model.User
+	GetUserByMail(mail string) *model.User
 	GetUsersByRole(roleId string) []model.User
 	UpdateUser(new model.User)
 	DeleteUser(id string)
@@ -21,6 +22,14 @@ func (d *Db) GetUsersAll() []model.User {
 func (d *Db) GetUserById(id string) *model.User {
 	var r model.User
 	if err := d.Db.Get(&r, "SELECT * FROM users WHERE user_id = ?", id); err != nil {
+		return nil
+	}
+	return &r
+}
+
+func (d *Db) GetUserByMail(mail string) *model.User {
+	var r model.User
+	if err := d.Db.Get(&r, "SELECT * FROM users WHERE mail = ?", mail); err != nil {
 		return nil
 	}
 	return &r

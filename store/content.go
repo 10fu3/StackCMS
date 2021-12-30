@@ -20,7 +20,7 @@ type Contents interface {
 }
 
 func (d *Db) getContents(depth int, api string, uuids []string) interface{} {
-	if depth > 4 {
+	if depth > 2 {
 		return nil
 	}
 	var r []bson.M
@@ -48,7 +48,17 @@ func (d *Db) getContents(depth int, api string, uuids []string) interface{} {
 			continue
 		}
 		for _, v := range r {
-			v[field.Name] = d.getContents(depth+1, *field.RelationApiId, v[field.Name].([]string))
+			v[field.Name] = d.getContents(depth+1, *field.RelationApiId, func() []string {
+				c, ok := v[field.Name].(bson.A)
+				if !ok {
+					return nil
+				}
+				var l []string
+				for _, v := range c {
+					l = append(l, v.(string))
+				}
+				return l
+			}())
 		}
 	}
 	return r
@@ -117,7 +127,10 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 			continue
 		}
 		for i, v := range jsonResult {
-			mongoDbUuids := v[field.Name].(bson.A)
+			mongoDbUuids, ok := v[field.Name].(bson.A)
+			if !ok {
+				continue
+			}
 			var uuids []string
 			for _, u := range mongoDbUuids {
 				uuids = append(uuids, u.(string))

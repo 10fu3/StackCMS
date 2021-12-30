@@ -24,13 +24,13 @@ type sqlLoginSessionLine struct {
 }
 
 type LoginSessionStore interface {
-	GetUser(authorization string) (string, error)
-	AddUser(user model.User) (string, error)
-	DeleteSessionBySession(authorization string)
-	DeleteSessionByUser(user model.User)
+	GetSessionUser(authorization string) (string, error)
+	AddSessionUser(user *model.User) (string, error)
+	DeleteSessionUserBySession(authorization string)
+	DeleteSessionUserByUser(user *model.User)
 }
 
-func (s *Db) GetUser(authorization string) (string, error) {
+func (s *Db) GetSessionUser(authorization string) (string, error) {
 
 	var u sqlLoginSessionLine
 	sqlErr := s.Db.QueryRowx("SELECT * FROM login_session WHERE session_id = ?", authorization).StructScan(&u)
@@ -40,14 +40,14 @@ func (s *Db) GetUser(authorization string) (string, error) {
 	}
 
 	if u.ExpiredAt.Before(time.Now()) {
-		s.DeleteSessionBySession(authorization)
-		return "", errors.New("expired time")
+		s.DeleteSessionUserBySession(authorization)
+		return "", errors.New("expired_time")
 	}
 
 	return u.UserId, nil
 }
 
-func (s *Db) AddUser(user model.User) (string, error) {
+func (s *Db) AddSessionUser(user *model.User) (string, error) {
 
 	u, uuidErr := uuid.NewRandom()
 	if uuidErr != nil {
@@ -60,10 +60,10 @@ func (s *Db) AddUser(user model.User) (string, error) {
 	return sessionId, nil
 }
 
-func (s *Db) DeleteSessionBySession(authorization string) {
+func (s *Db) DeleteSessionUserBySession(authorization string) {
 	s.Db.Exec("DELETE FROM login_session where session_id = ?", authorization)
 }
 
-func (s *Db) DeleteSessionByUser(user model.User) {
+func (s *Db) DeleteSessionUserByUser(user *model.User) {
 	s.Db.Exec("DELETE FROM login_session where user_id = ?", user.Id)
 }
