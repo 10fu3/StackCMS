@@ -2,13 +2,49 @@ package store
 
 import (
 	"StackCMS/model"
+	"StackCMS/util"
 	"fmt"
+	"github.com/google/uuid"
 )
 
 type ContentFields interface {
+	CreateFields(apiId string, fields []model.Field)
 	GetFieldsByApiId(apiId string) []model.Field
 	DeleteFieldsByApiId(apiId string)
 	DeleteField(field model.Field)
+}
+
+func (d *Db) CreateFields(apiId string, fields []model.Field) {
+
+	baseColumns := []string{
+		"_id",
+		"content_id",
+		"created_at",
+		"deleted_at",
+		"published_at",
+		"api_id",
+		"revised_at",
+		"updated_at",
+		"updated_by",
+		"publish_will",
+		"stop_will",
+	}
+
+	t, e := d.Db.Begin()
+	if e != nil {
+		return
+	}
+
+	for _, f := range fields {
+		if util.Contains(baseColumns, f.Id) {
+			continue
+		}
+
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), apiId, f.Id, f.Type, f.RelationApiId); err != nil {
+			continue
+		}
+	}
+	t.Commit()
 }
 
 func (d *Db) GetFieldsByApiId(apiId string) []model.Field {

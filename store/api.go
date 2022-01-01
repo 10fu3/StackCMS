@@ -32,10 +32,17 @@ func (d *Db) CreateApi(api model.Api) {
 	}
 
 	baseColumns := []string{
+		"_id",
+		"content_id",
 		"created_at",
 		"deleted_at",
 		"published_at",
+		"api_id",
+		"revised_at",
 		"updated_at",
+		"updated_by",
+		"publish_will",
+		"stop_will",
 	}
 
 	if err != nil {
