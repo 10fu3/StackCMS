@@ -1,8 +1,9 @@
-package contents
+package meta
 
 import (
 	"StackCMS/model"
 	"StackCMS/store"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -13,13 +14,14 @@ func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		filter := map[string]interface{}{}
-		ctx.ShouldBindJSON(&filter)
-		filter["api_id"] = ctx.Param("id")
+		if json.Unmarshal([]byte(ctx.Query("filter")), &filter) != nil {
+			filter = map[string]interface{}{}
+		}
 
+		filter["api_id"] = ctx.Param("id")
 		isGetDraft := func() bool {
 			return ctx.Query("draft") == "true"
 		}()
-
 		q := model.GetQuery{
 			Count: model.ResultCount{
 				Offset: func() int {
@@ -32,7 +34,7 @@ func Read() gin.HandlerFunc {
 				Limit: func() int {
 					v, e := strconv.Atoi(ctx.Query("limit"))
 					if e != nil {
-						return 10
+						return 0
 					}
 					return v
 				}(),
@@ -46,7 +48,7 @@ func Read() gin.HandlerFunc {
 				}
 				return s
 			}(),
-			GetMeta:  false,
+			GetMeta:  true,
 			GetDraft: isGetDraft,
 		}
 		ctx.JSON(http.StatusOK, func() interface{} {

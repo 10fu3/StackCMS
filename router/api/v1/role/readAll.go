@@ -1,8 +1,8 @@
-package define
+package role
 
 import "github.com/gin-gonic/gin"
 
-func Delete() gin.HandlerFunc {
+func ReadAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 	}

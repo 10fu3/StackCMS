@@ -8,9 +8,40 @@ import (
 	"net/http"
 )
 
+type CreateRequest struct {
+	CreatedBy string
+}
+
 func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var err error
+
+		authInterface, existsAuth := ctx.Get("auth")
+
+		if !existsAuth {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"message": "unauthorized",
+			})
+			return
+		}
+
+		auth, authConvert := authInterface.(model.AuthType)
+
+		if !authConvert {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"message": "unauthorized",
+			})
+			return
+		}
+
+		createdBy := ""
+
+		if auth.IsUser {
+			createdBy = auth.GetUser().Id
+		} else {
+			createdBy = "API"
+		}
+
 		api := store.Access.GetApi(ctx.Param("api_id"))
 		var j model.JSON = map[string]interface{}{}
 		if api == nil {
@@ -52,14 +83,17 @@ func Create() gin.HandlerFunc {
 			return
 		}
 
-		r := store.Access.CreateContent(api.Id, j)
+		r, e := store.Access.CreateContent(api.Id, createdBy, j)
 
-		if r != nil {
+		if e != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": r.Error(),
+				"message": e.Error(),
 			})
 			return
 		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"_id": r,
+		})
 
 	}
 }

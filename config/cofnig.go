@@ -1,7 +1,6 @@
 package config
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"os"
 )
 
@@ -58,11 +57,9 @@ func GetFirstSetupConfig() *FirstSetupConfig {
 		return nil
 	}
 
-	password, _ := bcrypt.GenerateFromPassword([]byte(adminPass), 10)
-
 	return &FirstSetupConfig{
 		AdminName:     "root",
-		AdminPassword: string(password),
+		AdminPassword: adminPass,
 		APIKey:        os.Getenv("API_KEY"),
 	}
 }

@@ -21,7 +21,7 @@ func ConnectDatabase(config config.RelationalDatabaseConfig) (*sqlx.DB, error) {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password, config.Host, config.Port, config.DatabaseName)
 
-	db, err := sqlx.Connect("mysql", dsn+"?parseTime=true&loc=Asia%2FTokyo")
+	db, err := sqlx.Connect("mysql", dsn+"?parseTime=true")
 
 	if err != nil {
 		return nil, err
@@ -32,12 +32,24 @@ func ConnectDatabase(config config.RelationalDatabaseConfig) (*sqlx.DB, error) {
 
 func DefineTables(db *sqlx.DB) {
 	sqls := []string{
-		"CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(40) UNIQUE, nick_name VARCHAR(128), mail VARCHAR(256), password_hash VARCHAR(512))",
-		"CREATE TABLE IF NOT EXISTS roles (role_id VARCHAR(40) UNIQUE,role_name VARCHAR(512))",
-		"CREATE TABLE IF NOT EXISTS user_role (user_role_id VARCHAR(40) UNIQUE,user_id VARCHAR(40),role_id VARCHAR(40))",
-		"CREATE TABLE IF NOT EXISTS role_ability(role_ability_id VARCHAR(40) UNIQUE,role_id VARCHAR(40),ability_id VARCHAR(512))",
-		"CREATE TABLE IF NOT EXISTS apis (api_id VARCHAR(40) UNIQUE,is_single BOOLEAN)",
-		"CREATE TABLE IF NOT EXISTS fields (field_id VARCHAR(40), api_id VARCHAR(40), field_name VARCHAR(40),field_type VARCHAR(40), relation_api VARCHAR(40))",
+		"CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(40) not null primary key, nick_name VARCHAR(128), mail VARCHAR(256), password_hash VARCHAR(512))",
+		"CREATE TABLE IF NOT EXISTS login_session (session_id VARCHAR(40) not null primary key, user_id VARCHAR(40), expired_at DATETIME)",
+		"CREATE TABLE IF NOT EXISTS roles (role_id VARCHAR(40) not null primary key,role_name VARCHAR(512))",
+		"CREATE TABLE IF NOT EXISTS user_role (user_role_id VARCHAR(40) not null primary key,user_id VARCHAR(40),role_id VARCHAR(40))",
+		"CREATE TABLE IF NOT EXISTS role_ability(role_ability_id VARCHAR(40) not null primary key,role_id VARCHAR(40),ability_id VARCHAR(512))",
+		"CREATE TABLE IF NOT EXISTS apis (api_id VARCHAR(40) not null primary key,is_single BOOLEAN not null)",
+		"CREATE TABLE IF NOT EXISTS fields (field_id VARCHAR(40) not null primary key, api_id VARCHAR(40), field_name VARCHAR(40),field_type VARCHAR(40), relation_api VARCHAR(40))",
+		"CREATE TABLE IF NOT EXISTS contents (" +
+			"content_id VARCHAR(40) not null primary key," +
+			"api_id VARCHAR(40)," +
+			"created_at DATETIME," +
+			"updated_at DATETIME," +
+			"published_at DATETIME," +
+			"revised_at DATETIME," +
+			"created_by VARCHAR(40)," +
+			"updated_by VARCHAR(40)," +
+			"publish_will DATETIME," +
+			"stop_will DATETIME)",
 	}
 
 	for _, sql := range sqls {
@@ -50,7 +62,7 @@ func DefineTables(db *sqlx.DB) {
 
 func DefineRootUser(db *sqlx.DB, setupConfig config.FirstSetupConfig) {
 
-	passHash, _ := bcrypt.GenerateFromPassword([]byte(config.Values.AdminPassword), 10)
+	passHash, _ := bcrypt.GenerateFromPassword([]byte(setupConfig.AdminPassword), 10)
 
 	db.Exec("INSERT INTO users (user_id,nick_name,mail,password_hash) VALUES(?,?,?,?)", "root", "管理者", "root", string(passHash))
 }
@@ -61,7 +73,9 @@ func Db() error {
 	if err != nil {
 		return err
 	}
+	config.Values = config.GetFirstSetupConfig()
 	DefineTables(store.Access.Db)
+	DefineRootUser(store.Access.Db, *config.Values)
 
 	var mongoClient *mongo.Client
 	var mongoSettings = config.GetDocumentDatabaseConfig()

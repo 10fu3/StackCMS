@@ -1,16 +1,14 @@
 package api
 
 import (
+	v1 "StackCMS/router/api/v1"
 	"StackCMS/router/api/v1/authentication"
-	"StackCMS/router/api/v1/contents"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterApi(g *gin.RouterGroup) {
-	authRoute := g.Group("/authentication")
-	authentication.RegisterAuthentication(authRoute)
-
-	contentsRoute := g.Group("/contents")
-	contents.RegisterRoutes(contentsRoute)
-
+func RegisterRoute(g *gin.RouterGroup) {
+	v1Routes := g.Group("v1")
+	v1NoAuthRoutes := g.Group("v1")
+	authentication.RegisterRoutes(v1NoAuthRoutes)
+	v1.RegisterRoutes(v1Routes)
 }

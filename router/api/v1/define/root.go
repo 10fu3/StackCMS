@@ -2,7 +2,8 @@ package define
 
 import "github.com/gin-gonic/gin"
 
-func RegisterDefineApi(g *gin.RouterGroup) {
+func RegisterRoutes(g *gin.RouterGroup) {
 	define := g.Group("/define")
+	define.POST("", Create())
 	define.GET("/all")
 }

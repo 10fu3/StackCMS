@@ -1,4 +1,4 @@
-package define
+package role
 
 import "github.com/gin-gonic/gin"
 

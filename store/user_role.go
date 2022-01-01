@@ -1,18 +1,27 @@
 package store
 
-import (
-	"StackCMS/model"
-)
+import "StackCMS/model"
 
 type UsersRole interface {
-	JoinUser(user model.User, role model.Role)
-	LeaveUser(user model.User, role model.Role)
+	JoinRoleUser(userId string, roleId string)
+	LeaveRoleUser(userId string, roleId string)
+	IsSameJoinedRole(aUserId string, bUserId string) []model.Role
 }
 
-func (d *Db) JoinUser(user model.User, role model.Role) {
-	d.Db.Exec("INSERT INTO user_role (user_role_id,user_id,role_id) VALUES (?,?,?)", user.Id+"_"+role.Id, user.Id, role.Id)
+func (d *Db) JoinRoleUser(userId string, roleId string) {
+	d.Db.Exec("INSERT INTO user_role (user_role_id,user_id,role_id) VALUES (?,?,?)", userId+"_"+roleId, userId, roleId)
 }
 
-func (d *Db) LeaveUser(user model.User, role model.Role) {
-	d.Db.Exec("DELETE FROM user_role WHERE user_role_id = ?", user.Id+"_"+role.Id)
+func (d *Db) LeaveRoleUser(userId string, roleId string) {
+	d.Db.Exec("DELETE FROM user_role WHERE user_role_id = ?", userId+"_"+roleId)
+}
+
+func (d *Db) SameJoinedRole(aUserId string, bUserId string) []model.Role {
+	var result []model.Role
+	d.Db.Select(&result, "SELECT * FROM roles WHERE role_id IN ("+
+		"SELECT role_id FROM user_role WHERE user_id = ? AND role_id IN ("+
+		"SELECT role_id FROM user_role WHERE user_id = ?"+
+		")"+
+		")", aUserId, bUserId)
+	return result
 }

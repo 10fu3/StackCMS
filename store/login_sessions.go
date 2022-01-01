@@ -2,7 +2,6 @@ package store
 
 import (
 	"StackCMS/model"
-	"errors"
 	"github.com/google/uuid"
 	"time"
 )
@@ -24,27 +23,27 @@ type sqlLoginSessionLine struct {
 }
 
 type LoginSessionStore interface {
-	GetSessionUser(authorization string) (string, error)
+	GetSessionUser(authorization string) string
 	AddSessionUser(user *model.User) (string, error)
 	DeleteSessionUserBySession(authorization string)
 	DeleteSessionUserByUser(user *model.User)
 }
 
-func (s *Db) GetSessionUser(authorization string) (string, error) {
+func (s *Db) GetSessionUser(authorization string) string {
 
 	var u sqlLoginSessionLine
 	sqlErr := s.Db.QueryRowx("SELECT * FROM login_session WHERE session_id = ?", authorization).StructScan(&u)
 
 	if sqlErr != nil {
-		return "", sqlErr
+		return ""
 	}
 
 	if u.ExpiredAt.Before(time.Now()) {
 		s.DeleteSessionUserBySession(authorization)
-		return "", errors.New("expired_time")
+		return ""
 	}
 
-	return u.UserId, nil
+	return u.UserId
 }
 
 func (s *Db) AddSessionUser(user *model.User) (string, error) {
