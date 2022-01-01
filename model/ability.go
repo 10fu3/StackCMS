@@ -7,11 +7,13 @@ func (a Ability) String() string {
 }
 
 const (
-	AbilityCreateContent  = "CreateContent"
-	AbilityUpdateContent  = "UpdateContent"
-	AbilityPublishContent = "PublishContent"
-	AbilityGetContent     = "GetContent"
-	AbilityDeleteContent  = "DeleteContent"
+	AbilityCreateContent      = "CreateContent"
+	AbilityUpdateContent      = "UpdateContent"
+	AbilityPublishContent     = "PublishContent"
+	AbilityGetAllContent      = "GetAllContent"
+	AbilityGetSameRoleContent = "GetAllContent"
+	AbilityGetSelfContent     = "GetAllContent"
+	AbilityDeleteContent      = "DeleteContent"
 
 	AbilityCreateRole = "CreateRole"
 	AbilityUpdateRole = "UpdateRole"
@@ -23,8 +25,11 @@ const (
 	AbilityGetApi    = "GetApi"
 	AbilityDeleteApi = "DeleteApi"
 
-	AbilityCreateUser = "CreateUser"
-	AbilityGetUser    = "GetUser"
+	AbilityCreateUser  = "CreateUser"
+	AbilityGetAllUser  = "GetAllUser"
+	AbilityGetSameRole = "GetSameRoleUser"
+	AbilityGetSelfUser = "GetSameRoleUser"
+	AbilityUpdateAllUser
 	AbilityDeleteUser = "DeleteUser"
 
 	AbilityChangeUserAbility = "ChangeUserAbility"
