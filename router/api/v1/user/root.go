@@ -3,10 +3,10 @@ package user
 import "github.com/gin-gonic/gin"
 
 func RegisterRoutes(g *gin.RouterGroup) {
-	g.Group("/user")
-	g.POST("", Create())
-	g.PATCH("/:user_id", Update())
-	g.GET("", ReadAll())
-	g.GET("/:user_id", Read())
-	g.DELETE("/:user_id", Delete())
+	user := g.Group("/user")
+	user.POST("", Create())
+	user.PATCH("/:user_id", Update())
+	user.GET("", ReadAll())
+	user.GET("/:user_id", Read())
+	user.DELETE("/:user_id", Delete())
 }

@@ -66,6 +66,15 @@ func (d *Db) CreateApi(api model.Api) {
 
 }
 
+func (d *Db) GetApis() []model.Api {
+	apis := []model.Api{}
+	d.Db.Select(&apis, "SELECT * FROM apis")
+	for i, _ := range apis {
+		apis[i].Fields = d.GetFieldsByApiId(apis[i].Id)
+	}
+	return apis
+}
+
 func (d *Db) GetApi(apiId string) *model.Api {
 	var api model.Api
 	var err error
@@ -79,6 +88,8 @@ func (d *Db) GetApi(apiId string) *model.Api {
 	if err != nil {
 		return nil
 	}
+
+	api.Fields = d.GetFieldsByApiId(apiId)
 
 	return &api
 }

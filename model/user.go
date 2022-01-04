@@ -1,10 +1,11 @@
 package model
 
 type User struct {
-	Id           string `db:"user_id"`
-	NickName     string `db:"nick_name"`
-	Mail         string `json:"-" db:"mail"`
+	Id           string `json:"user_id" db:"user_id"`
+	NickName     string `json:"nick_name" db:"nick_name"`
+	Mail         string `json:"mail" db:"mail"`
 	PasswordHash string `json:"-" db:"password_hash"`
+	Role         []Role `json:"roles" db:"-"`
 }
 
 func UpdateUser(old User, new User) *User {

@@ -3,9 +3,16 @@ package store
 import "StackCMS/model"
 
 type UsersRole interface {
+	GetUserRoles(userId string) []model.Role
 	JoinRoleUser(userId string, roleId string)
 	LeaveRoleUser(userId string, roleId string)
 	IsSameJoinedRole(aUserId string, bUserId string) []model.Role
+}
+
+func (d *Db) GetUserRoles(userId string) []model.Role {
+	r := []model.Role{}
+	d.Db.Select(&r, "SELECT * FROM roles WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = ?)", userId)
+	return r
 }
 
 func (d *Db) JoinRoleUser(userId string, roleId string) {

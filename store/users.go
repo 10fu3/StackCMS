@@ -12,10 +12,8 @@ type Users interface {
 }
 
 func (d *Db) GetUsersAll() []model.User {
-	var r []model.User
-	if err := d.Db.Select(&r, "SELECT * FROM users"); err != nil {
-		return nil
-	}
+	r := []model.User{}
+	d.Db.Select(&r, "SELECT * FROM users")
 	return r
 }
 
@@ -36,7 +34,7 @@ func (d *Db) GetUserByMail(mail string) *model.User {
 }
 
 func (d *Db) GetUsersByRole(roleId string) []model.User {
-	var r []model.User
+	r := []model.User{}
 	if err := d.Db.Select(&r, "SELECT * FROM users JOIN user_role ON user.id = user_role.user_id WHERE role_id = ?", roleId); err != nil {
 		return nil
 	}

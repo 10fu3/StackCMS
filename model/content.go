@@ -30,16 +30,16 @@ type Field struct {
 }
 
 type Content struct {
-	Id          string     `db:"content_id"`
-	ApiId       string     `db:"api_id"`
-	CreatedAt   time.Time  `db:"created_at"`
-	UpdatedAt   time.Time  `db:"updated_at"`
-	PublishedAt *time.Time `db:"published_at"`
-	RevisedAt   *time.Time `db:"revised_at"`
-	CreatedBy   string     `db:"created_by"`
-	UpdatedBy   string     `db:"updated_by"`
-	PublishWill *time.Time `db:"publish_will"`
-	StopWill    *time.Time `db:"stop_will"`
+	Id          string     `db:"content_id"   json:"id"`
+	ApiId       string     `db:"api_id"       json:"api_id"`
+	CreatedAt   time.Time  `db:"created_at"   json:"created_at"`
+	UpdatedAt   time.Time  `db:"updated_at"   json:"updated_at"`
+	PublishedAt *time.Time `db:"published_at" json:"published_at"`
+	RevisedAt   *time.Time `db:"revised_at"   json:"revised_at"`
+	CreatedBy   string     `db:"created_by"   json:"created_by"`
+	UpdatedBy   string     `db:"updated_by"   json:"updated_by"`
+	PublishWill *time.Time `db:"publish_will" json:"publish_will"`
+	StopWill    *time.Time `db:"stop_will"    json:"stop_will"`
 }
 
 type SqlContent struct {
