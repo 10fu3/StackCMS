@@ -2,34 +2,35 @@
 import {API_LOC} from "../const";
 import {AuthResult, Profile} from "../component/auth/types";
 
-export async function login(mail?:string, password?:string) {
-    let profile = await(async ()=>{
-        const header = new Headers()
-        const auth = localStorage.getItem('authorization')
-        if (!auth){
-            return null
-        }
-        header.set("authorization",auth)
+export async function existsAuthCredential(){
 
-        const existsAuthCredential = await fetch(API_LOC+"auth/me",{
-            method:"GET",
-            mode:"cors",
-            headers:header
-        })
-
-        if (existsAuthCredential.ok){
-            const j:Profile = await existsAuthCredential.json()
-            return j
-        }
+    const header = new Headers()
+    const auth = localStorage.getItem('authorization')
+    if (!auth){
         return null
-    })()
+    }
+    header.set("authorization",auth);
 
-    if (profile !== null){
+    const r = await fetch(API_LOC+"auth/me",{
+        method:"GET",
+        mode:"cors",
+        headers:header
+    })
+    if(r.ok){
+        const j:Profile = await r.json()
+        return j
+    }
+    return null
+}
+
+export async function login(mail?:string, password?:string) {
+    let profile = await existsAuthCredential()
+
+    if (profile){
         return profile
     }
 
     const sendLoginInfo = async () =>{
-        console.log("2 "+mail+" "+password)
         const r = await fetch(API_LOC+"auth/login",{
             method:"POST",
             body: JSON.stringify({

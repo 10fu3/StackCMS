@@ -3,6 +3,8 @@ package contents
 import (
 	"StackCMS/model"
 	"StackCMS/store"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -13,8 +15,14 @@ func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		filter := map[string]interface{}{}
-		ctx.ShouldBindJSON(&filter)
-		filter["api_id"] = ctx.Param("id")
+
+		filterParam := ctx.Query("filter")
+
+		if err := json.Unmarshal([]byte(filterParam), &filter); err != nil {
+			fmt.Println(err.Error())
+		}
+
+		filter["api_id"] = ctx.Param("api_id")
 
 		isGetDraft := func() bool {
 			return ctx.Query("draft") == "true"
@@ -48,6 +56,9 @@ func Read() gin.HandlerFunc {
 			}(),
 			GetMeta:  false,
 			GetDraft: isGetDraft,
+			//Depth: func() int {
+			//	s := strconv.Atoi(ctx.Query("depth") == 1)
+			//}(),
 		}
 		ctx.JSON(http.StatusOK, func() interface{} {
 			r := store.Access.GetContent(q)

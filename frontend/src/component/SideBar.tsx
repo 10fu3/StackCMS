@@ -1,16 +1,34 @@
 import {Box, Center, chakra, Flex, HStack, IconButton, Spacer} from "@chakra-ui/react";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {AddIcon, HamburgerIcon} from "@chakra-ui/icons";
-import React from "react";
+import React, {useEffect} from "react";
 import {ListItem} from "../store/displayData";
 import {useSelector} from "react-redux";
-import {getProfile} from "../store/auth";
+import {getProfile, setCurrentUser} from "../store/auth";
+import store from "../store";
+import {setApis} from "../store/apis";
+import {setUsers} from "../store/users";
+import {setRoles} from "../store/roles";
+import {CMSApi} from "../api/cms";
+import {existsAuthCredential} from "../api/auth";
 
 const SideBar:React.FC<{list:{[id:string]:ListItem}}> = (props)=>{
 
     const index = ["api","manage"]
 
-    const params = useParams<"category"|"id">()
+    const params = window.location.pathname.split("/").filter(e=>e.length > 0)
+
+    const user = useSelector(getProfile)
+
+    useEffect(()=>{
+        store.dispatch(setCurrentUser())
+        store.dispatch(setApis())
+        store.dispatch(setUsers())
+        store.dispatch(setRoles())
+        if(!user){
+            window.location.href = "/login"
+        }
+    },[params[0],params[1]])
 
     return <Box h={"100vh"}>
         <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">
@@ -20,15 +38,19 @@ const SideBar:React.FC<{list:{[id:string]:ListItem}}> = (props)=>{
                         return props.list[e] ? <chakra.dl>
                             <chakra.dt pt="15px" pb="20px">
                                 <Flex>
-                                    <Center>
+                                    <Center fontWeight="bold">
                                         <Link to={e}>
                                             {props.list[e].title}
                                         </Link>
                                     </Center>
                                     <Spacer/>
-                                    <IconButton color="teal" aria-label="add-item" size="xs">
-                                        <AddIcon/>
-                                    </IconButton>
+                                    {
+                                        props.list[e].onAdd ? <Link to={"/new-api"}>
+                                            <IconButton color="teal" aria-label="add-item" size="xs">
+                                                <AddIcon/>
+                                            </IconButton>
+                                        </Link> : <></>
+                                    }
                                 </Flex>
                             </chakra.dt>
                             <chakra.dd>
@@ -43,8 +65,8 @@ const SideBar:React.FC<{list:{[id:string]:ListItem}}> = (props)=>{
                                                 mt={"1.5px"}
                                                 borderRadius="20px 0 0 20px"
                                                 bgImage={(()=>{
-                                                    if(params && params.id && params.category && e === params.category && j.id === params.id){
-                                                        return "linear-gradient(90deg,#0EA9B0,#2c7a7b)"
+                                                    if(params.length >= 2 && params[0] ===  e && j.id === params[1]){
+                                                        return "linear-gradient(90deg,#139aa1,#285e61)"
                                                     }
                                                     return ""
                                                 })()}
@@ -79,7 +101,7 @@ const SideBar:React.FC<{list:{[id:string]:ListItem}}> = (props)=>{
                     (()=>{
                         // eslint-disable-next-line react-hooks/rules-of-hooks
                         const a = useSelector(getProfile)
-                        return a ? <p>"{a.nick_name}"としてログイン中</p> : <p>未ログイン</p>
+                        return a ? <Flex>"<div style={{fontWeight:"bold"}}>{a.nick_name}</div>"としてログイン中</Flex> : <p>未ログイン</p>
                     })()
                 }
             </Center>

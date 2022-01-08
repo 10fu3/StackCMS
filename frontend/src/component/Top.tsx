@@ -8,20 +8,14 @@ import {setRoles} from "../store/roles";
 import store from "../store";
 import {setUsers} from "../store/users";
 import {getDisplay} from "../store/displayData";
-import {setContents} from "../store/contents";
+import {setCurrentUser} from "../store/auth";
 const Top = ()=>{
-
-    useEffect(()=>{
-        store.dispatch(setApis())
-        store.dispatch(setUsers())
-        store.dispatch(setRoles())
-    },[])
 
     const params = useParams<"category"|"id">()
 
     return <Box>
         <Flex h="100vh">
-            <Box minW="260px" bgColor="teal.600">
+            <Box minW="260px" bgColor="teal.700">
                 <SideBar list={useSelector(getDisplay)}/>
             </Box>
             <Box w="calc(100% - 260px)">

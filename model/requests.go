@@ -26,4 +26,5 @@ type GetQuery struct {
 	Fields   []string
 	GetMeta  bool
 	GetDraft bool
+	Depth    int
 }

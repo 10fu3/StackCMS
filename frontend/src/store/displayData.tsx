@@ -1,6 +1,7 @@
 import {LockIcon, ViewIcon} from "@chakra-ui/icons";
 import React from "react";
 import {Api, Role, User} from "../model/model";
+import {Navigate} from "react-router-dom";
 
 interface State {
     apis:Api[]
@@ -17,7 +18,7 @@ export interface ListContent{
 export interface ListItem{
     title:string,
     item: ListContent[],
-    onAdd?: ()=>void
+    onAdd?: ()=>React.ReactNode
 }
 
 export const getDisplay: (state:State)=>{[id:string]:ListItem} = (state:State) => {
@@ -28,7 +29,7 @@ export const getDisplay: (state:State)=>{[id:string]:ListItem} = (state:State) =
                 return {id: i.api_id,title: i.api_id} as ListContent
             }),
             onAdd: () => {
-
+                return <Navigate to="new-api"/>
             }
         },
         "manage":{

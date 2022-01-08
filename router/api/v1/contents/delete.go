@@ -17,6 +17,13 @@ func Delete() gin.HandlerFunc {
 			return
 		}
 
+		if ctx.Param("content_id") == "all" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "check_your_link",
+			})
+			return
+		}
+
 		if store.Access.DeleteContent(ctx.Param("content_id")) != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{
 				"message": "not_found_content",

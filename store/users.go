@@ -54,9 +54,9 @@ func (d *Db) UpdateUser(new model.User) {
 		" password_hash = ?,"+
 		" nick_name = ?,"+
 		" mail = ? "+
-		"WHERE user_id = ?", user.PasswordHash, user.NickName, user.Mail, user.Id)
+		"WHERE user_id = ? AND is_lock = false", user.PasswordHash, user.NickName, user.Mail, user.Id)
 }
 
 func (d *Db) DeleteUser(id string) {
-	d.Db.Exec("DELETE FROM users WHERE user_id = ?", id)
+	d.Db.Exec("DELETE FROM users WHERE user_id = ? AND is_lock = false", id)
 }

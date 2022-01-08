@@ -16,6 +16,7 @@ type ResultCount struct {
 }
 
 type Api struct {
+	UniqueId        string  `json:"unique_id" db:"id"`
 	IsSingleContent bool    `json:"isSingleContent" db:"is_single"`
 	Id              string  `json:"api_id" db:"api_id"`
 	Fields          []Field `json:"fields" db:"-"`
@@ -104,13 +105,13 @@ func NewContent() Content {
 	}
 }
 
-var DefinedMeta = []string{"updated_at", "publish_at", "revised_at", "created_by", "updated_by", "publish_will", "stop_will"}
+var DefinedMeta = []string{"updated_at", "published_at", "revised_at", "created_by", "updated_by", "publish_will", "stop_will"}
 
 func (c *Content) ToJson() map[string]interface{} {
 	r := map[string]interface{}{}
 	r["_id"] = c.Id
 	r["updated_at"] = c.UpdatedAt
-	r["publish_at"] = c.PublishedAt
+	r["published_at"] = c.PublishedAt
 	r["revised_at"] = c.RevisedAt
 	r["created_by"] = c.CreatedBy
 	r["updated_by"] = c.UpdatedBy

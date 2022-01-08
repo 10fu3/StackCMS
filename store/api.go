@@ -10,6 +10,7 @@ import (
 
 type Apis interface {
 	CreateApi(api model.Api)
+	UpdateApi(api model.Api)
 	GetApi(apiId string) *model.Api
 	DeleteApi(apiId string)
 }
@@ -26,7 +27,7 @@ func (d *Db) CreateApi(api model.Api) {
 		return
 	}
 
-	if _, err := t.Exec("INSERT INTO apis (api_id,is_single) VALUES(?,?)", api.Id, api.IsSingleContent); err != nil {
+	if _, err := t.Exec("INSERT INTO apis (id,api_id,is_single) VALUES(?,?,?)", api.UniqueId, api.Id, api.IsSingleContent); err != nil {
 		fmt.Println(err.Error())
 		return
 	}
@@ -55,7 +56,7 @@ func (d *Db) CreateApi(api model.Api) {
 			continue
 		}
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), api.Id, f.Id, f.Type, f.RelationApiId); err != nil {
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), api.UniqueId, f.Name, f.Type, f.RelationApiId); err != nil {
 			continue
 		}
 	}
@@ -66,19 +67,23 @@ func (d *Db) CreateApi(api model.Api) {
 
 }
 
+func (d *Db) UpdateApi(id string, api model.Api) {
+	d.Db.Exec("UPDATE apis SET api_id = ?, is_single = ? WHERE id = ?", api.Id, api.IsSingleContent, id)
+}
+
 func (d *Db) GetApis() []model.Api {
 	apis := []model.Api{}
 	d.Db.Select(&apis, "SELECT * FROM apis")
 	for i, _ := range apis {
-		apis[i].Fields = d.GetFieldsByApiId(apis[i].Id)
+		apis[i].Fields = d.GetFieldsByApiUniqueId(apis[i].UniqueId)
 	}
 	return apis
 }
 
-func (d *Db) GetApi(apiId string) *model.Api {
+func (d *Db) GetApi(id string) *model.Api {
 	var api model.Api
 	var err error
-	r := d.Db.QueryRowx("SELECT * FROM apis WHERE api_id = ?", apiId)
+	r := d.Db.QueryRowx("SELECT * FROM apis WHERE api_id = ?", id)
 	err = r.Err()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -89,11 +94,11 @@ func (d *Db) GetApi(apiId string) *model.Api {
 		return nil
 	}
 
-	api.Fields = d.GetFieldsByApiId(apiId)
+	api.Fields = d.GetFieldsByApiUniqueId(api.UniqueId)
 
 	return &api
 }
 
-func (d *Db) DeleteApi(apiId string) {
-	d.Db.Exec("DELETE FROM apis WHERE api_id = ?", apiId)
+func (d *Db) DeleteApi(id string) {
+	d.Db.Exec("DELETE FROM apis WHERE id = ?", id)
 }

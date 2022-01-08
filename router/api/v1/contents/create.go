@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-type CreateRequest struct {
-	CreatedBy string
-}
-
 func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var err error
@@ -56,7 +52,7 @@ func Create() gin.HandlerFunc {
 			})
 		}
 
-		fields := store.Access.GetFieldsByApiId(api.Id)
+		fields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
 
 		if len(fields) == 0 {
 			ctx.JSON(http.StatusBadRequest, gin.H{

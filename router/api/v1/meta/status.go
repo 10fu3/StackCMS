@@ -59,7 +59,7 @@ func ChangeStatus() gin.HandlerFunc {
 		}
 
 		if err := store.Access.ChangePublishStatusContent(content.Id, publishedBy, func() store.ContentStatus {
-			if r.Status == "publish" {
+			if r.Status == "published" {
 				return store.ContentPublished
 			}
 			return store.ContentUnpublished

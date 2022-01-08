@@ -33,8 +33,15 @@ export default slice.reducer;
 
 // 認証済みか確認するセレクター
 export const isAuthSelector = (state:{auth:{auth:Profile|null}}) => {
-    return state.auth.auth !== null
+    if(state.auth.auth){
+        return true
+    }
+    return false
 };
+
+export const isLoggedIn = async ()=>{
+
+}
 
 export const getProfile = (state:{auth:{auth:Profile|null}}) => {
     return state.auth.auth

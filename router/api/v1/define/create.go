@@ -5,6 +5,7 @@ import (
 	"StackCMS/store"
 	"StackCMS/util"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func Create() gin.HandlerFunc {
@@ -25,7 +26,7 @@ func Create() gin.HandlerFunc {
 			})
 			return
 		}
-
+		r.UniqueId = uuid.NewString()
 		store.Access.CreateApi(r)
 	}
 }

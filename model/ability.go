@@ -1,5 +1,33 @@
 package model
 
+var abilities = []Ability{
+	AbilityCreateContent,
+	AbilityUpdateContent,
+	AbilityPublishContent,
+	AbilityGetAllContent,
+	AbilityGetSelfContent,
+	AbilityDeleteContent,
+	AbilityCreateRole,
+	AbilityUpdateRole,
+	AbilityGetRole,
+	AbilityDeleteRole,
+	AbilityCreateApi,
+	AbilityUpdateApi,
+	AbilityGetApi,
+	AbilityDeleteApi,
+	AbilityCreateUser,
+	AbilityGetAllUser,
+	AbilityUpdateAllUser,
+	AbilityUpdateSelfUser,
+	AbilityDeleteUser,
+	AbilityChangeRoleAbility,
+	AbilityChangeRoleUser,
+}
+
+func GetAllAbility() []Ability {
+	return abilities
+}
+
 type Ability string
 
 func (a Ability) String() string {
@@ -7,30 +35,29 @@ func (a Ability) String() string {
 }
 
 const (
-	AbilityCreateContent      = "CreateContent"
-	AbilityUpdateContent      = "UpdateContent"
-	AbilityPublishContent     = "PublishContent"
-	AbilityGetAllContent      = "GetAllContent"
-	AbilityGetSameRoleContent = "GetAllContent"
-	AbilityGetSelfContent     = "GetAllContent"
-	AbilityDeleteContent      = "DeleteContent"
+	AbilityCreateContent  = "Content.Create"
+	AbilityUpdateContent  = "Content.Update"
+	AbilityPublishContent = "Content.Create.Publish"
+	AbilityGetAllContent  = "Content.Get.All"
+	AbilityGetSelfContent = "Content.Get.Self"
+	AbilityDeleteContent  = "Content.Delete"
 
-	AbilityCreateRole = "CreateRole"
-	AbilityUpdateRole = "UpdateRole"
-	AbilityGetRole    = "GetRole"
-	AbilityDeleteRole = "DeleteRole"
+	AbilityCreateRole = "Role.Create"
+	AbilityUpdateRole = "Role.Update"
+	AbilityGetRole    = "Role.Get.All"
+	AbilityDeleteRole = "Role.Delete"
 
-	AbilityCreateApi = "CreateApi"
-	AbilityUpdateApi = "UpdateApi"
-	AbilityGetApi    = "GetApi"
-	AbilityDeleteApi = "DeleteApi"
+	AbilityCreateApi = "Api.Create"
+	AbilityUpdateApi = "Api.Update"
+	AbilityGetApi    = "Api.Get"
+	AbilityDeleteApi = "Api.Delete"
 
-	AbilityCreateUser  = "CreateUser"
-	AbilityGetAllUser  = "GetAllUser"
-	AbilityGetSameRole = "GetSameRoleUser"
-	AbilityGetSelfUser = "GetSameRoleUser"
-	AbilityUpdateAllUser
-	AbilityDeleteUser = "DeleteUser"
+	AbilityCreateUser     = "User.Create"
+	AbilityGetAllUser     = "User.Get.All"
+	AbilityUpdateSelfUser = "User.Update.Self"
+	AbilityUpdateAllUser  = "User.Update.All"
+	AbilityDeleteUser     = "User.Delete"
 
-	AbilityChangeUserAbility = "ChangeUserAbility"
+	AbilityChangeRoleAbility = "Role.Update.Ability"
+	AbilityChangeRoleUser    = "Role.Update.User"
 )

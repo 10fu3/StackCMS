@@ -1,4 +1,4 @@
-package define
+package contents
 
 import (
 	"StackCMS/store"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func Delete() gin.HandlerFunc {
+func DeleteAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		api := store.Access.GetApi(ctx.Param("api_id"))
 
@@ -17,8 +17,10 @@ func Delete() gin.HandlerFunc {
 			return
 		}
 
-		store.Access.DeleteContentByApiId(api.UniqueId)
-		store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
-		store.Access.DeleteApi(api.UniqueId)
+		if store.Access.DeleteContentByApiId(api.UniqueId) != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"message": "not_found_content",
+			})
+		}
 	}
 }

@@ -92,9 +92,11 @@ func (d *Db) getContents(depth int, api string, uuids []string) []bson.M {
 
 		for i, _ := range dbResults {
 			r := dbResults[i]
-			for _, v := range rToMap {
-				for k, v := range v {
-					r[k] = v
+			for k, v := range rToMap {
+				if k == i {
+					for k, v := range v {
+						r[k] = v
+					}
 				}
 			}
 			results = append(results, r)
@@ -104,7 +106,7 @@ func (d *Db) getContents(depth int, api string, uuids []string) []bson.M {
 
 	//relation
 
-	fields := d.GetFieldsByApiId(api)
+	fields := d.GetFieldsByApiUniqueId(api)
 
 	for _, field := range fields {
 		if field.RelationApiId == nil {
@@ -141,42 +143,15 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 		return nil
 	}
 
-	if api.IsSingleContent {
-
-		var meta = d.GetContentMetaById(query.ApiId)
-		if meta == nil {
-			return nil
-		}
-		var r bson.M = meta.ToJson()
-
-		if query.GetMeta {
-			return r
-		}
-
-		var err error
-		result := d.ContentDb.FindOne(Access.Ctx, bson.M{
-			"api_id": query.ApiId,
-		})
-		err = result.Err()
-		if err != nil {
-			return nil
-		}
-		err = result.Decode(&r)
-		if err != nil {
-			return nil
-		}
-		return r
-	}
-
 	definedFields := func() map[string]model.Field {
 		fs := map[string]model.Field{}
-		f := d.GetFieldsByApiId(query.ApiId)
+		f := d.GetFieldsByApiUniqueId(api.UniqueId)
 
 		for _, s := range model.DefinedMeta {
 			f = append(f, model.Field{
 				Id:            uuid.NewString(),
 				Name:          s,
-				ApiId:         api.Id,
+				ApiId:         api.UniqueId,
 				Type:          "default",
 				RelationApiId: nil,
 			})
@@ -191,7 +166,7 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 		fs["_id"] = model.Field{
 			Id:            uuid.NewString(),
 			Name:          "_id",
-			ApiId:         api.Id,
+			ApiId:         api.UniqueId,
 			Type:          "default",
 			RelationApiId: nil,
 		}
@@ -211,7 +186,7 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 		findOptions.SetProjection(fields)
 	}
 
-	query.Filter["api_id"] = query.ApiId
+	query.Filter["api_id"] = api.UniqueId
 
 	find, err := d.ContentDb.Find(Access.Ctx, query.Filter, findOptions)
 	if err != nil {
@@ -302,6 +277,9 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 				}
 				var uuids []string
 				for _, u := range mongoDbUuids {
+					if u == nil {
+						continue
+					}
 					uuids = append(uuids, u.(string))
 				}
 
@@ -338,6 +316,18 @@ func (d *Db) GetContentMetaById(contentId string) *model.Content {
 	return r.ToContent()
 }
 
+func (d *Db) GetContentMetaByApiId(apiId string) []*model.Content {
+	var r []model.SqlContent
+	var result []*model.Content
+	if d.Db.Select(&r, "SELECT * FROM contents WHERE api_id = ?", apiId) != nil {
+		return nil
+	}
+	for _, content := range r {
+		result = append(result, content.ToContent())
+	}
+	return result
+}
+
 func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (string, error) {
 
 	api := d.GetApi(apiId)
@@ -347,7 +337,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	}
 
 	if api.IsSingleContent {
-		r := d.ContentDb.FindOne(d.Ctx, bson.M{"api_id": api.Id})
+		r := d.ContentDb.FindOne(d.Ctx, bson.M{"api_id": api.UniqueId})
 		var same map[string]interface{}
 		var err = r.Decode(&same)
 		if r != nil && err == nil {
@@ -356,7 +346,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	}
 
 	meta := model.NewContent()
-	meta.ApiId = apiId
+	meta.ApiId = api.UniqueId
 	meta.CreatedBy = createdBy
 
 	contentId := meta.Id
@@ -379,7 +369,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	}
 
 	content["_id"] = contentId
-	content["api_id"] = apiId
+	content["api_id"] = api.UniqueId
 
 	_, e := d.ContentDb.InsertOne(d.Ctx, content)
 
@@ -433,7 +423,7 @@ func (d *Db) UpdateContent(contentId string, updateBy string, content model.JSON
 	}
 
 	var c model.Content
-	e = d.Db.Get(&c, "SELECT * FROM WHERE content_id = ?", contentId)
+	e = d.Db.Get(&c, "SELECT * FROM contents WHERE content_id = ?", contentId)
 	if e != nil {
 		return e
 	}
@@ -442,7 +432,7 @@ func (d *Db) UpdateContent(contentId string, updateBy string, content model.JSON
 	if c.PublishedAt != nil {
 		c.RevisedAt = &now
 	}
-	d.Db.Exec("UPDATE content SET update_by = ?, update_at = ?, published_at = ? WHERE content_id = ?", updateBy, c.UpdatedAt, c.PublishedAt, contentId)
+	d.Db.Exec("UPDATE contents SET update_by = ?, update_at = ?, published_at = ? WHERE content_id = ?", updateBy, c.UpdatedAt, c.PublishedAt, contentId)
 
 	return e
 }
@@ -452,7 +442,7 @@ func (d *Db) DeleteContent(contentId string) error {
 	if e != nil {
 		return e
 	}
-	d.Db.Exec("DELETE content WHERE content_id = ?", contentId)
+	d.Db.Exec("DELETE FROM contents WHERE content_id = ?", contentId)
 	return e
 }
 
@@ -461,6 +451,6 @@ func (d *Db) DeleteContentByApiId(apiId string) error {
 	if e != nil {
 		return e
 	}
-	d.Db.Exec("DELETE content WHERE api_id = ?", apiId)
+	d.Db.Exec("DELETE FROM contents WHERE api_id = ?", apiId)
 	return e
 }

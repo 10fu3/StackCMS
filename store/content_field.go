@@ -9,8 +9,8 @@ import (
 
 type ContentFields interface {
 	CreateFields(apiId string, fields []model.Field)
-	GetFieldsByApiId(apiId string) []model.Field
-	DeleteFieldsByApiId(apiId string)
+	GetFieldsByApiUniqueId(apiId string) []model.Field
+	DeleteFieldsByApiUniqueId(apiId string)
 	DeleteField(field model.Field)
 }
 
@@ -40,16 +40,16 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 			continue
 		}
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), apiId, f.Id, f.Type, f.RelationApiId); err != nil {
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), apiId, f.Name, f.Type, f.RelationApiId); err != nil {
 			continue
 		}
 	}
 	t.Commit()
 }
 
-func (d *Db) GetFieldsByApiId(apiId string) []model.Field {
+func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	var r []model.Field
-	var err = d.Db.Select(&r, "SELECT * FROM fields WHERE api_id = ?", apiId)
+	var err = d.Db.Select(&r, "SELECT * FROM fields WHERE api_id = ?", unique)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
@@ -57,7 +57,7 @@ func (d *Db) GetFieldsByApiId(apiId string) []model.Field {
 	return r
 }
 
-func (d *Db) DeleteFieldsByApiId(apiId string) {
+func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
 	d.Db.Exec("DELETE FROM fields WHERE api_id = ?", apiId)
 }
 

@@ -8,6 +8,6 @@ import (
 
 func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, store.Access.GetFieldsByApiId(ctx.Param("api_id")))
+		ctx.JSON(http.StatusOK, store.Access.GetFieldsByApiUniqueId(ctx.Param("api_id")))
 	}
 }

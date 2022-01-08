@@ -3,36 +3,59 @@ package define
 import (
 	"StackCMS/model"
 	"StackCMS/store"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )
 
-type FieldStatus string
-
-const (
-	appendField = "appendField"
-	deleteField = "deleteField"
-)
-
-var statuses = map[FieldStatus]bool{appendField: true, deleteField: true}
-
-type targetField struct {
-	Field  model.Field `json:"field"`
-	Status FieldStatus `json:"status"`
+type updateRequest struct {
+	IsOpen          *bool         `json:"is_open"`
+	IsSingleContent *bool         `json:"is_single"`
+	ApiName         *string       `json:"api_name"`
+	Fields          []model.Field `json:"fields"`
 }
 
-func (t targetField) isValid() bool {
-	_, ok := statuses[t.Status]
-	return ok
-}
+// 差集合
+//https://selfnote.work/20210211/programming/intersection-union-with-golang/
+//数字ではなくfieldを文字列にシリアライズしてmapに格納
+func calcDifference(l1, l2 []model.Field) []model.Field {
+	s := make(map[string]struct{}, len(l1))
 
-type fieldUpdateRequest struct {
-	Fields []targetField `json:"fields"`
+	for _, data := range l2 {
+		i := data.Name + data.Type + (func() string {
+			if data.RelationApiId == nil {
+				return ""
+			} else {
+				return *data.RelationApiId
+			}
+		}())
+		s[i] = struct{}{}
+	}
+
+	r := make([]model.Field, 0, len(l2))
+
+	for _, data := range l1 {
+		i := data.Name + data.Type + (func() string {
+			if data.RelationApiId == nil {
+				return ""
+			} else {
+				return *data.RelationApiId
+			}
+		}())
+		if _, ok := s[i]; ok {
+			continue
+		}
+
+		r = append(r, data)
+	}
+	return r
 }
 
 func Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req fieldUpdateRequest
+		var req updateRequest
 
 		api := store.Access.GetApi(ctx.Param("api_id"))
 
@@ -49,15 +72,26 @@ func Update() gin.HandlerFunc {
 			})
 			return
 		}
-		store.Access.DeleteFieldsByApiId(api.Id)
+
+		oldFields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
 
 		createField := []model.Field{}
 		for i := 0; i < len(req.Fields); i++ {
-			if req.Fields[i].Status == appendField {
-				createField = append(createField)
-			}
+			req.Fields[i].Id = uuid.NewString()
+			createField = append(createField, req.Fields[i])
 		}
 
-		store.Access.CreateFields(api.Id, createField)
+		diffField := calcDifference(oldFields, createField)
+
+		store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
+
+		store.Access.CreateFields(api.UniqueId, createField)
+
+		for _, field := range diffField {
+			fmt.Println(field.Name)
+			if _, err := store.Access.ContentDb.UpdateMany(store.Access.Ctx, bson.M{"api_id": api.UniqueId}, bson.M{"$unset": bson.M{field.Name: ""}}); err != nil {
+				fmt.Println("fault " + err.Error())
+			}
+		}
 	}
 }

@@ -6,6 +6,7 @@ type User struct {
 	Mail         string `json:"mail" db:"mail"`
 	PasswordHash string `json:"-" db:"password_hash"`
 	Role         []Role `json:"roles" db:"-"`
+	IsLock       bool   `json:"is_lock" db:"is_lock"`
 }
 
 func UpdateUser(old User, new User) *User {

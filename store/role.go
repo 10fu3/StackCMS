@@ -15,14 +15,22 @@ func (d *Db) GetAllRole() []model.Role {
 	return r
 }
 
+func (d *Db) GetRole(roleId string) *model.Role {
+	var r model.Role
+	if d.Db.Get(&r, "SELECT * FROM roles WHERE role_id = ?", roleId) != nil {
+		return nil
+	}
+	return &r
+}
+
 func (d *Db) CreateRole(role model.Role) {
-	d.Db.Exec("INSERT INTO roles (role_id,role_name) VALUES (?,?)", role.Id, role.Name)
+	d.Db.Exec("INSERT INTO roles (role_id,role_name,is_lock) VALUES (?,?,?)", role.Id, role.Name, false)
 }
 
 func (d *Db) UpdateRole(role model.Role) {
-	d.Db.Exec("UPDATE roles SET role_name = ? WHERE role_id = ?", role.Name, role.Id)
+	d.Db.Exec("UPDATE roles SET role_name = ? WHERE role_id = ? AND is_lock = false", role.Name, role.Id)
 }
 
 func (d *Db) DeleteRole(role model.Role) {
-	d.Db.Exec("DELETE FROM roles WHERE role_id = ?", role.Id)
+	d.Db.Exec("DELETE FROM roles WHERE role_id = ? AND is_lock = false", role.Id)
 }

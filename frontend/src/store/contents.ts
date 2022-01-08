@@ -11,7 +11,6 @@ const initialState = {
 };
 
 export const getContents = (state:State)=> {
-    console.log(state)
     return (state as {contents:{contents:any[]}}).contents.contents;
 }
 

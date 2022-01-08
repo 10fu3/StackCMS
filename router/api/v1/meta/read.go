@@ -13,6 +13,8 @@ import (
 func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
+		api := store.Access.GetApi(ctx.Param("api_id"))
+
 		filter := map[string]interface{}{}
 		if json.Unmarshal([]byte(ctx.Query("filter")), &filter) != nil {
 			filter = map[string]interface{}{}
@@ -39,7 +41,7 @@ func Read() gin.HandlerFunc {
 					return v
 				}(),
 			},
-			ApiId:  ctx.Param("api_id"),
+			ApiId:  api.UniqueId,
 			Filter: filter,
 			Fields: func() []string {
 				s := strings.Split(ctx.Query("fields"), ",")

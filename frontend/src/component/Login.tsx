@@ -12,6 +12,8 @@ const LoginPage = ()=>{
 
     const submit = () => {
         dispatch(setLogin(mail,password))
+        setMail('')
+        setPassword('')
     };
 
     return <Box bgColor="#f0f9ff" w="100%" h="100vh">
