@@ -6,6 +6,7 @@ Headless CMS software
 - golang
   - gin (web framework)
 - maria db (mysql)
+  - contents field management
   - account management
   - permission management
   - role management
@@ -18,27 +19,29 @@ Headless CMS software
   - update
   - read
   - delete
+  - publish
   
 - api
   - create
   - read
-
-## not implement
-- content
-  - publish
-
-- api
   - update
   - delete
 
 - user
+  - read
+
+- role
+  - read
+
+## not implement
+- user
   - create
   - update
-  - read
   - delete
   
 - role
   - create
   - update
-  - read
   - delete
+
+- webhook
