@@ -3,9 +3,9 @@
 Headless CMS software
 
 This CMS can...
-- define your original contents field
-- relation your contents to contents
-- search contents by filter (called mongo db api)
+- define your original 'contents' field
+- define relation about your 'contents' to your 'contents'
+- search contents by 'filter' (that is mongo db filter)
 
 ## based on
 - golang
