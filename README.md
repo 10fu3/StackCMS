@@ -2,6 +2,11 @@
 
 Headless CMS software
 
+This CMS can...
+- define your original contents field
+- relation your contents to contents
+- search contents by filter (called mongo db api)
+
 ## based on
 - golang
   - gin (web framework)
@@ -14,6 +19,9 @@ Headless CMS software
   - contents maneged
   
 ## feature
+
+- user login
+
 - content
   - create
   - update
