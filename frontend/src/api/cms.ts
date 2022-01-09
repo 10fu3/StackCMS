@@ -65,6 +65,26 @@ export class CMSApi{
         return []
     }
 
+    static async deleteContentsByApi(api_id:string): Promise<boolean>{
+        const k = localStorage.getItem("authorization");
+        return (await fetch(API_LOC+`contents/${api_id}/all`,{
+            headers: new Headers({
+                authorization: k ? k : ""
+            }),
+            method: "DELETE",
+        })).ok
+    }
+
+    static async deleteApi(api_id:string): Promise<boolean>{
+        const k = localStorage.getItem("authorization");
+        return (await fetch(API_LOC+`define/${api_id}`,{
+            headers: new Headers({
+                authorization: k ? k : ""
+            }),
+            method: "DELETE",
+        })).ok
+    }
+
     static async createContents(api_id:string, contents:{[id:string]:any}): Promise<boolean>{
         const k = localStorage.getItem("authorization");
         return (await fetch(API_LOC+`contents/${api_id}`,{

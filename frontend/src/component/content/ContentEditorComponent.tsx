@@ -62,7 +62,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
 
     const [contents,setContents] = useState<{[key:string]:any}[]>([])
 
-    const apis = useSelector(getApis).filter(f=>f.api_id === props.apiId).filter(f=>f.fields.length > 0)
+    const apis = useSelector(getApis).filter(f=>f.unique_id === props.apiId).filter(f=>f.fields.length > 0)
 
     const fields = apis[0].fields
 

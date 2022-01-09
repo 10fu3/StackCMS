@@ -28,7 +28,7 @@ const SideBar:React.FC<{list:{[id:string]:ListItem}}> = (props)=>{
         if(!user){
             window.location.href = "/login"
         }
-    },[params[0],params[1]])
+    },[params[0],params[1],params[2]])
 
     return <Box h={"100vh"}>
         <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">

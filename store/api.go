@@ -17,7 +17,7 @@ type Apis interface {
 
 func (d *Db) CreateApi(api model.Api) {
 
-	t, err := d.Db.Begin()
+	t, err := d.Db.Beginx()
 
 	if err != nil {
 		return
@@ -56,6 +56,8 @@ func (d *Db) CreateApi(api model.Api) {
 			continue
 		}
 
+		fmt.Println(f.RelationApiId)
+
 		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), api.UniqueId, f.Name, f.Type, f.RelationApiId); err != nil {
 			continue
 		}
@@ -78,6 +80,25 @@ func (d *Db) GetApis() []model.Api {
 		apis[i].Fields = d.GetFieldsByApiUniqueId(apis[i].UniqueId)
 	}
 	return apis
+}
+
+func (d *Db) GetApiByUniqueId(id string) *model.Api {
+	var api model.Api
+	var err error
+	r := d.Db.QueryRowx("SELECT * FROM apis WHERE id = ?", id)
+	err = r.Err()
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+	err = r.StructScan(&api)
+	if err != nil {
+		return nil
+	}
+
+	api.Fields = d.GetFieldsByApiUniqueId(api.UniqueId)
+
+	return &api
 }
 
 func (d *Db) GetApi(id string) *model.Api {

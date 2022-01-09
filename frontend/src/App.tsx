@@ -18,6 +18,7 @@ import ContentsEditor from "./component/content/ContentsEditor";
 import RoleDetailPage from "./component/manage/RoleDetail";
 import ApiSchemaSettings from "./component/api/settings/ApiSchemaSettings";
 import {Box} from "@chakra-ui/layout";
+import ApiDeleteSettings from "./component/api/settings/ApiDeleteSettings";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
@@ -44,7 +45,7 @@ const App:React.FC = ()=>{
           <Route path="schema" element={<ApiSchemaSettings/>}/>
           <Route path="preview" element={<Box>2</Box>}/>
           <Route path="webhook" element={<Box>3</Box>}/>
-          <Route path="delete" element={<Box>4</Box>}/>
+          <Route path="delete" element={<ApiDeleteSettings/>}/>
         </Route>
       </Route>
       <Route path="*" element={<NotFound/>}/>

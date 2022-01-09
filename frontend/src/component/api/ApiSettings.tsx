@@ -81,7 +81,7 @@ const ApiSettings = ()=>{
         <Box w={"100%"} pr={2}>
             <Box h={"100%"}>
                 <Flex h="100%">
-                    <Box p={5} minW="260px" bgColor="" h={"calc(100vh - 65px)"} overflow="auto">
+                    <Box p={5} minW="260px" bgColor={"#f8fdfb"} h={"calc(100vh - 65px)"} overflow="auto">
                         {
                             items.map(i=>{
                                 return <Box>
@@ -111,8 +111,8 @@ const ApiSettings = ()=>{
                             })
                         }
                     </Box>
-                    <Divider h="calc(100vh - 65px)" w="4px" orientation='vertical' />
-                    <Box pt={10} pr={3} pl={5} pb={10} w="100%" h={"calc(100vh - 65px)"} overflow="auto">
+                    <Divider bgColor={"#f8fdfb"} h="calc(100vh - 65px)" w="4px" orientation='vertical' />
+                    <Box bgColor={"#f8fdfb"} pt={10} pr={3} pl={5} pb={10} w="100%" h={"calc(100vh - 65px)"} overflow="auto">
                         <Outlet/>
                     </Box>
                 </Flex>

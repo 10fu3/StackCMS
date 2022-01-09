@@ -5,21 +5,22 @@ import {CSSProperties, useEffect, useState} from "react";
 import {getContents, setContents} from "../../store/contents";
 import {useSelector} from "react-redux";
 import {getFields} from "../../store/fields";
-import {ContentMeta} from "../../model/model";
+import {ContentMeta, FieldType} from "../../model/model";
 import {toJapaneseFromFieldType} from "../../api/cms";
 import store from "../../store";
+import apis, {getApis} from "../../store/apis";
 
 const ContentsList = ()=>{
 
     const params = useParams<"id">()
 
-    useEffect(()=>{
-        store.dispatch(setContents(params.id ? params.id : ""))
-    },[params.id])
+    const rawFields = useSelector(getFields)
+
+    const apis = useSelector(getApis)
+
+    const [fields,setFields] = useState<FieldType[]>([])
 
     const nav = useNavigate()
-
-    const fields = useSelector(getFields)
 
     const unionCellCss:CSSProperties = {
         padding:20,
@@ -28,7 +29,30 @@ const ContentsList = ()=>{
 
     const contents:{[key:string]:any}[] = useSelector(getContents)
 
-    return fields[params.id ? params.id : ""] ? <Box w={"100%"} h={"100vh"}>
+    useEffect(()=>{
+        store.dispatch(setContents(params.id ? params.id : ""))
+    },[params.id])
+
+    useEffect(()=>{
+        if(!params.id){
+            return;
+        }
+        if(!rawFields[params.id]){
+            return
+        }
+        let inputs:FieldType[] = []
+        for (const f of rawFields[params.id]) {
+            let input = Object.assign({},f)
+            if (f.type === "relation" && f.relation_api) {
+                const api = apis.filter(i => i.unique_id === f.relation_api)[0]
+                input.relation_api = api.api_id
+            }
+            inputs.push(input)
+        }
+        setFields(inputs)
+    },[rawFields])
+
+    return rawFields[params.id ? params.id : ""] ? <Box w={"100%"} h={"100vh"}>
         <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
             <Flex w={"100%"}>
                 <Center>
@@ -60,14 +84,14 @@ const ContentsList = ()=>{
                     <chakra.table style={{width:"100%",tableLayout:"fixed"}}>
                         <chakra.thead style={{width:"100%"}}>
                         <chakra.tr>
-                            <chakra.th style={{padding:10,width:`calc( 100%/ ${fields[String(params.id)].length+1})`}}>
+                            <chakra.th style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
                                 <Box>
                                     ステータス
                                 </Box>
                             </chakra.th>
                             {
-                                fields[String(params.id)].map((e)=>{
-                                    return <chakra.th style={{padding:10,width:`calc( 100%/ ${fields[String(params.id)].length}+1)`}}>
+                                fields.map((e)=>{
+                                    return <chakra.th style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length}+1)`}}>
                                         <Box>
                                             {
                                                 e.field_name
@@ -75,20 +99,24 @@ const ContentsList = ()=>{
                                         </Box>
                                         <Box color="#777">
                                             {
-                                                e.type === "relation" && e.relation_api ?
-                                                    <Center>
+                                                (()=> {
+                                                    if (!(e.type === "relation" && e.relation_api)) {
+                                                        return <Box>
+                                                            {toJapaneseFromFieldType(e.type)}
+                                                        </Box>
+                                                    }
+                                                    return e.relation_api ? <Center>
                                                         <Flex>
-                                                            参照先: <Link to={'/api/'+e.relation_api}>
-                                                                <Box textDecoration="underline">
-                                                                    {
-                                                                        e.relation_api
-                                                                    }
-                                                                </Box>
-                                                            </Link>
+                                                            参照先: <Link to={'/api/' + e.relation_api}>
+                                                            <Box textDecoration="underline">
+                                                                {
+                                                                    e.relation_api
+                                                                }
+                                                            </Box>
+                                                        </Link>
                                                         </Flex>
-                                                    </Center> : <Box>
-                                                        {toJapaneseFromFieldType(e.type)}
-                                                    </Box>
+                                                    </Center> : <></>
+                                                })()
                                             }
                                         </Box>
                                     </chakra.th>
@@ -112,7 +140,7 @@ const ContentsList = ()=>{
                                     {
                                         <th style={{
                                             backgroundColor:"white",
-                                            width:`calc( 100% / ${fields[String(params.id)].length+1})`,
+                                            width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
                                             borderRadius:"5px 0 0 5px",
                                             borderTop: "1px solid #e7e7e7",
                                             borderBottom: "1px solid #e7e7e7",
@@ -133,13 +161,13 @@ const ContentsList = ()=>{
                                         </th>
                                     }
                                     {
-                                        fields[params.id !== undefined ? params.id : ""].map((i,j)=>{
-                                            const fs = fields[params.id !== undefined ? params.id : ""]
+                                        rawFields[params.id !== undefined ? params.id : ""].map((i,j)=>{
+                                            const fs = rawFields[params.id !== undefined ? params.id : ""]
                                             return <chakra.th
                                                 style={{
                                                     backgroundColor:"white",
                                                     ...unionCellCss,
-                                                    width:`calc( 100% / ${fields[String(params.id)].length+1})`,
+                                                    width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
                                                     borderRadius: (()=>{
                                                         if(j === fs.length-1){
                                                             return "0px 5px 5px 0px"
@@ -173,9 +201,6 @@ const ContentsList = ()=>{
                         }
                         </tbody>
                     </table>
-                    {
-
-                    }
                 </Box>
             </Box>
         </Box>

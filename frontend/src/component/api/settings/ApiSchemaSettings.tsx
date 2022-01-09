@@ -2,7 +2,7 @@ import {Box, Center} from "@chakra-ui/layout";
 import React, {useEffect, useRef, useState} from "react";
 import {ApplyApiData, FieldType} from "../../../model/model";
 import {useSelector} from "react-redux";
-import {getApis} from "../../../store/apis";
+import {getApis, setApis} from "../../../store/apis";
 import {useParams} from "react-router-dom";
 import {
     AlertDialog,
@@ -20,6 +20,7 @@ import UUID from "uuidjs";
 import {AddIcon} from "@chakra-ui/icons";
 import {isCompletePage} from "../ApiCreate";
 import {CMSApi} from "../../../api/cms";
+import store from "../../../store";
 
 const ApiSchemaSettings = () => {
 
@@ -49,7 +50,6 @@ const ApiSchemaSettings = () => {
     }, [])
 
     useEffect(() => {
-        console.log(fields)
         if((base !== JSON.stringify(fields)) && isCompletePage({
             api_id: "",
             fields: fields,
@@ -67,6 +67,7 @@ const ApiSchemaSettings = () => {
                 fields: fields
             }
             if(await CMSApi.updateApi(params.id ? params.id : "" , d)){
+                store.dispatch(setApis)
                 setAppliedResult(true)
             }else{
                 setAppliedResult(false)
@@ -110,7 +111,7 @@ const ApiSchemaSettings = () => {
         </AlertDialog>
 
         <Box>
-            <Box overflow="auto" pt={3} pb={5} pl={5} pr={5} w={"100%"} h={"100%"} bgColor={"#f0f9ff"}>
+            <Box overflow="auto" pt={3} pb={5} pl={5} pr={5} w={"100%"} h={"100%"} borderRadius="5px" borderWidth="1px" bgColor={"white"}>
                 {
                     fields.map((e, i) => {
                         return <Box pt="10px" pb="10px">

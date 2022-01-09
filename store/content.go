@@ -368,6 +368,20 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 		return "", e
 	}
 
+	for _, k := range []string{
+		"content_id",
+		"created_at",
+		"deleted_at",
+		"published_at",
+		"revised_at",
+		"updated_at",
+		"updated_by",
+		"publish_will",
+		"stop_will",
+	} {
+		delete(content,k)
+	}
+
 	content["_id"] = contentId
 	content["api_id"] = api.UniqueId
 
@@ -411,6 +425,21 @@ func (d *Db) UpdateContent(contentId string, updateBy string, content model.JSON
 	}
 
 	delete(content, "_id")
+	for _, k := range []string{
+		"content_id",
+		"created_at",
+		"deleted_at",
+		"published_at",
+		"api_id",
+		"revised_at",
+		"updated_at",
+		"updated_by",
+		"publish_will",
+		"stop_will",
+	} {
+		delete(content,k)
+	}
+
 
 	_, e := d.ContentDb.UpdateOne(Access.Ctx,
 		bson.M{"_id": contentId},

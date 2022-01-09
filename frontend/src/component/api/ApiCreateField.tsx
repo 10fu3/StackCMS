@@ -67,7 +67,7 @@ const ApiCreateField :React.FC<{
                                 }} value={props.data.fields[i].relation_api} defaultValue={undefined} placeholder='未選択'>
                                     {
                                         apis.map((e)=>{
-                                            return <option value={e.api_id.valueOf()}>{e.api_id}</option>
+                                            return <option value={e.unique_id}>{e.api_id}</option>
                                         })
                                     }
                                 </Select>
