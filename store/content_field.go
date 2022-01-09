@@ -64,3 +64,7 @@ func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
 func (d *Db) DeleteField(field model.Field) {
 	d.Db.Exec("DELETE FROM fields WHERE field_id = ? AND api_id = ?", field.Id, field.ApiId)
 }
+
+func (d *Db) DeleteFieldByRelationApi(relationApiUnique string) {
+	d.Db.Exec("DELETE FROM fields WHERE relation_api", relationApiUnique)
+}
