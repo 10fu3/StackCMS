@@ -2,10 +2,16 @@
 
 Headless CMS software
 
+This CMS can...
+- define your original 'contents' field
+- define relation about your 'contents' to your 'contents'
+- search contents by 'filter' (that is mongo db filter)
+
 ## based on
 - golang
   - gin (web framework)
 - maria db (mysql)
+  - contents field management
   - account management
   - permission management
   - role management
@@ -13,32 +19,37 @@ Headless CMS software
   - contents maneged
   
 ## feature
+
+- user login
+
 - content
   - create
   - update
   - read
   - delete
+  - publish
   
 - api
   - create
   - read
-
-## not implement
-- content
-  - publish
-
-- api
   - update
   - delete
 
 - user
+  - read
+
+- role
+  - read
+
+## not implement
+- user
   - create
   - update
-  - read
   - delete
   
 - role
   - create
   - update
-  - read
   - delete
+
+- webhook
