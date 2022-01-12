@@ -1,11 +1,12 @@
 import {createSlice, Dispatch,applyMiddleware} from "@reduxjs/toolkit";
 import {API_LOC} from "../const";
-import {AuthResult, Message, Profile} from "../component/auth/types";
+import {AuthResult, Message} from "../component/auth/types";
 import {login, logout} from "../api/auth";
 import {setApis} from "./apis";
 import store from "./index";
+import {Role, User} from "../model/model";
 
-const initialState:{auth:Profile|null} = {
+const initialState:{auth:User|null} = {
     auth: null
 }
 
@@ -18,12 +19,12 @@ const slice = createSlice({
                 state.auth = null
                 return
             }
-            state.auth = Object.assign({
-
-            },{nickName: action.payload.nick_name},{
-                id: action.payload.id
-            },{
-                nick_name: action.payload.nick_name
+            state.auth = Object.assign({},{
+                is_lock: action.payload.is_lock,
+                user_id: action.payload.user_id,
+                nick_name:action.payload.nick_name,
+                mail:action.payload.mail,
+                roles: action.payload.roles,
             })
         }
     },
@@ -32,7 +33,7 @@ const slice = createSlice({
 export default slice.reducer;
 
 // 認証済みか確認するセレクター
-export const isAuthSelector = (state:{auth:{auth:Profile|null}}) => {
+export const isAuthSelector = (state:{auth:{auth:User|null}}) => {
     if(state.auth.auth){
         return true
     }
@@ -43,7 +44,7 @@ export const isLoggedIn = async ()=>{
 
 }
 
-export const getProfile = (state:{auth:{auth:Profile|null}}) => {
+export const getProfile = (state:{auth:{auth:User|null}}) => {
     return state.auth.auth
 };
 

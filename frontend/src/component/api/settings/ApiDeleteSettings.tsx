@@ -21,7 +21,6 @@ const ApiDeleteSettings:React.FC<{}> = (props)=>{
     const nav = useNavigate()
 
     const [handle,setHandle] = useState<string|undefined>()
-
     const [handleResult,setHandleResult] = useState<boolean|undefined>()
 
     const action: {[id:string]:()=>void} = {

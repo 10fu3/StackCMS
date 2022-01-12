@@ -1,11 +1,8 @@
-export interface Profile{
-    id:string,
-    nick_name:string
-}
+import {User} from "../../model/model";
 
 export interface AuthResult{
     authorization: string,
-    profile: Profile
+    profile: User
 }
 
 export interface Message{

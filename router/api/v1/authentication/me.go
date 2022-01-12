@@ -35,6 +35,8 @@ func LiveSession() gin.HandlerFunc {
 			store.Access.DeleteSessionUserBySession(key)
 			return
 		}
+
+		u.Role = store.Access.GetUserRoles(u.Id)
 		ctx.JSON(http.StatusOK, u)
 	}
 }

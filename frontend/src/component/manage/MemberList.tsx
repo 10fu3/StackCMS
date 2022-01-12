@@ -11,7 +11,7 @@ import {setContents} from "../../store/contents";
 import {getProfile, setCurrentUser} from "../../store/auth";
 
 const MembersList = ()=>{
-    const params = useParams<"category"|"id"|"settings">()
+    //const params = useParams<"category"|"id"|"settings">()
 
     const unionCellCss:CSSProperties = {
         padding:20,
@@ -21,6 +21,8 @@ const MembersList = ()=>{
     }
 
     const self = useSelector(getProfile)
+
+    const nav = useNavigate()
 
     useEffect(()=>{
         if(!self){
@@ -62,7 +64,7 @@ const MembersList = ()=>{
                         <tbody>
                         {
                             useSelector(getUsers).map((e,i)=>{
-                                return <tr style={{width:"100%",backgroundColor:"white"}}>
+                                return <tr onClick={()=>{nav("/profile/"+e.user_id)}} style={{width:"100%",backgroundColor:"white",cursor:"pointer"}}>
                                     <th style={{
                                         ...unionCellCss,
                                         borderRadius:"5px 0 0 5px",

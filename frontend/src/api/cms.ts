@@ -24,6 +24,39 @@ export function toJapaneseFromFieldType(f: string) {
 
 export class CMSApi{
 
+    static async createRole(name:string): Promise<boolean> {
+        const k = localStorage.getItem("authorization")
+        if(k === null){
+            return false
+        }
+
+        const r = (await fetch(API_LOC+"role",{
+            headers: new Headers({
+                authorization:k
+            }),
+            method:"post",
+            body: JSON.stringify({
+                role_name: name
+            })
+        }))
+        return r.ok
+    }
+
+    static async deleteRole(id:string): Promise<boolean> {
+        const k = localStorage.getItem("authorization")
+        if(k === null){
+            return false
+        }
+
+        const r = (await fetch(API_LOC+`role/${id}`,{
+            headers: new Headers({
+                authorization:k
+            }),
+            method:"delete",
+        }))
+        return r.ok
+    }
+
     static async getApis():Promise<Api[]> {
 
         const k = localStorage.getItem("authorization")

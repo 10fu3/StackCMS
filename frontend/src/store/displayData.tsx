@@ -29,7 +29,7 @@ export const getDisplay: (state:State)=>{[id:string]:ListItem} = (state:State) =
                 return {id: i.api_id,title: i.api_id} as ListContent
             }),
             onAdd: () => {
-                return <Navigate to="new-api"/>
+                return <Navigate to="create"/>
             }
         },
         "manage":{

@@ -1,6 +1,8 @@
 // ログイン機能
 import {API_LOC} from "../const";
-import {AuthResult, Profile} from "../component/auth/types";
+import {AuthResult} from "../component/auth/types";
+import {User} from "../model/model";
+
 
 export async function existsAuthCredential(){
 
@@ -17,7 +19,7 @@ export async function existsAuthCredential(){
         headers:header
     })
     if(r.ok){
-        const j:Profile = await r.json()
+        const j:User = await r.json()
         return j
     }
     return null

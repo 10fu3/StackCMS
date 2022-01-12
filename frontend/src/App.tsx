@@ -11,29 +11,36 @@ import DisplayList from "./component/DisplayList";
 import ContentsList from "./component/content/ContentsList";
 import ApiSettings from "./component/api/ApiSettings";
 import MembersList from "./component/manage/MemberList";
-import RoleListPage from "./component/manage/RoleListPage";
+import RoleListPage from "./component/manage/role/RoleListPage";
 import ApiCreate from "./component/api/ApiCreate";
 import ContentsNew from "./component/content/ContentsNew";
 import ContentsEditor from "./component/content/ContentsEditor";
-import RoleDetailPage from "./component/manage/RoleDetail";
+import RoleDetailPage from "./component/manage/role/RoleDetail";
 import ApiSchemaSettings from "./component/api/settings/ApiSchemaSettings";
 import {Box} from "@chakra-ui/layout";
 import ApiDeleteSettings from "./component/api/settings/ApiDeleteSettings";
+import RoleCreatePage from "./component/manage/role/RoleCreate";
+import ProfilePage from "./component/ProfilePage";
+import RoleEditPage from "./component/manage/role/RoleEdit";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
     <Route path="" element={<PrivateRoute/>}>
       <Route path="" element={<Top/>}>
-        <Route path="new-member" />
-        <Route path="new-api" element={<ApiCreate/>}/>
+        <Route path="profile/self" element={<ProfilePage/>}/>
+        <Route path="profile/:id" element={<ProfilePage/>}/>
         {/*管理*/}
         <Route path="manage" element={<DisplayList category={"manage"}/>}/>
         <Route path="manage/member" element={<MembersList/>}/>
+        <Route path="manage/new-member" />
         <Route path="manage/member/:member_id"/>
         <Route path="manage/role" element={<RoleListPage/>}/>
+        <Route path="manage/role/create" element={<RoleCreatePage/>}/>
         <Route path="manage/role/:role_id" element={<RoleDetailPage/>}/>
+        <Route path="manage/role/:role_id/edit" element={<RoleEditPage/>}/>
         {/*コンテンツ(API)ページ*/}
         <Route path="api" element={<DisplayList category={"api"}/>}/>
+        <Route path="api/create" element={<ApiCreate/>}/>
         <Route path="api/:id" element={<ContentsList/>}/>
         <Route path="api/:id/:contents_id" element={<ContentsEditor/>}/>
         <Route path="api/:id/new" element={<ContentsNew/>}/>

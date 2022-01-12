@@ -25,7 +25,7 @@ export interface Role{
     is_lock:boolean
     id:string
     name: string
-    abilities: string[]
+    abilities: {[id:string]:{[id:string]:string[]}}
 }
 
 export interface Api{
