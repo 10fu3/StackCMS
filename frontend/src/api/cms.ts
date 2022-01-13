@@ -215,6 +215,20 @@ export class CMSApi{
         return []
     }
 
+    static async updateRole(role_id:string,role_name:string,applyPermission:string[]): Promise<boolean>{
+        const k = localStorage.getItem("authorization");
+        return (await fetch(API_LOC+`role/${role_id}`,{
+            headers: new Headers({
+                authorization: k ? k : ""
+            }),
+            method: "PATCH",
+            body: JSON.stringify({
+                role_name: role_name,
+                role_ability: applyPermission
+            })
+        })).ok
+    }
+
     static async getUsers(): Promise<User[]>{
         const k = localStorage.getItem("authorization")
         if(k === null){

@@ -1,14 +1,32 @@
 package store
 
-import "StackCMS/model"
+import (
+	"StackCMS/model"
+	"github.com/google/uuid"
+)
 
 type Users interface {
+	CreateUser(mail string)
 	GetUsersAll() []model.User
 	GetUserById(id string) *model.User
 	GetUserByMail(mail string) *model.User
 	GetUsersByRole(roleId string) []model.User
 	UpdateUser(new model.User)
 	DeleteUser(id string)
+}
+
+func (d *Db) CreateUser(mail string, nick *string) {
+	d.Db.Exec("INSERT INTO users (user_id,nick_name,mail,password_hash,is_lock) VALUES(?,?,?,?,?)",
+		uuid.NewString(),
+		func() string {
+			if nick == nil {
+				return "仮ユーザー"
+			}
+			return *nick
+		}(),
+		mail,
+		"",
+		false)
 }
 
 func (d *Db) GetUsersAll() []model.User {

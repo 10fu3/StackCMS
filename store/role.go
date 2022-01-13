@@ -29,8 +29,11 @@ func (d *Db) CreateRole(role model.Role) {
 
 func (d *Db) UpdateRole(role model.Role) {
 	d.Db.Exec("UPDATE roles SET role_name = ? WHERE role_id = ? AND is_lock = false", role.Name, role.Id)
+	d.LeaveAbilitiesByRoleId(&role)
+	d.AppendAbilities(role, role.Abilities)
 }
 
 func (d *Db) DeleteRole(role model.Role) {
 	d.Db.Exec("DELETE FROM roles WHERE role_id = ? AND is_lock = false", role.Id)
+	d.LeaveAbilitiesByRoleId(&role)
 }

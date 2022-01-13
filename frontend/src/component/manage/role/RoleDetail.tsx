@@ -41,13 +41,14 @@ const RoleDetailPage = ()=>{
         nav(-1)
     }
 
-    const abilityCategory = ["Create","Update","Get","Delete"]
+    const abilityCategory = ["Create","Update","Get","Delete","Publish"]
 
     const crudMap:{[id:string]:string} = {
         "Create":"作成",
         "Update":"更新",
         "Get":"取得",
         "Delete":"削除",
+        "Publish":"公開状態の変更"
     }
 
     const detailMap :{[id:string]:string} = {
@@ -108,7 +109,7 @@ const RoleDetailPage = ()=>{
                     </Link>
                 </Center>
                 <Center pl={4}>
-                    <chakra.p fontWeight="bold">ロール管理</chakra.p>
+                    <chakra.p fontWeight="bold">ロール管理 / {roleName}</chakra.p>
                 </Center>
                 <Spacer/>
                 {
@@ -163,15 +164,17 @@ const RoleDetailPage = ()=>{
                                                     const abilities = roleAbility[k][i]
                                                     return <Th borderLeftWidth="1px">
                                                         {
-                                                                abilities.filter(j=>j.includes("All")).length === 1 ?
+                                                            abilities ? abilities.filter(j=>j.includes("All")).length === 1 ?
                                                                     "全権限" :
                                                                     abilities.length === 0 ?
                                                                         "権限なし":
+                                                                    abilities.length === 1 && abilities[0].split(".")[2] === "Role" ?
+                                                                         "同じロールのみ" :
                                                                     abilities.length === 1 ?
-                                                                        "○" :
+                                                                         "○" :
                                                                     abilities
                                                                         .slice(0,abilities.length)
-                                                                        .map(j=>detailMap[j.split(".")[2]]).join(",")
+                                                            .map(j=>detailMap[j.split(".")[2]]).join(",") : <></>
                                                         }
                                                     </Th>
                                                 })
