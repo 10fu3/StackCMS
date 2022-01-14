@@ -12,7 +12,7 @@ import {Box, Center} from "@chakra-ui/layout";
 import React, {CSSProperties, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {CMSApi, toJapaneseFromFieldType} from "../../api/cms";
-import {ContentMeta} from "../../model/model";
+import {ContentMeta, FieldType} from "../../model/model";
 import {useSelector} from "react-redux";
 import {getApis} from "../../store/apis";
 
@@ -64,11 +64,26 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
 
     const apis = useSelector(getApis).filter(f=>f.unique_id === props.apiId).filter(f=>f.fields.length > 0)
 
-    const fields = apis[0].fields
+    const allApis = useSelector(getApis)
+
+    const fields = apis[0].fields.map(i=>{
+        let f:FieldType = Object.assign({},i)
+        if(!f.relation_api){
+            return f
+        }
+        const as = allApis.filter(a=>{
+            return a.unique_id === f.relation_api
+        })
+
+        if(as.length > 0){
+            f.relation_api = as[0].api_id
+        }
+        return f
+    })
 
     useEffect(()=>{
         (async ()=>{
-            const r = await CMSApi.getContent(props.apiId)
+            const r = await CMSApi.getContent(apis[0].api_id)
             setContents(r)
         })()
     },[props.apiId])
@@ -89,6 +104,14 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                     </chakra.th>
                     {
                         fields.map((e)=>{
+
+                            if(e.relation_api){
+                                const a = apis.filter(i=>i.api_id === e.relation_api)
+                                if(a && a.length > 0){
+                                    e.relation_api = a[0].api_id
+                                }
+                            }
+
                             return <chakra.th style={{padding:10,width:`calc( 100%/ ${fields.length}+1)`}}>
                                 <Box>
                                     {

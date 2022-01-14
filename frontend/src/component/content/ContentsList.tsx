@@ -45,6 +45,9 @@ const ContentsList = ()=>{
             let input = Object.assign({},f)
             if (f.type === "relation" && f.relation_api) {
                 const api = apis.filter(i => i.unique_id === f.relation_api)[0]
+                if(!api){
+                    return;
+                }
                 input.relation_api = api.api_id
             }
             inputs.push(input)

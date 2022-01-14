@@ -63,9 +63,24 @@ const ApiSchemaSettings = () => {
 
     const handleApply = ()=>{
         (async ()=>{
+
+            const datas = fields.map(i=>{
+                let d:FieldType = Object.assign({},i)
+                if(d.relation_api){
+                    const a = apis.filter(j=>j.api_id === d.relation_api)
+                    if(a.length === 1){
+                        d.relation_api = a[0].unique_id
+                    }
+                }
+                return d
+            })
+
             const d:ApplyApiData = {
-                fields: fields
+                fields: datas
             }
+
+            console.log(d)
+
             if(await CMSApi.updateApi(params.id ? params.id : "" , d)){
                 store.dispatch(setApis)
                 setAppliedResult(true)
@@ -163,7 +178,7 @@ const ApiSchemaSettings = () => {
                                         }} value={fields[i].relation_api} defaultValue={undefined} placeholder='未選択'>
                                             {
                                                 apis.map((e) => {
-                                                    return <option value={e.api_id.valueOf()}>{e.api_id}</option>
+                                                    return <option value={e.unique_id.valueOf()}>{apis.filter(i=>i.api_id === e.api_id)[0].api_id}</option>
                                                 })
                                             }
                                         </Select>
@@ -174,7 +189,6 @@ const ApiSchemaSettings = () => {
                                         fields.length > 1 ? <Button colorScheme="red" onClick={() => {
                                             if (fields.length > 0) {
                                                 let t = fields.filter((j) => {
-                                                    console.log(fields)
                                                     return j.id !== e.id
                                                 })
                                                 setFields(t)
