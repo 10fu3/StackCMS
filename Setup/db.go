@@ -36,7 +36,7 @@ func ConnectDatabase(config config.RelationalDatabaseConfig) (*sqlx.DB, error) {
 
 func DefineTables(db *sqlx.DB) error {
 	sqls := []string{
-		"CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(40) not null primary key, nick_name VARCHAR(128), mail VARCHAR(256), password_hash VARCHAR(512),is_lock BOOLEAN not null)",
+		"CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(40) not null , nick_name VARCHAR(128), mail VARCHAR(256) not null , password_hash VARCHAR(512),is_lock BOOLEAN not null , primary key (user_id,mail))",
 		"CREATE TABLE IF NOT EXISTS login_session (session_id VARCHAR(40) not null primary key, user_id VARCHAR(40), expired_at DATETIME)",
 		"CREATE TABLE IF NOT EXISTS roles (role_id VARCHAR(40) not null primary key,role_name VARCHAR(512) UNIQUE,is_lock BOOLEAN not null)",
 		"CREATE TABLE IF NOT EXISTS user_role (user_role_id VARCHAR(80) not null primary key,user_id VARCHAR(40),role_id VARCHAR(40))",

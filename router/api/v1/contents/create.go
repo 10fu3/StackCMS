@@ -33,6 +33,12 @@ func Create() gin.HandlerFunc {
 		createdBy := ""
 
 		if auth.IsUser {
+			if !store.Access.IsUserAuthorization(auth.GetUser().Id, []model.Ability{model.AbilityCreateContent}) {
+				ctx.JSON(http.StatusForbidden, gin.H{
+					"message": "you_dont_have_permission",
+				})
+				return
+			}
 			createdBy = auth.GetUser().Id
 		} else {
 			createdBy = "API"

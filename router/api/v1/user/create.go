@@ -7,14 +7,14 @@ import (
 )
 
 type createUserRequest struct {
-	Mail string
-	Nick *string
+	Mail string  `json:"mail"`
+	Nick *string `json:"nick_name"`
 }
 
 func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var r createUserRequest
-		if ctx.ShouldBindJSON(&r) == nil || r.Mail == "" {
+		if ctx.ShouldBindJSON(&r) != nil || r.Mail == "" {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "bad_params",
 			})

@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Top from "./component/Top";
-import {Routes, Route, Navigate, Outlet} from "react-router-dom";
+import {Routes, Route, Navigate} from "react-router-dom";
 import PrivateRoute from "./component/auth/PrivateRoute";
 import LoginPage from "./component/Login";
 import {isAuthSelector} from "./store/auth";
@@ -10,7 +10,7 @@ import {useSelector} from "react-redux";
 import DisplayList from "./component/DisplayList";
 import ContentsList from "./component/content/ContentsList";
 import ApiSettings from "./component/api/ApiSettings";
-import MembersList from "./component/manage/MemberList";
+import MembersList from "./component/manage/member/MemberList";
 import RoleListPage from "./component/manage/role/RoleListPage";
 import ApiCreate from "./component/api/ApiCreate";
 import ContentsNew from "./component/content/ContentsNew";
@@ -22,6 +22,8 @@ import ApiDeleteSettings from "./component/api/settings/ApiDeleteSettings";
 import RoleCreatePage from "./component/manage/role/RoleCreate";
 import ProfilePage from "./component/ProfilePage";
 import RoleEditPage from "./component/manage/role/RoleEdit";
+import MemberCreate from "./component/manage/member/MemberCreate";
+import ProfileUpdatePage from "./component/manage/member/MemberUpdate";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
@@ -29,11 +31,11 @@ const App:React.FC = ()=>{
       <Route path="" element={<Top/>}>
         <Route path="profile/self" element={<ProfilePage/>}/>
         <Route path="profile/:id" element={<ProfilePage/>}/>
+        <Route path="profile/:id/edit" element={<ProfileUpdatePage/>}/>
         {/*管理*/}
         <Route path="manage" element={<DisplayList category={"manage"}/>}/>
         <Route path="manage/member" element={<MembersList/>}/>
-        <Route path="manage/new-member" />
-        <Route path="manage/member/:member_id"/>
+        <Route path="manage/member/create" element={<MemberCreate/>}/>
         <Route path="manage/role" element={<RoleListPage/>}/>
         <Route path="manage/role/create" element={<RoleCreatePage/>}/>
         <Route path="manage/role/:role_id" element={<RoleDetailPage/>}/>

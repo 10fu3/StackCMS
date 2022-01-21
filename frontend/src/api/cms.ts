@@ -24,6 +24,25 @@ export function toJapaneseFromFieldType(f: string) {
 
 export class CMSApi{
 
+    static async createUser(mail:string,name:string):Promise<boolean>{
+        const k = localStorage.getItem("authorization")
+        if(k === null){
+            return false
+        }
+
+        const r = (await fetch(API_LOC+"user",{
+            headers: new Headers({
+                authorization:k
+            }),
+            method:"post",
+            body: JSON.stringify({
+                nick_name: name,
+                mail: mail
+            })
+        }))
+        return r.ok
+    }
+
     static async createRole(name:string): Promise<boolean> {
         const k = localStorage.getItem("authorization")
         if(k === null){

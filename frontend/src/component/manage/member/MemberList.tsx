@@ -2,13 +2,13 @@ import {Link, Outlet, useNavigate, useParams} from "react-router-dom";
 import {CSSProperties, useEffect} from "react";
 import {Box, Center} from "@chakra-ui/layout";
 import {Button, chakra, Flex, Spacer} from "@chakra-ui/react";
-import store from "../../store";
-import {setApis} from "../../store/apis";
-import {setRoles} from "../../store/roles";
+import store from "../../../store";
+import {setApis} from "../../../store/apis";
+import {setRoles} from "../../../store/roles";
 import {useSelector} from "react-redux";
-import {getUsers, setUsers} from "../../store/users";
-import {setContents} from "../../store/contents";
-import {getProfile, setCurrentUser} from "../../store/auth";
+import {getUsers, setUsers} from "../../../store/users";
+import {setContents} from "../../../store/contents";
+import {getProfile, setCurrentUser} from "../../../store/auth";
 
 const MembersList = ()=>{
     //const params = useParams<"category"|"id"|"settings">()
@@ -38,9 +38,11 @@ const MembersList = ()=>{
                 </Center>
                 <Spacer/>
                 <Box pl={2} pr={2}>
-                    <Button colorScheme="green">
-                        追加
-                    </Button>
+                    <Link to={"/manage/member/create"}>
+                        <Button colorScheme="green">
+                            追加
+                        </Button>
+                    </Link>
                 </Box>
             </Flex>
         </Center>

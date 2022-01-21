@@ -53,12 +53,12 @@ export async function login(mail?:string, password?:string) {
 }
 
 // ログイン機能
-export async function logout() {
+export async function logout(): Promise<boolean> {
     const sendLogout = async ()=>{
         const header = new Headers()
         const auth = localStorage.getItem('authorization')
         if (auth == null){
-            return
+            return false
         }
         header.set("authorization",auth)
         const r = await fetch(API_LOC+"auth/logout",{
@@ -66,11 +66,8 @@ export async function logout() {
             headers:header,
             mode:"cors"
         })
-        if(!r.ok){
-            alert("ログアウトに失敗しました")
-            return
-        }
         localStorage.removeItem('authorization')
+        return r.ok
     }
-    sendLogout()
+    return sendLogout()
 }

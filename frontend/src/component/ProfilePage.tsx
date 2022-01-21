@@ -7,6 +7,7 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import {User} from "../model/model";
 import {getUsers} from "../store/users";
 import {ArrowBackIcon} from "@chakra-ui/icons";
+import {logout} from "../api/auth";
 
 const ProfilePage = ()=>{
 
@@ -18,7 +19,7 @@ const ProfilePage = ()=>{
 
     const users = useSelector(getUsers)
 
-    const profile = useSelector(getProfile)
+    let profile = useSelector(getProfile)
 
     useEffect(()=>{
         const filterUsers = users.filter(u=>u.user_id === params.id);
@@ -33,7 +34,7 @@ const ProfilePage = ()=>{
         <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
             <Flex w={"100%"}>
                 <Center>
-                    <Link to={`/manage/role`}>
+                    <Link to={`/manage/member`}>
                         <ArrowBackIcon/>
                     </Link>
                 </Center>
@@ -78,6 +79,30 @@ const ProfilePage = ()=>{
                                         })
                                     }
                                 </chakra.ul>
+                            </Box>
+                            <Box pl={2} pr={2}>
+                                <Link to={"edit"}>
+                                    <Center pt={5}>
+                                        <Button w={"full"} onClick={()=>{
+
+                                        }} colorScheme="green">
+                                            編集
+                                        </Button>
+                                    </Center>
+                                </Link>
+                                {
+                                    profile?.user_id === params.id ? <Center pt={5}>
+                                        <Button w={"full"} onClick={()=>{
+                                            (async ()=>{
+                                                if(await logout()){
+                                                    nav("/login")
+                                                }
+                                            })()}
+                                        } colorScheme="red">
+                                            ログアウト
+                                        </Button>
+                                    </Center> : <></>
+                                }
                             </Box>
                         </Box>
                     </Box>
