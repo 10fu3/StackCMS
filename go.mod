@@ -1,6 +1,7 @@
 module StackCMS
 
 go 1.17
+// +heroku goVersion go1.17
 
 require (
 	github.com/gin-contrib/cors v1.3.1
