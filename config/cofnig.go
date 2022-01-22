@@ -45,13 +45,14 @@ func GetDocumentDatabaseConfig() DocumentDatabaseConfig {
 var Values *FirstSetupConfig = GetFirstSetupConfig()
 
 type FirstSetupConfig struct {
-	AdminName     string `db:"admin_name"`
-	AdminPassword string `db:"admin_password"`
-	APIKey        string `db:"api_key"`
+	AdminName     string
+	AdminPassword string
+	AppPort       string
 }
 
 func GetFirstSetupConfig() *FirstSetupConfig {
 	adminPass := os.Getenv("APP_ROOT_PASSWORD")
+	port := os.Getenv("PORT")
 
 	if adminPass == "" {
 		return nil
@@ -60,6 +61,6 @@ func GetFirstSetupConfig() *FirstSetupConfig {
 	return &FirstSetupConfig{
 		AdminName:     "root",
 		AdminPassword: adminPass,
-		APIKey:        os.Getenv("API_KEY"),
+		AppPort:       port,
 	}
 }

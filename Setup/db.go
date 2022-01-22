@@ -43,6 +43,7 @@ func DefineTables(db *sqlx.DB) error {
 		"CREATE TABLE IF NOT EXISTS role_ability(role_ability_id VARCHAR(80) not null primary key,role_id VARCHAR(40),ability_id VARCHAR(512))",
 		"CREATE TABLE IF NOT EXISTS apis (id VARCHAR(40) not null primary key, api_id VARCHAR(40) UNIQUE,is_single BOOLEAN not null)",
 		"CREATE TABLE IF NOT EXISTS fields (field_id VARCHAR(40) not null primary key, api_id VARCHAR(40), field_name VARCHAR(40),field_type VARCHAR(40), relation_api VARCHAR(40))",
+		"CREATE TABLE IF NOT EXISTS clients (client_id VARCHAR(80) primary key , api_id VARCHAR(80), client_name VARCHAR(80), client_secret VARCHAR(512) not null )",
 		"CREATE TABLE IF NOT EXISTS contents (" +
 			"content_id VARCHAR(40) not null primary key," +
 			"api_id VARCHAR(40)," +
@@ -135,6 +136,7 @@ func DefineAdminRole(db *sqlx.DB) error {
 
 func Db() error {
 	var err error
+	store.Access = &store.Db{}
 	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
 	if err != nil {
 		return err

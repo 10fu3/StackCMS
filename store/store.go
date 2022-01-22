@@ -12,4 +12,16 @@ type Db struct {
 	Ctx       context.Context
 }
 
-var Access Db
+type IDb interface {
+	Apis
+	Clients
+	Contents
+	LoginSessionStore
+	Roles
+	RolesAbility
+	UsersRole
+	Users
+	Webhooks
+}
+
+var Access *Db

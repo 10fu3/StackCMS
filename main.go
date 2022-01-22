@@ -12,6 +12,11 @@ import (
 func main() {
 	config.Values = config.GetFirstSetupConfig()
 
+	if config.Values == nil {
+		fmt.Println("config value is invalid.")
+		return
+	}
+
 	err := Setup.Db()
 
 	if err != nil {
@@ -29,5 +34,5 @@ func main() {
 
 	router.RegisterRoute(g)
 
-	g.Run(":8080")
+	g.Run(fmt.Sprintf(":%s", config.Values.AppPort))
 }
