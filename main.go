@@ -28,7 +28,7 @@ func main() {
 
 	// CORS 対応
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+	corsConfig.AllowOrigins = []string{"*"}
 	corsConfig.AllowHeaders = []string{"authorization"}
 	g.Use(cors.New(corsConfig))
 
