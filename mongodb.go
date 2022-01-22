@@ -54,7 +54,3 @@ func init() {
 		fmt.Println("Mongo Connected")
 	}
 }
-
-func main() {
-	fmt.Println("Connection Test")
-}
