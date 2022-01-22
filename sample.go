@@ -1,12 +1,8 @@
 package main
 
 import (
-	"StackCMS/Setup"
-	"StackCMS/config"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"reflect"
 )
 
@@ -40,118 +36,118 @@ func FieldChecker(input Content, define map[string]FieldInfo) error {
 	return nil
 }
 
-func main() {
-
-	config.Values = config.GetFirstSetupConfig()
-
-	Setup.Db()
-
-	g := gin.Default()
-
-	apis := Apis{}
-
-	g.GET("/api/contents/:id", func(ctx *gin.Context) {
-
-		if ctx.Param("id") == "" {
-			ctx.JSON(400, gin.H{
-				"message": "bad_params",
-			})
-			return
-		}
-
-		v, has := apis[ctx.Param("id")]
-
-		if !has {
-			ctx.JSON(404, gin.H{
-				"message": "not_found",
-			})
-			return
-		}
-
-		ctx.JSON(200, v.Store)
-	})
-
-	g.POST("/api/contents/:id", func(ctx *gin.Context) {
-
-		if ctx.Param("id") == "" {
-			ctx.JSON(400, gin.H{
-				"message": "empty_id",
-			})
-			return
-		}
-
-		v, has := apis[ctx.Param("id")]
-
-		if !has {
-			ctx.JSON(404, gin.H{
-				"message": "not_found",
-			})
-			return
-		}
-
-		var r Content
-		bindErr := ctx.BindJSON(&r)
-		if bindErr != nil {
-			ctx.JSON(400, gin.H{
-				"message": bindErr.Error(),
-			})
-			return
-		}
-
-		//checker
-
-		inputErr := FieldChecker(r, v.Fields)
-
-		if inputErr != nil {
-			ctx.JSON(400, gin.H{
-				"message": inputErr.Error(),
-			})
-			return
-		}
-
-		r["content_id"] = uuid.New().String()
-		r["createdAt"] = ""
-		r["publishedAt"] = nil
-
-		if v.IsSingleContent {
-			apis[ctx.Param("id")].Store = r
-		} else {
-			(apis[ctx.Param("id")].Store).(map[string]Content)[(r["content_id"]).(string)] = r
-		}
-
-	})
-
-	g.POST("/api/define", func(ctx *gin.Context) {
-		type CreateReq struct {
-			IsSingleContent bool                 `json:"isSingleContent"`
-			Name            string               `json:"name"`
-			Fields          map[string]FieldInfo `json:"fields"`
-		}
-
-		var r CreateReq
-		bindErr := ctx.BindJSON(&r)
-
-		if bindErr != nil {
-			ctx.JSON(400, gin.H{
-				"message": bindErr.Error(),
-			})
-			return
-		}
-
-		if r.IsSingleContent {
-			apis[r.Name] = &Api{
-				IsSingleContent: r.IsSingleContent,
-				Store:           Content{},
-				Fields:          r.Fields,
-			}
-		} else {
-			apis[r.Name] = &Api{
-				IsSingleContent: r.IsSingleContent,
-				Store:           map[string]Content{},
-				Fields:          r.Fields,
-			}
-		}
-
-	})
-	g.Run(":3000")
-}
+//func main() {
+//
+//	config.Values = config.GetFirstSetupConfig()
+//
+//	Setup.Db()
+//
+//	g := gin.Default()
+//
+//	apis := Apis{}
+//
+//	g.GET("/api/contents/:id", func(ctx *gin.Context) {
+//
+//		if ctx.Param("id") == "" {
+//			ctx.JSON(400, gin.H{
+//				"message": "bad_params",
+//			})
+//			return
+//		}
+//
+//		v, has := apis[ctx.Param("id")]
+//
+//		if !has {
+//			ctx.JSON(404, gin.H{
+//				"message": "not_found",
+//			})
+//			return
+//		}
+//
+//		ctx.JSON(200, v.Store)
+//	})
+//
+//	g.POST("/api/contents/:id", func(ctx *gin.Context) {
+//
+//		if ctx.Param("id") == "" {
+//			ctx.JSON(400, gin.H{
+//				"message": "empty_id",
+//			})
+//			return
+//		}
+//
+//		v, has := apis[ctx.Param("id")]
+//
+//		if !has {
+//			ctx.JSON(404, gin.H{
+//				"message": "not_found",
+//			})
+//			return
+//		}
+//
+//		var r Content
+//		bindErr := ctx.BindJSON(&r)
+//		if bindErr != nil {
+//			ctx.JSON(400, gin.H{
+//				"message": bindErr.Error(),
+//			})
+//			return
+//		}
+//
+//		//checker
+//
+//		inputErr := FieldChecker(r, v.Fields)
+//
+//		if inputErr != nil {
+//			ctx.JSON(400, gin.H{
+//				"message": inputErr.Error(),
+//			})
+//			return
+//		}
+//
+//		r["content_id"] = uuid.New().String()
+//		r["createdAt"] = ""
+//		r["publishedAt"] = nil
+//
+//		if v.IsSingleContent {
+//			apis[ctx.Param("id")].Store = r
+//		} else {
+//			(apis[ctx.Param("id")].Store).(map[string]Content)[(r["content_id"]).(string)] = r
+//		}
+//
+//	})
+//
+//	g.POST("/api/define", func(ctx *gin.Context) {
+//		type CreateReq struct {
+//			IsSingleContent bool                 `json:"isSingleContent"`
+//			Name            string               `json:"name"`
+//			Fields          map[string]FieldInfo `json:"fields"`
+//		}
+//
+//		var r CreateReq
+//		bindErr := ctx.BindJSON(&r)
+//
+//		if bindErr != nil {
+//			ctx.JSON(400, gin.H{
+//				"message": bindErr.Error(),
+//			})
+//			return
+//		}
+//
+//		if r.IsSingleContent {
+//			apis[r.Name] = &Api{
+//				IsSingleContent: r.IsSingleContent,
+//				Store:           Content{},
+//				Fields:          r.Fields,
+//			}
+//		} else {
+//			apis[r.Name] = &Api{
+//				IsSingleContent: r.IsSingleContent,
+//				Store:           map[string]Content{},
+//				Fields:          r.Fields,
+//			}
+//		}
+//
+//	})
+//	g.Run(":3000")
+//}
