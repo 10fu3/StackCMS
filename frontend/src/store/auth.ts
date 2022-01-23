@@ -1,10 +1,6 @@
-import {createSlice, Dispatch,applyMiddleware} from "@reduxjs/toolkit";
-import {API_LOC} from "../const";
-import {AuthResult, Message} from "../component/auth/types";
+import {createSlice, Dispatch} from "@reduxjs/toolkit";
 import {login, logout} from "../api/auth";
-import {setApis} from "./apis";
-import store from "./index";
-import {Role, User} from "../model/model";
+import {User} from "../model/model";
 
 const initialState:{auth:User|null} = {
     auth: null

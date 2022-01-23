@@ -30,7 +30,7 @@ export class CMSApi{
             return false
         }
 
-        const r = (await fetch(API_LOC+"user",{
+        const r = (await fetch(API_LOC()+"user",{
             headers: new Headers({
                 authorization:k
             }),
@@ -49,7 +49,7 @@ export class CMSApi{
             return false
         }
 
-        const r = (await fetch(API_LOC+"role",{
+        const r = (await fetch(API_LOC()+"role",{
             headers: new Headers({
                 authorization:k
             }),
@@ -67,7 +67,7 @@ export class CMSApi{
             return false
         }
 
-        const r = (await fetch(API_LOC+`role/${id}`,{
+        const r = (await fetch(API_LOC()+`role/${id}`,{
             headers: new Headers({
                 authorization:k
             }),
@@ -83,7 +83,7 @@ export class CMSApi{
             return []
         }
 
-        const r = (await fetch(API_LOC+"define/all",{
+        const r = (await fetch(API_LOC()+"define/all",{
             headers: new Headers({
                 authorization:k
             })
@@ -99,7 +99,7 @@ export class CMSApi{
         if(k === null){
             return []
         }
-        const url = new URL(API_LOC+`contents/${api_id}`)
+        const url = new URL(API_LOC()+`contents/${api_id}`)
         url.searchParams.append('draft','true')
 
         const r = (await fetch(url.toString(),{
@@ -119,7 +119,7 @@ export class CMSApi{
 
     static async deleteContentsByApi(api_id:string): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`contents/${api_id}/all`,{
+        return (await fetch(API_LOC()+`contents/${api_id}/all`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -129,7 +129,7 @@ export class CMSApi{
 
     static async deleteApi(api_id:string): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`define/${api_id}`,{
+        return (await fetch(API_LOC()+`define/${api_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -139,7 +139,7 @@ export class CMSApi{
 
     static async createContents(api_id:string, contents:{[id:string]:any}): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`contents/${api_id}`,{
+        return (await fetch(API_LOC()+`contents/${api_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -150,7 +150,7 @@ export class CMSApi{
 
     static async deleteContents(api_id:string,contentsId:string): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`contents/${api_id}/${contentsId}`,{
+        return (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -160,7 +160,7 @@ export class CMSApi{
 
     static async updateContents(api_id:string,contentsId:string, contents:{[id:string]:any}): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`contents/${api_id}/${contentsId}`,{
+        return (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -171,7 +171,7 @@ export class CMSApi{
 
     static async changePublishStatus(isPublish:boolean,api_id:string,contentsId:string){
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`meta/${api_id}/${contentsId}/status`,{
+        return (await fetch(API_LOC()+`meta/${api_id}/${contentsId}/status`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -184,7 +184,7 @@ export class CMSApi{
 
     static async createApi(api:ApplyApiData): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`define`,{
+        return (await fetch(API_LOC()+`define`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -195,7 +195,7 @@ export class CMSApi{
 
     static async updateApi(api_id:string,appliedApi:ApplyApiData): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`define/${api_id}`,{
+        return (await fetch(API_LOC()+`define/${api_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -209,7 +209,7 @@ export class CMSApi{
         if(k === null){
             return []
         }
-        const r = (await fetch(API_LOC+`define/${api_id}`,{
+        const r = (await fetch(API_LOC()+`define/${api_id}`,{
             headers: new Headers({authorization:k})
         }))
         if (r.ok){
@@ -224,7 +224,7 @@ export class CMSApi{
         if(k === null){
             return []
         }
-        const r = (await fetch(API_LOC+`role/all`,{
+        const r = (await fetch(API_LOC()+`role/all`,{
             headers: new Headers({authorization:k})
         }))
         if (r.ok){
@@ -236,7 +236,7 @@ export class CMSApi{
 
     static async updateRole(role_id:string,role_name:string,applyPermission:string[]): Promise<boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC+`role/${role_id}`,{
+        return (await fetch(API_LOC()+`role/${role_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -253,7 +253,7 @@ export class CMSApi{
         if(k === null){
             return []
         }
-        const r = (await fetch(API_LOC+`user`,{
+        const r = (await fetch(API_LOC()+`user`,{
             headers: new Headers({authorization:k})
         }))
         if (r.ok){

@@ -13,7 +13,7 @@ export async function existsAuthCredential(){
     }
     header.set("authorization",auth);
 
-    const r = await fetch(API_LOC+"auth/me",{
+    const r = await fetch(API_LOC()+"auth/me",{
         method:"GET",
         mode:"cors",
         headers:header
@@ -33,7 +33,7 @@ export async function login(mail?:string, password?:string) {
     }
 
     const sendLoginInfo = async () =>{
-        const r = await fetch(API_LOC+"auth/login",{
+        const r = await fetch(API_LOC()+"auth/login",{
             method:"POST",
             body: JSON.stringify({
                 mail:mail,
@@ -61,7 +61,7 @@ export async function logout(): Promise<boolean> {
             return false
         }
         header.set("authorization",auth)
-        const r = await fetch(API_LOC+"auth/logout",{
+        const r = await fetch(API_LOC()+"auth/logout",{
             method:"POST",
             headers:header,
             mode:"cors"
