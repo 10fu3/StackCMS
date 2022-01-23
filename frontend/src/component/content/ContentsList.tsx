@@ -1,6 +1,6 @@
 import {Box, Center} from "@chakra-ui/layout";
 import {Button, chakra, Flex, Spacer, Table} from "@chakra-ui/react";
-import {Link, Outlet, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {CSSProperties, useEffect, useState} from "react";
 import {getContents, setContents} from "../../store/contents";
 import {useSelector} from "react-redux";
@@ -8,7 +8,7 @@ import {getFields} from "../../store/fields";
 import {ContentMeta, FieldType} from "../../model/model";
 import {toJapaneseFromFieldType} from "../../api/cms";
 import store from "../../store";
-import apis, {getApis} from "../../store/apis";
+import {getApis} from "../../store/apis";
 
 const ContentsList = ()=>{
 
@@ -138,7 +138,7 @@ const ContentsList = ()=>{
                                     }}
                                     style={{
                                         width:"100%",
-                                        cursor:"pointer"
+                                        cursor:"pointer",
                                     }}>
                                     {
                                         <th style={{
@@ -149,7 +149,8 @@ const ContentsList = ()=>{
                                             borderBottom: "1px solid #e7e7e7",
                                             borderLeft: "1px solid #e7e7e7",
                                             borderRight: "0px",
-                                            borderWidth: 1
+                                            borderWidth: 1,
+                                            height:100,
                                         }}>
                                             <Center>
                                                 <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>
@@ -180,21 +181,20 @@ const ContentsList = ()=>{
                                                     borderTop: "1px solid #e7e7e7",
                                                     borderBottom: "1px solid #e7e7e7",
                                                     borderRight: j === fs.length-1 ? "1px solid #e7e7e7" : "",
-                                                    fontWeight:"normal"
+                                                    fontWeight:"normal",
                                                 }}>
                                                 {
                                                     (typeof e[i.field_name]) === "object" ? (()=>{
                                                         const r = (e[i.field_name] as ContentMeta[])
-                                                        console.log(r)
                                                         if(r && r.length > 0){
-                                                            return <ul>
+                                                            return <ul style={{maxHeight:"100px"}}>
                                                                 {
                                                                     r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
                                                                 }
                                                             </ul>
                                                         }
                                                         return ""
-                                                    })() : <Box><chakra.p fontWeight="">{e[i.field_name]}</chakra.p></Box>
+                                                    })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
                                                 }
                                             </chakra.th>
                                         })

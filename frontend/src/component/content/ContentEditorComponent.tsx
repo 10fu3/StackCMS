@@ -195,7 +195,8 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                         borderTop: "1px solid #e7e7e7",
                                         borderBottom: "1px solid #e7e7e7",
                                         borderRight: j === fields.length-1 ? "1px solid #e7e7e7" : "",
-                                        fontWeight:"normal"
+                                        fontWeight:"normal",
+                                        //maxHeight:"100px"
                                     }}>
                                     {
                                         (typeof e[i.field_name]) === "object" ? (()=>{
@@ -204,7 +205,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                                 return r.map(i=>i._id ? <Box>{i._id}</Box> : <Box/>)
                                             }
                                             return ""
-                                        })() : <Box><chakra.p fontWeight="">{e[i.field_name]}</chakra.p></Box>
+                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
                                     }
                                 </chakra.th>
                             })
