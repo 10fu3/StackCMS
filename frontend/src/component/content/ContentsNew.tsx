@@ -150,10 +150,14 @@ const ContentsNew = () =>{
                                                 return <RelationEditor
                                                     apiId={f.relation_api ? f.relation_api : ""}
                                                     onClickItem={(e,i)=>{
-
                                                         const c = {...createContents}
+                                                        console.log(c[f.field_name])
                                                         if(c[f.field_name] as string[]){
-                                                            (c[f.field_name] as string[]).push(i._id)
+                                                            if((c[f.field_name] as string[]).includes(i._id)){
+                                                                c[f.field_name] = (c[f.field_name] as string[]).filter(ff=>ff !== i._id)
+                                                            }else{
+                                                                (c[f.field_name] as string[]).push(i._id)
+                                                            }
                                                         }else{
                                                             c[f.field_name] = [i.api_id]
                                                         }
