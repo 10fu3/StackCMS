@@ -2,6 +2,7 @@ package define
 
 import (
 	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -73,25 +74,30 @@ func Update() gin.HandlerFunc {
 			return
 		}
 
-		oldFields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityUpdateApi},
+			WhenYes: func(id string) {
+				oldFields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
 
-		createField := []model.Field{}
-		for i := 0; i < len(req.Fields); i++ {
-			req.Fields[i].Id = uuid.NewString()
-			createField = append(createField, req.Fields[i])
-		}
+				createField := []model.Field{}
+				for i := 0; i < len(req.Fields); i++ {
+					req.Fields[i].Id = uuid.NewString()
+					createField = append(createField, req.Fields[i])
+				}
 
-		diffField := calcDifference(oldFields, createField)
+				diffField := calcDifference(oldFields, createField)
 
-		store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
+				store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
 
-		store.Access.CreateFields(api.UniqueId, createField)
+				store.Access.CreateFields(api.UniqueId, createField)
 
-		for _, field := range diffField {
-			fmt.Println(field.Name)
-			if _, err := store.Access.ContentDb.UpdateMany(store.Access.Ctx, bson.M{"api_id": api.UniqueId}, bson.M{"$unset": bson.M{field.Name: ""}}); err != nil {
-				fmt.Println("fault " + err.Error())
-			}
-		}
+				for _, field := range diffField {
+					fmt.Println(field.Name)
+					if _, err := store.Access.ContentDb.UpdateMany(store.Access.Ctx, bson.M{"api_id": api.UniqueId}, bson.M{"$unset": bson.M{field.Name: ""}}); err != nil {
+						fmt.Println("fault " + err.Error())
+					}
+				}
+			},
+		}})
 	}
 }

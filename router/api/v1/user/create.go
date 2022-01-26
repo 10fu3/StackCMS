@@ -1,6 +1,8 @@
 package user
 
 import (
+	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -20,6 +22,11 @@ func Create() gin.HandlerFunc {
 			})
 			return
 		}
-		store.Access.CreateUser(r.Mail, r.Nick)
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityCreateUser},
+			WhenYes: func(id string) {
+				store.Access.CreateUser(r.Mail, r.Nick)
+			},
+		}})
 	}
 }

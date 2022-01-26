@@ -16,6 +16,12 @@ type createWebhookReq struct {
 
 func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		//router.IsAuthorization(ctx,[]router.AbilityFunc{{
+		//	Abilities: []model.Ability{model.AbilityGetAllUser},
+		//	WhenYes: nil,
+		//}})
+
 		apiId := ctx.Param("api_id")
 
 		var req createWebhookReq

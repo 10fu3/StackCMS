@@ -214,12 +214,14 @@ func (d *Db) GetContent(query model.GetQuery) interface{} {
 		sql := func() string {
 			s := "SELECT * FROM contents WHERE content_id IN (?)"
 			if !query.GetDraft {
-				s += "and published_at is not null "
+				s += "and published_at is not null order by published_at desc"
+			} else {
+				s += "order by created_at"
 			}
 			return s
 		}()
 
-		statement, args, err := sqlx.In(sql+"order by published_at", ids)
+		statement, args, err := sqlx.In(sql, ids)
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -379,7 +381,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 		"publish_will",
 		"stop_will",
 	} {
-		delete(content,k)
+		delete(content, k)
 	}
 
 	content["_id"] = contentId
@@ -437,9 +439,8 @@ func (d *Db) UpdateContent(contentId string, updateBy string, content model.JSON
 		"publish_will",
 		"stop_will",
 	} {
-		delete(content,k)
+		delete(content, k)
 	}
-
 
 	_, e := d.ContentDb.UpdateOne(Access.Ctx,
 		bson.M{"_id": contentId},

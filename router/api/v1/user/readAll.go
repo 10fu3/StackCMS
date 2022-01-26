@@ -2,6 +2,7 @@ package user
 
 import (
 	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,6 +10,12 @@ import (
 
 func ReadAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityGetAllUser},
+			WhenYes:   nil,
+		}})
+
 		r := store.Access.GetUsersAll()
 		if len(r) == 0 {
 			empty := make([]model.User, 0)

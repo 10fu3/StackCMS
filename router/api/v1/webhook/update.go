@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"StackCMS/router"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -14,6 +15,12 @@ type updateWebhookReq struct {
 
 func Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: nil,
+			WhenYes:   nil,
+		}})
+
 		var req updateWebhookReq
 		hookId := ctx.Param("webhook_id")
 		if ctx.ShouldBindJSON(&req) != nil {

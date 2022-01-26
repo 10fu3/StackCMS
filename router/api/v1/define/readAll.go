@@ -1,6 +1,8 @@
 package define
 
 import (
+	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -8,7 +10,12 @@ import (
 
 func ReadAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, store.Access.GetApis())
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityGetApi},
+			WhenYes: func(id string) {
+				ctx.JSON(http.StatusOK, store.Access.GetApis())
+			},
+		}})
 		return
 	}
 }

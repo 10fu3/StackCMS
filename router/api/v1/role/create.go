@@ -2,6 +2,7 @@ package role
 
 import (
 	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,10 +24,15 @@ func Create() gin.HandlerFunc {
 			})
 		}
 
-		store.Access.CreateRole(model.Role{
-			Id:        uuid.NewString(),
-			Name:      r.RoleName,
-			Abilities: nil,
-		})
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityCreateRole},
+			WhenYes: func(id string) {
+				store.Access.CreateRole(model.Role{
+					Id:        uuid.NewString(),
+					Name:      r.RoleName,
+					Abilities: nil,
+				})
+			},
+		}})
 	}
 }

@@ -2,6 +2,7 @@ package contents
 
 import (
 	"StackCMS/model"
+	"StackCMS/router"
 	"StackCMS/store"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -12,90 +13,62 @@ func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var err error
 
-		authInterface, existsAuth := ctx.Get("auth")
+		router.IsAuthorization(ctx, []router.AbilityFunc{{
+			Abilities: []model.Ability{model.AbilityCreateContent},
+			WhenYes: func(createdBy string) {
+				api := store.Access.GetApi(ctx.Param("api_id"))
+				var j model.JSON = map[string]interface{}{}
+				if api == nil {
+					ctx.JSON(http.StatusNotFound, gin.H{
+						"message": "not_found",
+					})
+					return
+				}
+				if err = ctx.BindJSON(&j); err != nil {
+					ctx.JSON(http.StatusNotFound, gin.H{
+						"message": "cant_parse",
+					})
+				}
 
-		if !existsAuth {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-			})
-			return
-		}
+				fields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
 
-		auth, authConvert := authInterface.(model.AuthType)
+				if len(fields) == 0 {
+					ctx.JSON(http.StatusBadRequest, gin.H{
+						"message": "can't_check_params",
+					})
+					return
+				}
 
-		if !authConvert {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-			})
-			return
-		}
+				for _, field := range fields {
+					if _, ok := j[field.Name]; !ok {
+						ctx.JSON(http.StatusBadRequest, gin.H{
+							"message":   fmt.Sprintf("your_request_is_mistake"),
+							"params_id": field.Name,
+						})
+						return
+					}
+				}
 
-		createdBy := ""
+				if len(fields) != len(j) {
+					ctx.JSON(http.StatusBadRequest, gin.H{
+						"message": fmt.Sprintf("your_request_is_mistake"),
+						"reason":  fmt.Sprintf("registered params count is %d but input %d", len(fields), len(j)),
+					})
+					return
+				}
 
-		if auth.IsUser {
-			if !store.Access.IsUserAuthorization(auth.GetUser().Id, []model.Ability{model.AbilityCreateContent}) {
-				ctx.JSON(http.StatusForbidden, gin.H{
-					"message": "you_dont_have_permission",
+				r, e := store.Access.CreateContent(api.Id, createdBy, j)
+
+				if e != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{
+						"message": e.Error(),
+					})
+					return
+				}
+				ctx.JSON(http.StatusOK, gin.H{
+					"_id": r,
 				})
-				return
-			}
-			createdBy = auth.GetUser().Id
-		} else {
-			createdBy = "API"
-		}
-
-		api := store.Access.GetApi(ctx.Param("api_id"))
-		var j model.JSON = map[string]interface{}{}
-		if api == nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"message": "not_found",
-			})
-			return
-		}
-		if err = ctx.BindJSON(&j); err != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{
-				"message": "cant_parse",
-			})
-		}
-
-		fields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
-
-		if len(fields) == 0 {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": "can't_check_params",
-			})
-			return
-		}
-
-		for _, field := range fields {
-			if _, ok := j[field.Name]; !ok {
-				ctx.JSON(http.StatusBadRequest, gin.H{
-					"message":   fmt.Sprintf("your_request_is_mistake"),
-					"params_id": field.Name,
-				})
-				return
-			}
-		}
-
-		if len(fields) != len(j) {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": fmt.Sprintf("your_request_is_mistake"),
-				"reason":  fmt.Sprintf("registered params count is %d but input %d", len(fields), len(j)),
-			})
-			return
-		}
-
-		r, e := store.Access.CreateContent(api.Id, createdBy, j)
-
-		if e != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"message": e.Error(),
-			})
-			return
-		}
-		ctx.JSON(http.StatusOK, gin.H{
-			"_id": r,
-		})
-
+			},
+		}})
 	}
 }

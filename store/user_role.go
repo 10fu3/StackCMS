@@ -6,6 +6,7 @@ type UsersRole interface {
 	GetUserRoles(userId string) []model.Role
 	JoinRoleUser(userId string, roleIds []string)
 	LeaveRoleUser(userId string)
+	LeaveRole(roleId string)
 	IsSameJoinedRole(aUserId string, bUserId string) []model.Role
 }
 
@@ -31,6 +32,10 @@ func (d *Db) JoinRoleUser(userId string, roleIds []string) {
 
 func (d *Db) LeaveRoleUser(userId string) {
 	d.Db.Exec("DELETE FROM user_role WHERE user_id = ?", userId)
+}
+
+func (d *Db) LeaveRole(roleId string) {
+	d.Db.Exec("DELETE FROM user_role WHERE role_id = ?", roleId)
 }
 
 func (d *Db) SameJoinedRole(aUserId string, bUserId string) []model.Role {
