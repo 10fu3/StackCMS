@@ -2,7 +2,7 @@ package meta
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,7 +15,7 @@ type changeStatusRequest struct {
 func ChangeStatus() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityPublishAllContent},
 			WhenYes: func(publishedBy string) {
 				var r changeStatusRequest

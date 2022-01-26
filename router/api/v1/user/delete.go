@@ -2,7 +2,7 @@ package user
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 
 func Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityDeleteUser},
 			WhenYes: func(id string) {
 				if user := store.Access.GetUserById(ctx.Param("user_id")); user != nil {

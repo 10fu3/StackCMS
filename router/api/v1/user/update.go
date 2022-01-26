@@ -2,7 +2,7 @@ package user
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -21,7 +21,7 @@ func Update() gin.HandlerFunc {
 
 		var r userUpdateRequest
 		ctx.ShouldBindJSON(&r)
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateAllUser},
 			WhenYes: func(id string) {
 				user := store.Access.GetUserById(ctx.Param("user_id"))

@@ -2,7 +2,7 @@ package define
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"StackCMS/util"
 	"github.com/gin-gonic/gin"
@@ -29,7 +29,7 @@ func Create() gin.HandlerFunc {
 		}
 		r.UniqueId = uuid.NewString()
 
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityCreateApi},
 			WhenYes: func(id string) {
 				store.Access.CreateApi(r)

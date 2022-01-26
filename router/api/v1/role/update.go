@@ -2,7 +2,7 @@ package role
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -16,7 +16,7 @@ type updateRoleRequest struct {
 func Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateRoleAbility, model.AbilityUpdateRoleUser},
 			WhenYes: func(id string) {
 				var r updateRoleRequest

@@ -2,7 +2,7 @@ package contents
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ func Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var err error
 
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityCreateContent},
 			WhenYes: func(createdBy string) {
 				api := store.Access.GetApi(ctx.Param("api_id"))

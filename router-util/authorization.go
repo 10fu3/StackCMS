@@ -1,4 +1,4 @@
-package router
+package router_util
 
 import (
 	"StackCMS/model"

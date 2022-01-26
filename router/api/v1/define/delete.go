@@ -2,7 +2,7 @@ package define
 
 import (
 	"StackCMS/model"
-	"StackCMS/router"
+	"StackCMS/router-util"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,7 +19,7 @@ func Delete() gin.HandlerFunc {
 			return
 		}
 
-		router.IsAuthorization(ctx, []router.AbilityFunc{{
+		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityDeleteApi},
 			WhenYes: func(id string) {
 				store.Access.DeleteContentByApiId(api.UniqueId)
