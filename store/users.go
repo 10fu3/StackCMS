@@ -3,10 +3,11 @@ package store
 import (
 	"StackCMS/model"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Users interface {
-	CreateUser(mail string)
+	CreateUser(mail string, nick *string, password string)
 	GetUsersAll() []model.User
 	GetUserById(id string) *model.User
 	GetUserByMail(mail string) *model.User
@@ -15,7 +16,9 @@ type Users interface {
 	DeleteUser(id string)
 }
 
-func (d *Db) CreateUser(mail string, nick *string) {
+func (d *Db) CreateUser(mail string, nick *string, password string) {
+	rawPass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
+
 	d.Db.Exec("INSERT INTO users (user_id,nick_name,mail,password_hash,is_lock) VALUES(?,?,?,?,?)",
 		uuid.NewString(),
 		func() string {
@@ -25,7 +28,7 @@ func (d *Db) CreateUser(mail string, nick *string) {
 			return *nick
 		}(),
 		mail,
-		"",
+		string(rawPass),
 		false)
 }
 

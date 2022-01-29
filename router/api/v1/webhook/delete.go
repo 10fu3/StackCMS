@@ -1,7 +1,7 @@
 package webhook
 
 import (
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 )
@@ -9,7 +9,7 @@ import (
 func Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: nil,
 			WhenYes:   nil,
 		}})

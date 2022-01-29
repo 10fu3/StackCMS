@@ -28,7 +28,7 @@ func Login() gin.HandlerFunc {
 		user := store.Access.GetUserByMail(authParams.Mail)
 
 		//存在しないかパスワードが一致しなければ404を返す
-		if user == nil || (len(user.PasswordHash) > 0 && bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(authParams.Password)) != nil) {
+		if user == nil || bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(authParams.Password)) != nil {
 			ctx.JSON(http.StatusNotFound, map[string]string{
 				"message": "not_found_user",
 			})

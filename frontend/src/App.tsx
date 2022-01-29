@@ -29,7 +29,6 @@ const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
     <Route path="" element={<PrivateRoute/>}>
       <Route path="" element={<Top/>}>
-        <Route path="profile/self" element={<ProfilePage/>}/>
         <Route path="profile/:id" element={<ProfilePage/>}/>
         <Route path="profile/:id/edit" element={<ProfileUpdatePage/>}/>
         {/*管理*/}

@@ -2,7 +2,7 @@ package meta
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ import (
 func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityGetAllContent},
 			WhenYes: func(id string) {
 				api := store.Access.GetApi(ctx.Param("api_id"))

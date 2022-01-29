@@ -1,10 +1,12 @@
 import {Box, Center} from "@chakra-ui/layout";
 import {useSelector} from "react-redux";
-import {getRoles} from "../../../store/roles";
+import {getRoles, setRoles} from "../../../store/roles";
 import {Button, chakra, Flex, Spacer, Table, Tbody, Th, Thead, Tr} from "@chakra-ui/react";
 import {Link, useNavigate} from "react-router-dom";
 import {getProfile} from "../../../store/auth";
 import React, {useEffect} from "react";
+import store from "../../../store";
+import {setApis} from "../../../store/apis";
 
 const RoleListPage = ()=>{
     const self = useSelector(getProfile)
@@ -14,7 +16,9 @@ const RoleListPage = ()=>{
     useEffect(()=>{
         if(!self){
             window.location.href = "/login"
+            return
         }
+        store.dispatch(setRoles())
     },[])
 
     return <Box w={"100%"} h={"100vh"}>

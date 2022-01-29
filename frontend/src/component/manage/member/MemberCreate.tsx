@@ -9,6 +9,7 @@ const MemberCreate = ()=>{
 
     const [mail,setMail] = useState('')
     const [name,setName] = useState('')
+    const [password,setPassword] = useState('')
 
     const [result,setResult] = useState<boolean>()
 
@@ -16,7 +17,7 @@ const MemberCreate = ()=>{
 
     const handleCreate = ()=>{
         (async ()=>{
-            setResult(await CMSApi.createUser(mail,name))
+            setResult(await CMSApi.createUser(mail,name,password))
         })()
     }
 
@@ -53,9 +54,19 @@ const MemberCreate = ()=>{
                             }}/>
                         </Box>
                     </Box>
+                    <Box pt={5}>
+                        <chakra.p fontWeight="bold">
+                            パスワード
+                        </chakra.p>
+                        <Box pt={5}>
+                            <Input type="password" value={password} onChange={(e)=>{
+                                setPassword(e.target.value)
+                            }}/>
+                        </Box>
+                    </Box>
                 </Box>
                 <Center w="100%" p={30}>
-                    <Button onClick={handleCreate} colorScheme="green" isDisabled={mail.length <= 0 || name.length <= 0}>
+                    <Button onClick={handleCreate} colorScheme="green" isDisabled={mail.length < 1 || name.length <= 0 || password.length < 8}>
                         ユーザーを作成
                     </Button>
                 </Center>

@@ -2,7 +2,7 @@ package define
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -74,7 +74,7 @@ func Update() gin.HandlerFunc {
 			return
 		}
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateApi},
 			WhenYes: func(id string) {
 				oldFields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)

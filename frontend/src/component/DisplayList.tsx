@@ -39,8 +39,6 @@ const DisplayList:React.FC<{category:string}> = (props)=>{
     useEffect(()=>{
         store.dispatch(setCurrentUser())
         store.dispatch(setApis())
-        store.dispatch(setUsers())
-        store.dispatch(setRoles())
     },[])
 
     const self = useSelector(getProfile)

@@ -2,11 +2,12 @@ package user
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"net/mail"
 )
 
 type userUpdateRequest struct {
@@ -21,7 +22,7 @@ func Update() gin.HandlerFunc {
 
 		var r userUpdateRequest
 		ctx.ShouldBindJSON(&r)
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateAllUser},
 			WhenYes: func(id string) {
 				user := store.Access.GetUserById(ctx.Param("user_id"))
@@ -40,9 +41,16 @@ func Update() gin.HandlerFunc {
 					return
 				}
 
-				if len(r.Password) < 7 {
+				if len(r.Password) < 8 {
 					ctx.JSON(http.StatusBadRequest, gin.H{
-						"message": "need_password_length",
+						"message": "need_password_length_8",
+					})
+					return
+				}
+
+				if _, invalidMail := mail.ParseAddress(r.Mail); r.Mail != "root" && invalidMail != nil {
+					ctx.JSON(http.StatusBadRequest, gin.H{
+						"message": "cant_parse_mail_addr",
 					})
 					return
 				}

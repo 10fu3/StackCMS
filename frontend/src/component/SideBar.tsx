@@ -27,14 +27,17 @@ const SideBar:React.FC = ()=>{
 
     useEffect(()=>{
         store.dispatch(setCurrentUser())
-        store.dispatch(setApis())
-        store.dispatch(setUsers())
-        store.dispatch(setRoles())
         if(!user){
             window.location.href = "/login"
             return
         }
     },[params[0],params[1],params[2],params[3]])
+
+    useEffect(()=>{
+        store.dispatch(setApis())
+        store.dispatch(setUsers())
+        store.dispatch(setRoles())
+    },[])
 
     return <Box h={"100vh"}>
         <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">

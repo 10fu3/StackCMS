@@ -15,24 +15,17 @@ func (d *Db) IsUserAuthorization(userId string, abilities []model.Ability) bool 
 		return a
 	}()
 
-	sql := "select * from " +
-		"role_ability " +
-		"inner join " +
-		"user_role " +
-		"on " +
-		"role_ability.role_id = role_ability.role_id " +
-		"where " +
-		"user_id = ? " +
-		"and " +
-		"ability_id IN (?)"
+	inSql := "select role_id from role_ability where ability_id IN (?)"
 
-	q, a, e := sqlx.In(sql, userId, args)
+	q, a, e := sqlx.In(inSql, args)
 
 	if e != nil {
 		return false
 	}
 
-	r, e := d.Db.Query(q, a...)
+	q = "select user_id from user_role where role_id IN ( " + q + ") AND user_id = ?"
+
+	r, e := d.Db.Query(q, append(a, userId)...)
 	if e != nil {
 		return false
 	} else {

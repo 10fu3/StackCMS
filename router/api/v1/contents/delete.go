@@ -2,7 +2,7 @@ package contents
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -26,7 +26,7 @@ func Delete() gin.HandlerFunc {
 			return
 		}
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityDeleteAllContent},
 			WhenYes: func(_ string) {
 				if store.Access.DeleteContent(ctx.Param("content_id")) != nil {

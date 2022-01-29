@@ -8,6 +8,7 @@ import {User} from "../model/model";
 import {getUsers} from "../store/users";
 import {ArrowBackIcon} from "@chakra-ui/icons";
 import {logout} from "../api/auth";
+import {CMSApi} from "../api/cms";
 
 const ProfilePage = ()=>{
 
@@ -90,8 +91,19 @@ const ProfilePage = ()=>{
                                         </Button>
                                     </Center>
                                 </Link>
+                                <Center pt={5}>
+                                    <Button w={"full"} onClick={()=>{
+                                        (async ()=>{
+                                            if(await CMSApi.deleteUser(user?.user_id ? user?.user_id : "")){
+                                                nav(-1)
+                                            }
+                                        })()}
+                                    } colorScheme="red">
+                                        削除する
+                                    </Button>
+                                </Center>
                                 {
-                                    profile?.user_id === params.id ? <Center pt={5}>
+                                    profile?.user_id === params.id || params.id === "self" ? <Center pt={5}>
                                         <Button w={"full"} onClick={()=>{
                                             (async ()=>{
                                                 if(await logout()){

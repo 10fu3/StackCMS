@@ -2,7 +2,7 @@ package contents
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"encoding/json"
 	"fmt"
@@ -15,7 +15,7 @@ import (
 func Read() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityGetAllContent},
 			WhenYes: func(id string) {
 				filter := map[string]interface{}{}

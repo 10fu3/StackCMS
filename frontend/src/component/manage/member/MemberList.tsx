@@ -27,7 +27,9 @@ const MembersList = ()=>{
     useEffect(()=>{
         if(!self){
             window.location.href = "/login"
+            return
         }
+        store.dispatch(setUsers())
     },[])
 
     return <Box w={"100%"} h={"100vh"}>

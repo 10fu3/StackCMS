@@ -2,7 +2,7 @@ package contents
 
 import (
 	"StackCMS/model"
-	"StackCMS/router-util"
+	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,7 +12,7 @@ func Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var err error
 
-		router_util.IsAuthorization(ctx, []router_util.AbilityFunc{{
+		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateAllContent},
 			WhenYes: func(updatedBy string) {
 				api := store.Access.GetApi(ctx.Param("api_id"))

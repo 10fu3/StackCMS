@@ -24,7 +24,22 @@ export function toJapaneseFromFieldType(f: string) {
 
 export class CMSApi{
 
-    static async createUser(mail:string,name:string):Promise<boolean>{
+    static async deleteUser(id:string):Promise<boolean>{
+        const k = localStorage.getItem("authorization")
+        if(k === null){
+            return false
+        }
+
+        const r = (await fetch(API_LOC()+`user/${id}`,{
+            headers: new Headers({
+                authorization:k
+            }),
+            method:"delete",
+        }))
+        return r.ok
+    }
+
+    static async createUser(mail:string,name:string,password:string):Promise<boolean>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -37,7 +52,8 @@ export class CMSApi{
             method:"post",
             body: JSON.stringify({
                 nick_name: name,
-                mail: mail
+                mail: mail,
+                password: password
             })
         }))
         return r.ok
