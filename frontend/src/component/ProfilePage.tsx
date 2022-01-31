@@ -18,17 +18,17 @@ const ProfilePage = ()=>{
 
     const [user,setUser] = useState<User|null>();
 
-    const users = useSelector(getUsers)
-
     let profile = useSelector(getProfile)
 
     useEffect(()=>{
-        const filterUsers = users.filter(u=>u.user_id === params.id);
-        if(filterUsers.length !== 1){
-            setUser(profile)
-            return
-        }
-        setUser(filterUsers[0])
+        (async ()=>{
+            const filterUsers = (await CMSApi.getUsers()).filter(u=>u.user_id === params.id);
+            if(filterUsers.length !== 1){
+                setUser(profile)
+                return
+            }
+            setUser(filterUsers[0])
+        })()
     },[])
 
     return <Box w={"100%"} h={"100vh"}>
@@ -54,7 +54,7 @@ const ProfilePage = ()=>{
                         </chakra.p>
                         <Box p={3}>
                             <Flex m={2} borderWidth={1} p={2}>
-                                <chakra.p fontWeight="bold">名前</chakra.p> : {user?.nick_name}
+                                <chakra.p fontWeight="bold">ニックネーム</chakra.p> : {user?.nick_name}
                             </Flex>
                             <Flex m={2} borderWidth={1} p={2}>
                                 <chakra.p fontWeight="bold">内部ユーザーID</chakra.p> : {user?.user_id}

@@ -6,6 +6,13 @@ export interface FieldType{
     relation_api?:string
 }
 
+export interface UpdateUserEntity {
+    nick_name: string,
+    mail: string,
+    password?: string,
+    role: string[]
+}
+
 export interface RelationField extends FieldType{
     id:string
     field_name:string

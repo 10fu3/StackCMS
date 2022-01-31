@@ -1,5 +1,5 @@
 import {API_LOC} from "../const";
-import {Api, ApplyApiData, FieldType, Role, User} from "../model/model";
+import {Api, ApplyApiData, FieldType, Role, UpdateUserEntity, User} from "../model/model";
 
 
 interface JsonResultArray{
@@ -35,6 +35,31 @@ export class CMSApi{
                 authorization:k
             }),
             method:"delete",
+        }))
+        return r.ok
+    }
+
+    static async updateUser(id:string,user:UpdateUserEntity):Promise<boolean>{
+        const k = localStorage.getItem("authorization")
+        if(k === null){
+            return false
+        }
+
+        let reqBody:{[key:string]:any} = {}
+
+        reqBody["nick_name"] = user.nick_name
+        reqBody["mail"] = user.mail
+        reqBody["roles"] = user.role
+        if(reqBody.password){
+            reqBody["password"] = user.password
+        }
+
+        const r = (await fetch(API_LOC()+`user/${id}`,{
+            headers: new Headers({
+                authorization:k
+            }),
+            method:"PATCH",
+            body: JSON.stringify(reqBody)
         }))
         return r.ok
     }
