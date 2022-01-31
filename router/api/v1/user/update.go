@@ -12,7 +12,7 @@ import (
 
 type userUpdateRequest struct {
 	Mail     string   `json:"mail"`
-	Password string   `json:"password"`
+	Password *string  `json:"password"`
 	NickName string   `json:"nick_name"`
 	Role     []string `json:"roles"`
 }
@@ -41,13 +41,6 @@ func Update() gin.HandlerFunc {
 					return
 				}
 
-				if len(r.Password) < 8 {
-					ctx.JSON(http.StatusBadRequest, gin.H{
-						"message": "need_password_length_8",
-					})
-					return
-				}
-
 				if _, invalidMail := mail.ParseAddress(r.Mail); r.Mail != "root" && invalidMail != nil {
 					ctx.JSON(http.StatusBadRequest, gin.H{
 						"message": "cant_parse_mail_addr",
@@ -55,11 +48,19 @@ func Update() gin.HandlerFunc {
 					return
 				}
 
-				passRaw, _ := bcrypt.GenerateFromPassword([]byte(r.Password), 10)
+				if r.Password != nil {
+					if len(*r.Password) < 8 {
+						ctx.JSON(http.StatusBadRequest, gin.H{
+							"message": "need_password_length_8",
+						})
+						return
+					}
+					passRaw, _ := bcrypt.GenerateFromPassword([]byte(*r.Password), 10)
+					user.PasswordHash = string(passRaw)
+				}
 
 				user.Mail = r.Mail
 				user.NickName = r.NickName
-				user.PasswordHash = string(passRaw)
 
 				store.Access.LeaveRoleUser(user.Id)
 				store.Access.JoinRoleUser(user.Id, r.Role)

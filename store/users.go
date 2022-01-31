@@ -2,6 +2,7 @@ package store
 
 import (
 	"StackCMS/model"
+	"errors"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,7 +14,7 @@ type Users interface {
 	GetUserByMail(mail string) *model.User
 	GetUsersByRole(roleId string) []model.User
 	UpdateUser(new model.User)
-	DeleteUser(id string)
+	DeleteUser(id string) error
 }
 
 func (d *Db) CreateUser(mail string, nick *string, password string) {
@@ -78,6 +79,14 @@ func (d *Db) UpdateUser(new model.User) {
 		"WHERE user_id = ? AND is_lock = false", user.PasswordHash, user.NickName, user.Mail, user.Id)
 }
 
-func (d *Db) DeleteUser(id string) {
-	d.Db.Exec("DELETE FROM users WHERE user_id = ? AND is_lock = false", id)
+func (d *Db) DeleteUser(id string) error {
+	exec, err := d.Db.Exec("DELETE FROM users WHERE user_id = ? AND is_lock = false", id)
+	if err != nil {
+		return err
+	}
+	c, err := exec.RowsAffected()
+	if err != nil || c == 0 {
+		return errors.New("Not found rows")
+	}
+	return nil
 }

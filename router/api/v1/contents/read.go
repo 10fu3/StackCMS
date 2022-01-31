@@ -5,7 +5,6 @@ import (
 	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -22,9 +21,7 @@ func Read() gin.HandlerFunc {
 
 				filterParam := ctx.Query("filter")
 
-				if err := json.Unmarshal([]byte(filterParam), &filter); err != nil {
-					fmt.Println(err.Error())
-				}
+				_ = json.Unmarshal([]byte(filterParam), &filter)
 
 				filter["api_id"] = ctx.Param("api_id")
 
