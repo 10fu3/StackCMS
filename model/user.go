@@ -11,18 +11,14 @@ type User struct {
 
 func UpdateUser(old User, new User) *User {
 	pass := old.PasswordHash
-	if new.PasswordHash == "" {
+	if len(new.PasswordHash) > 55 {
 		pass = new.PasswordHash
 	}
 
-	nick := old.NickName
-
-	mail := old.Mail
-
 	return &User{
 		Id:           old.Id,
-		NickName:     nick,
-		Mail:         mail,
+		NickName:     new.NickName,
+		Mail:         new.Mail,
 		PasswordHash: pass,
 	}
 
