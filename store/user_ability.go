@@ -5,7 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (d *Db) IsUserAuthorization(userId string, abilities []model.Ability) bool {
+func (d *Db) HasUserAuthority(userId string, abilities []model.Ability) bool {
 
 	args := func() []string {
 		a := []string{}

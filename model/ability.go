@@ -31,6 +31,10 @@ var abilitiesMap = map[string]bool{
 	AbilityDeleteUser:         true,
 	AbilityUpdateRoleAbility:  true,
 	AbilityUpdateRoleUser:     true,
+	AbilityCreateClient:       true,
+	AbilityUpdateClient:       true,
+	AbilityGetClient:          true,
+	AbilityDeleteClient:       true,
 }
 
 var abilities = []Ability{
@@ -62,12 +66,16 @@ var abilities = []Ability{
 	AbilityDeleteUser,
 	AbilityUpdateRoleAbility,
 	AbilityUpdateRoleUser,
+	AbilityCreateClient,
+	AbilityUpdateClient,
+	AbilityGetClient,
+	AbilityDeleteClient,
 }
 
 func InitParams() map[string]map[string][]string {
 	results := map[string]map[string][]string{}
 
-	for _, category := range []string{"Api", "Content", "Role", "User"} {
+	for _, category := range []string{"Api", "Content", "Role", "User", "Client"} {
 		results[category] = map[string][]string{}
 		for _, curd := range []string{"Create", "Update", "Get", "Delete"} {
 			results[category][curd] = []string{}
@@ -161,6 +169,19 @@ var categorizedAbility = map[string]map[string]map[string]bool{
 		"Delete": {
 			AbilityDeleteUser: true,
 		},
+	}, "Client": {
+		"Create": {
+			AbilityCreateClient: true,
+		},
+		"Update": {
+			AbilityUpdateClient: true,
+		},
+		"Get": {
+			AbilityGetClient: true,
+		},
+		"Delete": {
+			AbilityDeleteClient: true,
+		},
 	},
 }
 
@@ -219,4 +240,9 @@ const (
 	AbilityUpdateAllUser  = "User.Update.All"
 
 	AbilityDeleteUser = "User.Delete.All"
+
+	AbilityCreateClient = "Client.Create.All"
+	AbilityUpdateClient = "Client.Update.All"
+	AbilityGetClient    = "Client.Get.All"
+	AbilityDeleteClient = "Client.Delete.All"
 )

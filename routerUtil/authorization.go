@@ -34,7 +34,7 @@ func IsAuthorization(ctx *gin.Context, abilityFunc []AbilityFunc) {
 
 	for _, a := range abilityFunc {
 		if auth.IsUser {
-			if !store.Access.IsUserAuthorization(auth.GetUser().Id, a.Abilities) {
+			if !store.Access.HasUserAuthority(auth.GetUser().Id, a.Abilities) {
 				ctx.JSON(http.StatusForbidden, gin.H{
 					"message": "you_dont_have_permission",
 				})
@@ -42,6 +42,8 @@ func IsAuthorization(ctx *gin.Context, abilityFunc []AbilityFunc) {
 			}
 			a.WhenYes(auth.GetUser().Id)
 		} else {
+			//client
+			store.Access.HasClientAuthority(auth.GetClient().Id, a.Abilities)
 			a.WhenYes(auth.GetClient().Id)
 		}
 	}

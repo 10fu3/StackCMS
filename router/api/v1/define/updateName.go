@@ -8,8 +8,14 @@ import (
 	"net/http"
 )
 
-func Delete() gin.HandlerFunc {
+type updateNameRequest struct {
+	ApiName string `json:"api_name"`
+}
+
+func UpdateName() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		var req updateNameRequest
+
 		api := store.Access.GetApi(ctx.Param("api_id"))
 
 		if api == nil {
@@ -19,13 +25,18 @@ func Delete() gin.HandlerFunc {
 			return
 		}
 
+		if ctx.ShouldBindJSON(&req) != nil || req.ApiName == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "bad_params",
+			})
+			return
+		}
+
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
-			Abilities: []model.Ability{model.AbilityDeleteApi},
+			Abilities: []model.Ability{model.AbilityUpdateApi},
 			WhenYes: func(id string) {
-				store.Access.DeleteContentByApiId(api.UniqueId)
-				store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
-				store.Access.DeleteWebhookByApi(api.UniqueId)
-				store.Access.DeleteApi(api.UniqueId)
+				api.Id = req.ApiName
+				store.Access.UpdateApi(api.UniqueId, *api)
 			},
 		}})
 	}

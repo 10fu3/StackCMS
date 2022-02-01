@@ -20,6 +20,8 @@ type Api struct {
 	IsSingleContent bool    `json:"isSingleContent" db:"is_single"`
 	Id              string  `json:"api_id" db:"api_id"`
 	Fields          []Field `json:"fields" db:"-"`
+	PreviewURL      string  `json:"preview_url"`
+	PreviewSecret   string  `json:"preview_secret"`
 }
 
 type Field struct {
@@ -27,6 +29,7 @@ type Field struct {
 	Name          string  `json:"field_name" db:"field_name"`
 	ApiId         string  `json:"api_id" db:"api_id"`
 	Type          string  `json:"type" db:"field_type"`
+	OrderScore    int64   `json:"order_score" db:"order_score"`
 	RelationApiId *string `json:"relation_api" db:"relation_api"`
 }
 

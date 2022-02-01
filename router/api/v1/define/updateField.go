@@ -11,11 +11,8 @@ import (
 	"net/http"
 )
 
-type updateRequest struct {
-	IsOpen          *bool         `json:"is_open"`
-	IsSingleContent *bool         `json:"is_single"`
-	ApiName         *string       `json:"api_name"`
-	Fields          []model.Field `json:"fields"`
+type updateFieldRequest struct {
+	Fields []model.Field `json:"fields"`
 }
 
 // 差集合
@@ -54,9 +51,9 @@ func calcDifference(l1, l2 []model.Field) []model.Field {
 	return r
 }
 
-func Update() gin.HandlerFunc {
+func UpdateField() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var req updateRequest
+		var req updateFieldRequest
 
 		api := store.Access.GetApi(ctx.Param("api_id"))
 
