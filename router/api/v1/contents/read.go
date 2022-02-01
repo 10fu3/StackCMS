@@ -4,10 +4,7 @@ import (
 	"StackCMS/model"
 	"StackCMS/routerUtil"
 	"StackCMS/store"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -17,35 +14,18 @@ func Read() gin.HandlerFunc {
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityGetAllContent},
 			WhenYes: func(id string) {
+
 				filter := map[string]interface{}{}
 
-				filterParam := ctx.Query("filter")
-
-				_ = json.Unmarshal([]byte(filterParam), &filter)
-
 				filter["api_id"] = ctx.Param("api_id")
+				filter["_id"] = ctx.Param("content_id")
 
 				isGetDraft := func() bool {
 					return ctx.Query("draft") == "true"
 				}()
 
-				q := model.GetQuery{
-					Count: model.ResultCount{
-						Offset: func() int {
-							v, e := strconv.Atoi(ctx.Query("offset"))
-							if e != nil {
-								return 0
-							}
-							return v
-						}(),
-						Limit: func() int {
-							v, e := strconv.Atoi(ctx.Query("limit"))
-							if e != nil {
-								return 10
-							}
-							return v
-						}(),
-					},
+				store.Access.GetContent(model.GetQuery{
+					Count:  model.ResultCount{},
 					ApiId:  ctx.Param("api_id"),
 					Filter: filter,
 					Fields: func() []string {
@@ -57,18 +37,8 @@ func Read() gin.HandlerFunc {
 					}(),
 					GetMeta:  false,
 					GetDraft: isGetDraft,
-					//Depth: func() int {
-					//	s := strconv.Atoi(ctx.Query("depth") == 1)
-					//}(),
-				}
-				ctx.JSON(http.StatusOK, func() interface{} {
-					r := store.Access.GetContent(q)
-					var empty = map[string]interface{}{}
-					if r == nil {
-						return empty
-					}
-					return r
-				}())
+					Depth:    0,
+				})
 			},
 		}})
 	}

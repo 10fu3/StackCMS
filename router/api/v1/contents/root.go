@@ -12,9 +12,9 @@ func RegisterRoutes(g *gin.RouterGroup) {
 	//U
 	contentsRoute.PATCH("/:content_id", Update())
 	//R
-	contentsRoute.GET("", Read())
+	contentsRoute.GET("", ReadAll())
 	//R
-	contentsRoute.GET("", Read())
+	contentsRoute.GET("/:content_id", Read())
 	//D all
 	contentsRoute.DELETE("/all", DeleteAll())
 	//D
