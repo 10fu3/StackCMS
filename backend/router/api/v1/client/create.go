@@ -26,7 +26,7 @@ func Create() gin.HandlerFunc {
 		}
 
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
-			Abilities: []model.Ability{model.AbilityCreateClient, model.AbilityGetClient},
+			Abilities: []model.Ability{model.AbilityCreateClient},
 			WhenYes: func(id string) {
 				store.Access.CreateClient(
 					model.Client{
