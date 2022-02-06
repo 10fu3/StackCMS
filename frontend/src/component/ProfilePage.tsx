@@ -22,7 +22,12 @@ const ProfilePage = ()=>{
 
     useEffect(()=>{
         (async ()=>{
-            const filterUsers = (await CMSApi.getUsers()).filter(u=>u.user_id === params.id);
+            const r = (await CMSApi.getUsers())
+            if(!r){
+                window.location.href = "/login"
+                return
+            }
+            const filterUsers = r.filter(u=>u.user_id === params.id);
             if(filterUsers.length !== 1){
                 setUser(profile)
                 return

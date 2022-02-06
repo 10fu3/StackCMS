@@ -79,10 +79,8 @@ const ApiSchemaSettings = () => {
                 fields: datas
             }
 
-            console.log(d)
-
-            if(await CMSApi.updateApi(params.id ? params.id : "" , d)){
-                store.dispatch(setApis)
+            if(await CMSApi.updateApiField(params.id ? params.id : "" , d)){
+                store.dispatch(setApis())
                 setAppliedResult(true)
             }else{
                 setAppliedResult(false)

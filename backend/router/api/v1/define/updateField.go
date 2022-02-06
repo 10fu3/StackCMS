@@ -6,7 +6,6 @@ import (
 	"StackCMS/store"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )
@@ -78,7 +77,6 @@ func UpdateField() gin.HandlerFunc {
 
 				createField := []model.Field{}
 				for i := 0; i < len(req.Fields); i++ {
-					req.Fields[i].Id = uuid.NewString()
 					createField = append(createField, req.Fields[i])
 				}
 
@@ -86,11 +84,11 @@ func UpdateField() gin.HandlerFunc {
 
 				store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
 
-				store.Access.CreateFields(api.UniqueId, createField)
+				store.Access.CreateFields(api.UniqueId, createField, true)
 
 				for _, field := range diffField {
 					fmt.Println(field.Name)
-					if _, err := store.Access.ContentDb.UpdateMany(store.Access.Ctx, bson.M{"api_id": api.UniqueId}, bson.M{"$unset": bson.M{field.Name: ""}}); err != nil {
+					if _, err := store.Access.ContentDb.Collection(api.UniqueId).UpdateMany(store.Access.Ctx, bson.M{}, bson.M{"$unset": bson.M{field.Id: ""}}); err != nil {
 						fmt.Println("fault " + err.Error())
 					}
 				}

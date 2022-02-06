@@ -42,7 +42,7 @@ func GetDocumentDatabaseConfig() DocumentDatabaseConfig {
 	}
 }
 
-var Values *FirstSetupConfig = GetFirstSetupConfig()
+var Values = GetFirstSetupConfig()
 
 type FirstSetupConfig struct {
 	AdminName     string

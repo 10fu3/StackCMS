@@ -4,9 +4,9 @@ import {Api, Role, User} from "../model/model";
 import {Navigate} from "react-router-dom";
 
 interface State {
-    apis:Api[]
-    roles:Role[]
-    users: User[]
+    apis:Api[]|undefined
+    roles:Role[]|undefined
+    users: User[]|undefined
 }
 
 export interface ListContent{
@@ -21,13 +21,18 @@ export interface ListItem{
     onAdd?: ()=>React.ReactNode
 }
 
-export const getDisplay: (state:State)=>{[id:string]:ListItem} = (state:State) => {
+export const getDisplay: (state:State)=>{[id:string]:ListItem}|undefined = (state:State) => {
+    if (!state.users || !state.apis || !state.roles){
+        return undefined
+    }
     return {
         "api":{
             title: "コンテンツ(API)",
-            item: state.apis.map(i => {
-                return {id: i.api_id,title: i.api_id} as ListContent
-            }),
+            item: (()=>{
+                return state.apis.map(i => {
+                    return {id: i.api_id,title: i.api_id} as ListContent
+                })
+            })(),
             onAdd: () => {
                 return <Navigate to="create"/>
             }
@@ -36,11 +41,15 @@ export const getDisplay: (state:State)=>{[id:string]:ListItem} = (state:State) =
             title:"権限管理",
             item: [
                 {
-                    title: `${state.users.length}人のメンバー`,
+                    title: (()=>{
+                        return `${state.users.length}人のメンバー`
+                    })(),
                     id: "member",
                     icon: <ViewIcon/>
                 },{
-                    title: `${state.roles.length}個のロール`,
+                    title: (()=>{
+                        return `${state.roles.length}個のロール`
+                    })(),
                     id: "role",
                     icon: <LockIcon/>
                 }

@@ -22,6 +22,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setRoles: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return [
                 ...action.payload
             ];

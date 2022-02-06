@@ -30,29 +30,33 @@ func Read() gin.HandlerFunc {
 				}()
 				q := model.GetQuery{
 					Count: model.ResultCount{
-						Offset: func() int {
+						Offset: func() int64 {
 							v, e := strconv.Atoi(ctx.Query("offset"))
 							if e != nil {
 								return 0
 							}
-							return v
+							return int64(v)
 						}(),
-						Limit: func() int {
+						Limit: func() int64 {
 							v, e := strconv.Atoi(ctx.Query("limit"))
 							if e != nil {
 								return 0
 							}
-							return v
+							return int64(v)
 						}(),
 					},
 					ApiId:  api.UniqueId,
 					Filter: filter,
-					Fields: func() []string {
+					Fields: func() map[string]bool {
 						s := strings.Split(ctx.Query("fields"), ",")
 						if len(s) == 1 && s[0] == "" {
-							return nil
+							return map[string]bool{}
 						}
-						return s
+						r := map[string]bool{}
+						for _, f := range s {
+							r[f] = true
+						}
+						return r
 					}(),
 					GetMeta:  true,
 					GetDraft: isGetDraft,

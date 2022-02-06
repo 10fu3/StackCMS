@@ -5,21 +5,23 @@ import (
 	"StackCMS/util"
 	"fmt"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
+	"strings"
 )
 
 type ContentFields interface {
-	CreateFields(apiId string, fields []model.Field)
+	CreateFields(apiId string, fields []model.Field, isUpdate bool)
 	GetFieldsByApiUniqueId(apiId string) []model.Field
 	DeleteFieldsByApiUniqueId(apiId string)
 	DeleteField(field model.Field)
 }
 
-func (d *Db) CreateFields(apiId string, fields []model.Field) {
+func (d *Db) CreateFields(apiId string, fields []model.Field, isUpdate bool) {
 
 	baseColumns := []string{
 		"_id",
-		"content_id",
 		"created_at",
+		"created_by",
 		"deleted_at",
 		"published_at",
 		"api_id",
@@ -40,11 +42,32 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 			continue
 		}
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), apiId, f.Name, f.Type, f.RelationApiId); err != nil {
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)",
+			func() string {
+				if isUpdate {
+					return strings.ReplaceAll(f.Id, "-", "_")
+				}
+				return strings.ReplaceAll("a"+uuid.New().String(), "-", "_")
+			}(),
+			apiId, f.Name, f.Type, f.RelationApiId); err != nil {
 			continue
 		}
 	}
-	t.Commit()
+	if t.Commit() == nil {
+		for _, f := range fields {
+			d.ContentDb.Collection(apiId).UpdateMany(d.Ctx,
+				bson.M{
+					f.Id: bson.M{
+						"$exists": false,
+					},
+				},
+				bson.M{
+					"$set": bson.M{
+						strings.ReplaceAll(f.Id, "-", "_"): nil,
+					},
+				})
+		}
+	}
 }
 
 func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {

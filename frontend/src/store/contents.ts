@@ -29,6 +29,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setContents: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return Object.assign({}, state, { contents: action.payload });
         },
     },

@@ -36,6 +36,8 @@ export interface Role{
 }
 
 export interface Api{
+    preview_url:string
+    preview_secret: string
     unique_id:string
     api_id: string
     is_single: boolean

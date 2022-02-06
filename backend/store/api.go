@@ -58,7 +58,7 @@ func (d *Db) CreateApi(api model.Api) {
 
 		fmt.Println(f.RelationApiId)
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", uuid.New().String(), api.UniqueId, f.Name, f.Type, f.RelationApiId); err != nil {
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", strings.ReplaceAll("a"+uuid.New().String(), "-", "_"), api.UniqueId, f.Name, f.Type, f.RelationApiId); err != nil {
 			continue
 		}
 	}
@@ -75,7 +75,9 @@ func (d *Db) UpdateApi(id string, api model.Api) {
 
 func (d *Db) GetApis() []model.Api {
 	apis := []model.Api{}
-	d.Db.Select(&apis, "SELECT * FROM apis")
+	if err := d.Db.Select(&apis, "SELECT * FROM apis"); err != nil {
+		fmt.Println(err)
+	}
 	for i, _ := range apis {
 		apis[i].Fields = d.GetFieldsByApiUniqueId(apis[i].UniqueId)
 	}

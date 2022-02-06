@@ -19,24 +19,13 @@ const SideBar:React.FC = ()=>{
 
     const list = useSelector(getDisplay)
 
-    const user = useSelector(getProfile)
+    //const user = useSelector(getProfile)
 
     useLocationChange(()=>{
         setParams(window.location.pathname.split("/").filter(e=>e.length > 0))
     })
 
     useEffect(()=>{
-        store.dispatch(setCurrentUser())
-        if(!user){
-            window.location.href = "/login"
-            return
-        }
-    },[params[0],params[1],params[2],params[3]])
-
-    useEffect(()=>{
-        store.dispatch(setApis())
-        store.dispatch(setUsers())
-        store.dispatch(setRoles())
     },[])
 
     return <Box h={"100vh"}>

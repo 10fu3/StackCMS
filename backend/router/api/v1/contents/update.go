@@ -28,7 +28,7 @@ func Update() gin.HandlerFunc {
 						"message": "cant_parse",
 					})
 				}
-				if err = store.Access.UpdateContent(ctx.Param("content_id"), updatedBy, j); err != nil {
+				if err = store.Access.UpdateContent(api.UniqueId, ctx.Param("content_id"), updatedBy, j); err != nil {
 					ctx.JSON(http.StatusBadRequest, gin.H{
 						"message": err.Error(),
 					})

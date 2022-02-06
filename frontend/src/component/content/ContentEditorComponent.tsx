@@ -84,6 +84,10 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
     useEffect(()=>{
         (async ()=>{
             const r = await CMSApi.getContent(apis[0].api_id)
+            if(!r){
+                window.location.href = "/login"
+                return
+            }
             setContents(r)
         })()
     },[props.apiId])
@@ -142,78 +146,86 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                 </chakra.tr>
             </chakra.thead>
         </chakra.table>
-        <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
-            <tbody style={{width:"100%"}}>
-            {
+        <Box style={{
+            height: contents.length > 5 ? "400px" : "100%",
+            overflowY: contents.length > 5 ? "scroll" : "visible",
+            padding:5,
+            borderRadius:10,
+            borderWidth:2}}
+        >
+            <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
+                <tbody style={{width:"100%"}}>
+                {
 
-                contents ? contents.map((e,j)=>{
-                    return <tr
-                        onClick={()=>{
-                            props.onClickItem(j,(e as ContentMeta))
-                        }}
-                        style={{
-                            width:"100%",
-                            backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
-                                ? "#f0f9ff"
-                                : "white" ,
-                            cursor:"pointer",}}>
-                        {
-                            <th
-                                style={{
-                                //backgroundColor:"white",
-                                width:`calc( 100% / ${fields.length+1})`,
-                                borderRadius:"5px 0 0 5px",
-                                borderTop: "1px solid #e7e7e7",
-                                borderBottom: "1px solid #e7e7e7",
-                                borderLeft: "1px solid #e7e7e7",
-                                borderRight: "0px",
-                                borderWidth: 1
-                            }}>
-                                <Center>
-                                    <Box pl={3} borderLeft={`5px solid ${e["publish_at"] ? "#2cff00" : "#0087ff"}`}>
-                                        {
-                                            e["publish_at"] ? "公開済み" : "下書き"
-                                        }
-                                    </Box>
-                                </Center>
-                            </th>
-                        }
-                        {
-                            fields.map((i,j)=>{
-
-                                return <chakra.th
+                    contents ? contents.map((e,j)=>{
+                        return <tr
+                            onClick={()=>{
+                                props.onClickItem(j,(e as ContentMeta))
+                            }}
+                            style={{
+                                width:"100%",
+                                backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
+                                    ? "#f0f9ff"
+                                    : "white" ,
+                                cursor:"pointer",}}>
+                            {
+                                <th
                                     style={{
                                         //backgroundColor:"white",
-                                        ...unionCellCss,
                                         width:`calc( 100% / ${fields.length+1})`,
-                                        borderRadius: (()=>{
-                                            if(j === fields.length-1){
-                                                return "0px 5px 5px 0px"
-                                            }
-                                            return ""
-                                        })(),
+                                        borderRadius:"5px 0 0 5px",
                                         borderTop: "1px solid #e7e7e7",
                                         borderBottom: "1px solid #e7e7e7",
-                                        borderRight: j === fields.length-1 ? "1px solid #e7e7e7" : "",
-                                        fontWeight:"normal",
-                                        //maxHeight:"100px"
+                                        borderLeft: "1px solid #e7e7e7",
+                                        borderRight: "0px",
+                                        borderWidth: 1
                                     }}>
-                                    {
-                                        (typeof e[i.field_name]) === "object" ? (()=>{
-                                            const r = (e[i.field_name] as ContentMeta[])
-                                            if(r && r.length > 0){
-                                                return r.map(i=>i._id ? <Box>{i._id}</Box> : <Box/>)
+                                    <Center>
+                                        <Box pl={3} borderLeft={`5px solid ${e["publish_at"] ? "#2cff00" : "#0087ff"}`}>
+                                            {
+                                                e["publish_at"] ? "公開済み" : "下書き"
                                             }
-                                            return ""
-                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
-                                    }
-                                </chakra.th>
-                            })
-                        }
-                    </tr>
-                }) : <></>
-            }
-            </tbody>
-        </table>
+                                        </Box>
+                                    </Center>
+                                </th>
+                            }
+                            {
+                                fields.map((i,j)=>{
+
+                                    return <chakra.th
+                                        style={{
+                                            //backgroundColor:"white",
+                                            ...unionCellCss,
+                                            width:`calc( 100% / ${fields.length+1})`,
+                                            borderRadius: (()=>{
+                                                if(j === fields.length-1){
+                                                    return "0px 5px 5px 0px"
+                                                }
+                                                return ""
+                                            })(),
+                                            borderTop: "1px solid #e7e7e7",
+                                            borderBottom: "1px solid #e7e7e7",
+                                            borderRight: j === fields.length-1 ? "1px solid #e7e7e7" : "",
+                                            fontWeight:"normal",
+                                            //maxHeight:"100px"
+                                        }}>
+                                        {
+                                            (typeof e[i.field_name]) === "object" ? (()=>{
+                                                const r = (e[i.field_name] as ContentMeta[])
+                                                if(r && r.length > 0){
+                                                    return r.map(i=>i._id ? <Box>{i._id}</Box> : <Box/>)
+                                                }
+                                                return ""
+                                            })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
+                                        }
+                                    </chakra.th>
+                                })
+                            }
+                        </tr>
+                    }) : <></>
+                }
+                </tbody>
+            </table>
+        </Box>
     </Box> : <></>
 }

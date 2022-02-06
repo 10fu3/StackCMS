@@ -67,6 +67,7 @@ const RoleDetailPage = ()=>{
 
     const abilityCategoryMap:{[id:string]:string} = {
         "Api":"API",
+        "Client":"クライアント",
         "Content":"コンテンツ",
         "Self":"自分",
         "User":"ユーザー",

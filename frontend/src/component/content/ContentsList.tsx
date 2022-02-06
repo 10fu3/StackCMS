@@ -40,6 +40,10 @@ const ContentsList = ()=>{
         if(!rawFields[params.id]){
             return
         }
+        if(!contents){
+            window.location.href = "/login"
+            return
+        }
         let inputs:FieldType[] = []
         for (const f of rawFields[params.id]) {
             let input = Object.assign({},f)
@@ -150,7 +154,6 @@ const ContentsList = ()=>{
                                             borderLeft: "1px solid #e7e7e7",
                                             borderRight: "0px",
                                             borderWidth: 1,
-                                            height:100,
                                         }}>
                                             <Center>
                                                 <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>

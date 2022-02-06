@@ -3,7 +3,7 @@ import {Api, ApplyApiData, FieldType, Role, UpdateUserEntity, User} from "../mod
 
 
 interface JsonResultArray{
-    content: {[key:string]:any}[]
+    contents: {[key:string]:any}[]
 }
 
 export function toJapaneseFromFieldType(f: string) {
@@ -24,7 +24,7 @@ export function toJapaneseFromFieldType(f: string) {
 
 export class CMSApi{
 
-    static async deleteUser(id:string):Promise<boolean>{
+    static async deleteUser(id:string):Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -36,10 +36,13 @@ export class CMSApi{
             }),
             method:"delete",
         }))
+        if (r.status === 401){
+            return undefined
+        }
         return r.ok
     }
 
-    static async updateUser(id:string,user:UpdateUserEntity):Promise<boolean>{
+    static async updateUser(id:string,user:UpdateUserEntity):Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -61,10 +64,13 @@ export class CMSApi{
             method:"PATCH",
             body: JSON.stringify(reqBody)
         }))
+        if (r.status === 401){
+            return undefined
+        }
         return r.ok
     }
 
-    static async createUser(mail:string,name:string,password:string):Promise<boolean>{
+    static async createUser(mail:string,name:string,password:string):Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -81,10 +87,13 @@ export class CMSApi{
                 password: password
             })
         }))
+        if (r.status === 401){
+            return undefined
+        }
         return r.ok
     }
 
-    static async createRole(name:string): Promise<boolean> {
+    static async createRole(name:string): Promise<undefined|boolean> {
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -99,10 +108,13 @@ export class CMSApi{
                 role_name: name
             })
         }))
+        if (r.status === 401){
+            return undefined
+        }
         return r.ok
     }
 
-    static async deleteRole(id:string): Promise<boolean> {
+    static async deleteRole(id:string): Promise<undefined|boolean> {
         const k = localStorage.getItem("authorization")
         if(k === null){
             return false
@@ -114,10 +126,13 @@ export class CMSApi{
             }),
             method:"delete",
         }))
+        if (r.status === 401){
+            return undefined
+        }
         return r.ok
     }
 
-    static async getApis():Promise<Api[]> {
+    static async getApis():Promise<undefined|Api[]> {
 
         const k = localStorage.getItem("authorization")
         if(k === null){
@@ -129,13 +144,13 @@ export class CMSApi{
                 authorization:k
             })
         }))
-        if (r.ok){
-            return ((await r.json()) as Api[])
+        if (r.status === 401){
+            return undefined
         }
-        return []
+        return (await r.json())
     }
 
-    static async getContent(api_id:string):Promise<{[key:string]:any}[]> {
+    static async getContent(api_id:string):Promise<undefined|{[key:string]:any}[]> {
         const k = localStorage.getItem("authorization")
         if(k === null){
             return []
@@ -150,69 +165,92 @@ export class CMSApi{
         }))
         if (r.ok){
             const d = await r.json()
-            const result = (d as JsonResultArray).content;
+            const result = (d as JsonResultArray).contents;
             if(result) {
                 return result
             }
         }
+        if (r.status === 401){
+            return undefined
+        }
         return []
     }
 
-    static async deleteContentsByApi(api_id:string): Promise<boolean>{
+    static async deleteContentsByApi(api_id:string): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`contents/${api_id}/all`,{
+        const r = (await fetch(API_LOC()+`contents/${api_id}/all`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "DELETE",
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async deleteApi(api_id:string): Promise<boolean>{
+    static async deleteApi(api_id:string): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`define/${api_id}`,{
+        const r = (await fetch(API_LOC()+`define/${api_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "DELETE",
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async createContents(api_id:string, contents:{[id:string]:any}): Promise<boolean>{
+    static async createContents(api_id:string, contents:{[id:string]:any}): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`contents/${api_id}`,{
+        const r = (await fetch(API_LOC()+`contents/${api_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "POST",
             body: JSON.stringify(contents)
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async deleteContents(api_id:string,contentsId:string): Promise<boolean>{
+    static async deleteContents(api_id:string,contentsId:string): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
+        const r = (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "DELETE",
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async updateContents(api_id:string,contentsId:string, contents:{[id:string]:any}): Promise<boolean>{
+    static async updateContents(api_id:string,contentsId:string, contents:{[id:string]:any}): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
+        const r = (await fetch(API_LOC()+`contents/${api_id}/${contentsId}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "PATCH",
             body: JSON.stringify(contents)
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async changePublishStatus(isPublish:boolean,api_id:string,contentsId:string){
+    static async changePublishStatus(isPublish:boolean,api_id:string,contentsId:string): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`meta/${api_id}/${contentsId}/status`,{
+        const r = (await fetch(API_LOC()+`meta/${api_id}/${contentsId}/status`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -220,32 +258,93 @@ export class CMSApi{
             body: JSON.stringify({
                 status: isPublish ? "published" : "unpublished"
             })
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async createApi(api:ApplyApiData): Promise<boolean>{
+    static async createApi(api:ApplyApiData): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`define`,{
+        const r = (await fetch(API_LOC()+`define`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "POST",
             body: JSON.stringify(api)
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async updateApi(api_id:string,appliedApi:ApplyApiData): Promise<boolean>{
+    static async updateApiPreview(api_id:string,changedName?:string): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`define/${api_id}`,{
+        const r = (await fetch(API_LOC()+`define/${api_id}/preview_url`,{
+            headers: new Headers({
+                authorization: k ? k : ""
+            }),
+            method: "PATCH",
+            body: JSON.stringify(changedName ? {
+                preview_url: changedName
+            } : {})
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
+    }
+
+    static async updateApiId(api_id:string,changedName:string): Promise<undefined|boolean>{
+        const k = localStorage.getItem("authorization");
+        const r = (await fetch(API_LOC()+`define/${api_id}/name`,{
+            headers: new Headers({
+                authorization: k ? k : ""
+            }),
+            method: "PATCH",
+            body: JSON.stringify({
+                api_name: changedName
+            })
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
+    }
+
+    static async updateApiField(api_id:string,appliedApi:ApplyApiData): Promise<undefined|boolean>{
+        const k = localStorage.getItem("authorization");
+        const r = (await fetch(API_LOC()+`define/${api_id}/field`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
             method: "PATCH",
             body: JSON.stringify(appliedApi)
-        })).ok
+        }))
+        if (r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async getFields(api_id:string): Promise<FieldType[]>{
+    // static async updateApi(api_id:string,appliedApi:ApplyApiData): Promise<undefined|boolean>{
+    //     const k = localStorage.getItem("authorization");
+    //     const r = (await fetch(API_LOC()+`define/${api_id}`,{
+    //         headers: new Headers({
+    //             authorization: k ? k : ""
+    //         }),
+    //         method: "PATCH",
+    //         body: JSON.stringify(appliedApi)
+    //     }))
+    //     if (r.status === 401){
+    //         return undefined
+    //     }
+    //     return r.ok
+    // }
+
+    static async getFields(api_id:string): Promise<undefined|FieldType[]>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return []
@@ -253,14 +352,16 @@ export class CMSApi{
         const r = (await fetch(API_LOC()+`define/${api_id}`,{
             headers: new Headers({authorization:k})
         }))
+        if (r.status === 401){
+            return undefined
+        }
         if (r.ok){
-            const result = (await r.json()) as FieldType[]
-            return result
+            return (await r.json()) as FieldType[]
         }
         return []
     }
 
-    static async getRoles(): Promise<Role[]>{
+    static async getRoles(): Promise<undefined|Role[]>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return []
@@ -268,16 +369,18 @@ export class CMSApi{
         const r = (await fetch(API_LOC()+`role/all`,{
             headers: new Headers({authorization:k})
         }))
+        if (r.status === 401){
+            return undefined
+        }
         if (r.ok){
-            const result = (await r.json()) as Role[]
-            return result
+            return (await r.json()) as Role[]
         }
         return []
     }
 
-    static async updateRole(role_id:string,role_name:string,applyPermission:string[]): Promise<boolean>{
+    static async updateRole(role_id:string,role_name:string,applyPermission:string[]): Promise<undefined|boolean>{
         const k = localStorage.getItem("authorization");
-        return (await fetch(API_LOC()+`role/${role_id}`,{
+        const r = (await fetch(API_LOC()+`role/${role_id}`,{
             headers: new Headers({
                 authorization: k ? k : ""
             }),
@@ -286,10 +389,14 @@ export class CMSApi{
                 role_name: role_name,
                 role_ability: applyPermission
             })
-        })).ok
+        }))
+        if(r.status === 401){
+            return undefined
+        }
+        return r.ok
     }
 
-    static async getUsers(): Promise<User[]>{
+    static async getUsers(): Promise<undefined|User[]>{
         const k = localStorage.getItem("authorization")
         if(k === null){
             return []
@@ -297,9 +404,11 @@ export class CMSApi{
         const r = (await fetch(API_LOC()+`user`,{
             headers: new Headers({authorization:k})
         }))
+        if(r.status === 401){
+            return undefined
+        }
         if (r.ok){
-            const result = (await r.json()) as User[]
-            return result
+            return (await r.json()) as User[]
         }
         return []
     }

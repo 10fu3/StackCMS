@@ -25,10 +25,6 @@ const MembersList = ()=>{
     const nav = useNavigate()
 
     useEffect(()=>{
-        if(!self){
-            window.location.href = "/login"
-            return
-        }
         store.dispatch(setUsers())
     },[])
 

@@ -21,6 +21,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setApis: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return [
                 ...action.payload
             ];

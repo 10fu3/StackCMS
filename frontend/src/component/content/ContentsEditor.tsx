@@ -40,8 +40,7 @@ const ContentsEditor  = ()=>{
             let contents: {[id:string]:any} = Object.assign({},editContents[0])
             for (const f of fields) {
                 const r:ContentMeta[] = contents[f.field_name]
-                console.log(r)
-                if((typeof r) !== "object") {
+                if(!r || (typeof r) !== "object") {
                     continue
                 }
                 contents[f.field_name] = r.map(i=>i._id)

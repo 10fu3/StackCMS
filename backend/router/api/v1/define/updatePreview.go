@@ -38,9 +38,10 @@ func UpdatePreview() gin.HandlerFunc {
 			WhenYes: func(id string) {
 
 				if req.PreviewURL == nil {
-					api.PreviewSecret = uuid.NewString() + "-" + uuid.NewString()
+					key := uuid.NewString() + "-" + uuid.NewString()
+					api.PreviewSecret = &key
 				} else {
-					api.PreviewURL = *req.PreviewURL
+					api.PreviewURL = req.PreviewURL
 				}
 				store.Access.UpdateApi(api.UniqueId, *api)
 			},

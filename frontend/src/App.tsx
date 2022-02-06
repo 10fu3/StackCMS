@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import Top from "./component/Top";
 import {Routes, Route, Navigate} from "react-router-dom";
 import PrivateRoute from "./component/auth/PrivateRoute";
 import LoginPage from "./component/Login";
-import {isAuthSelector} from "./store/auth";
+import {isAuthSelector, setCurrentUser} from "./store/auth";
 import NotFound from "./component/NotFound";
 import {useSelector} from "react-redux";
 import DisplayList from "./component/DisplayList";
@@ -39,6 +39,8 @@ const App:React.FC = ()=>{
         <Route path="manage/role/create" element={<RoleCreatePage/>}/>
         <Route path="manage/role/:role_id" element={<RoleDetailPage/>}/>
         <Route path="manage/role/:role_id/edit" element={<RoleEditPage/>}/>
+        <Route path="manage/clients" element={<DisplayList category={"manage"}/>}/>
+        <Route path="manage/clients/create" element={<DisplayList category={"manage"}/>}/>
         {/*コンテンツ(API)ページ*/}
         <Route path="api" element={<DisplayList category={"api"}/>}/>
         <Route path="api/create" element={<ApiCreate/>}/>

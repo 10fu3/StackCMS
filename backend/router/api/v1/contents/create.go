@@ -24,10 +24,19 @@ func Create() gin.HandlerFunc {
 					})
 					return
 				}
+
+				if api.IsSingleContent && len(store.Access.GetContentMetaByApiId(api.UniqueId)) > 0 {
+					ctx.JSON(http.StatusNotFound, gin.H{
+						"message": "exists_content",
+					})
+					return
+				}
+
 				if err = ctx.BindJSON(&j); err != nil {
 					ctx.JSON(http.StatusNotFound, gin.H{
 						"message": "cant_parse",
 					})
+					return
 				}
 
 				fields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
@@ -57,7 +66,7 @@ func Create() gin.HandlerFunc {
 					return
 				}
 
-				r, e := store.Access.CreateContent(api.Id, createdBy, j)
+				r, e := store.Access.CreateContent(api.UniqueId, createdBy, j)
 
 				if e != nil {
 					ctx.JSON(http.StatusBadRequest, gin.H{

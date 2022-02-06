@@ -8,7 +8,7 @@ import (
 
 type Db struct {
 	Db        *sqlx.DB
-	ContentDb *mongo.Collection
+	ContentDb *mongo.Database
 	Ctx       context.Context
 }
 

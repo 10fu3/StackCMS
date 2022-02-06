@@ -23,7 +23,7 @@ type GetQuery struct {
 	Count    ResultCount
 	ApiId    string
 	Filter   map[string]interface{}
-	Fields   []string
+	Fields   map[string]bool
 	GetMeta  bool
 	GetDraft bool
 	Depth    int

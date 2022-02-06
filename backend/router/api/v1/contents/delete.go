@@ -29,7 +29,7 @@ func Delete() gin.HandlerFunc {
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityDeleteAllContent},
 			WhenYes: func(_ string) {
-				if store.Access.DeleteContent(ctx.Param("content_id")) != nil {
+				if store.Access.DeleteContent(api.UniqueId, ctx.Param("content_id")) != nil {
 					ctx.JSON(http.StatusNotFound, gin.H{
 						"message": "not_found_content",
 					})

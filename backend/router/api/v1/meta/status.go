@@ -31,13 +31,13 @@ func ChangeStatus() gin.HandlerFunc {
 					return
 				}
 
-				content := store.Access.GetContentMetaById(ctx.Param("content_id"))
+				content := store.Access.GetContentMetaById(api.UniqueId, ctx.Param("content_id"))
 				if content == nil {
 					ctx.JSON(http.StatusNotFound, "not_found_content")
 					return
 				}
 
-				if err := store.Access.ChangePublishStatusContent(content.Id, publishedBy, func() store.ContentStatus {
+				if err := store.Access.ChangePublishStatusContent(api.UniqueId, content.Id, func() store.ContentStatus {
 					if r.Status == "published" {
 						return store.ContentPublished
 					}
