@@ -1,6 +1,6 @@
 FROM golang:stretch AS builder
 WORKDIR /go/src/app
-COPY .. .
+COPY . .
 RUN go build -o server
 
 #final stage
