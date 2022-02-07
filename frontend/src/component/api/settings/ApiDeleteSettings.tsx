@@ -26,12 +26,12 @@ const ApiDeleteSettings:React.FC<{}> = (props)=>{
     const action: {[id:string]:()=>void} = {
         "contents": ()=>{
             (async ()=>{
-                setHandleResult(await CMSApi.deleteContentsByApi(params.id ? params.id : ""))
+                setHandleResult(await CMSApi.Content.deleteByApi(params.id ? params.id : ""))
             })()
         },
         "api":()=>{
             (async ()=>{
-                setHandleResult(await CMSApi.deleteApi(params.id ? params.id : ""))
+                setHandleResult(await CMSApi.Api.delete(params.id ? params.id : ""))
             })()
         }
     }

@@ -15,7 +15,6 @@ import {useSelector} from "react-redux";
 import {getFields} from "../../store/fields";
 import React, {useEffect, useRef, useState} from "react";
 import {CMSApi, toJapaneseFromFieldType} from "../../api/cms";
-import {getApis} from "../../store/apis";
 import {BooleanEditor, NumberEditor, RelationEditor, TextEditor} from "./ContentEditorComponent";
 const ContentsNew = () =>{
     const params = useParams<"id">()
@@ -49,7 +48,7 @@ const ContentsNew = () =>{
     const handleSend = ()=>{
         (async ()=>{
             setSendFaultResult(undefined)
-            const r = await CMSApi.createContents(params.id ? params.id : "",createContents)
+            const r = await CMSApi.Content.create(params.id ? params.id : "",createContents)
             setSendFaultResult(!r);
             if(r){
                 nav(-1)

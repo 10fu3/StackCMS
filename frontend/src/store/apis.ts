@@ -11,7 +11,7 @@ export const getApis = (state:{ apis:Api[] }):Api[] => {
 export function setApis(){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            dispatch(slice.actions.setApis(await CMSApi.getApis()));
+            dispatch(slice.actions.setApis(await CMSApi.Api.getAll()));
         })()
     }
 }

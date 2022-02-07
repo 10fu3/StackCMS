@@ -1,12 +1,13 @@
-import {LockIcon, ViewIcon} from "@chakra-ui/icons";
+import {HamburgerIcon, LockIcon, ViewIcon} from "@chakra-ui/icons";
 import React from "react";
-import {Api, Role, User} from "../model/model";
+import {Api, ClientEntity, Role, User} from "../model/model";
 import {Navigate} from "react-router-dom";
 
 interface State {
     apis:Api[]|undefined
     roles:Role[]|undefined
     users: User[]|undefined
+    clients: ClientEntity[]|undefined
 }
 
 export interface ListContent{
@@ -22,7 +23,7 @@ export interface ListItem{
 }
 
 export const getDisplay: (state:State)=>{[id:string]:ListItem}|undefined = (state:State) => {
-    if (!state.users || !state.apis || !state.roles){
+    if (!state.users || !state.apis || !state.roles || !state.clients){
         return undefined
     }
     return {
@@ -52,6 +53,12 @@ export const getDisplay: (state:State)=>{[id:string]:ListItem}|undefined = (stat
                     })(),
                     id: "role",
                     icon: <LockIcon/>
+                },{
+                    title: (()=>{
+                        return `${state.clients.length}個のクライアント`
+                    })(),
+                    id: "client",
+                    icon: <HamburgerIcon/>
                 }
             ]
         }

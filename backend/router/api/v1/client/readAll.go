@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-func Read() gin.HandlerFunc {
+func ReadAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityGetClient},
 			WhenYes: func(id string) {
-				r := store.Access.GetClientById(ctx.Param("client_id"))
+				r := store.Access.GetClients()
 				ctx.JSON(http.StatusOK, r)
 			},
 		}})

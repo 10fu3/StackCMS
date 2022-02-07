@@ -51,8 +51,7 @@ const ContentsEditor  = ()=>{
 
     const handleDelete = ()=>{
         (async ()=>{
-            const r = (await CMSApi.
-            deleteContents(params.id ? params.id : "",
+            const r = (await CMSApi.Content.deleteById(params.id ? params.id : "",
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
@@ -64,8 +63,7 @@ const ContentsEditor  = ()=>{
     const handleUpdate = ()=>{
         (async ()=>{
             setSendFaultResult(undefined)
-            const r = (await CMSApi.
-            updateContents(params.id ? params.id : "",
+            const r = (await CMSApi.Content.update(params.id ? params.id : "",
                 params.contents_id ? params.contents_id : "",
                 contents))
             setSendFaultResult(!r)
@@ -81,8 +79,7 @@ const ContentsEditor  = ()=>{
 
         (async ()=>{
             setSendFaultResult(undefined)
-            const r = (await CMSApi.
-            changePublishStatus(publishFlag,params.id ? params.id : "",
+            const r = (await CMSApi.Content.changePublishStatus(publishFlag,params.id ? params.id : "",
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){

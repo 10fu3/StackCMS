@@ -7,12 +7,14 @@ import {setCurrentUser} from "../store/auth";
 import {setApis} from "../store/apis";
 import {setUsers} from "../store/users";
 import {setRoles} from "../store/roles";
+import {setClients} from "../store/clients";
 const Top = ()=>{
     useEffect(()=>{
         store.dispatch(setCurrentUser())
         store.dispatch(setApis())
         store.dispatch(setUsers())
         store.dispatch(setRoles())
+        store.dispatch(setClients())
     },[])
     return <Box>
         <Flex h="100vh">

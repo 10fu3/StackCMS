@@ -19,14 +19,9 @@ const SideBar:React.FC = ()=>{
 
     const list = useSelector(getDisplay)
 
-    //const user = useSelector(getProfile)
-
     useLocationChange(()=>{
         setParams(window.location.pathname.split("/").filter(e=>e.length > 0))
     })
-
-    useEffect(()=>{
-    },[])
 
     return <Box h={"100vh"}>
         <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">

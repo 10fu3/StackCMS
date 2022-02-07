@@ -83,7 +83,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
 
     useEffect(()=>{
         (async ()=>{
-            const r = await CMSApi.getContent(apis[0].api_id)
+            const r = await CMSApi.Content.getByApiId(apis[0].api_id)
             if(!r){
                 window.location.href = "/login"
                 return

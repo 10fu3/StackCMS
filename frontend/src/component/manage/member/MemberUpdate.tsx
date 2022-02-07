@@ -44,7 +44,7 @@ const ProfileUpdatePage = ()=>{
 
     const handleApply = ()=>{
         (async ()=>{
-            await CMSApi.updateUser(params.id ? params.id : "",updateData)
+            await CMSApi.User.update(params.id ? params.id : "",updateData)
             store.dispatch(setUsers())
             nav(-1)
         })()

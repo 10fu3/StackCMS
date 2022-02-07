@@ -20,8 +20,6 @@ const MembersList = ()=>{
         borderBottom:"1px solid #e7e7e7",
     }
 
-    const self = useSelector(getProfile)
-
     const nav = useNavigate()
 
     useEffect(()=>{

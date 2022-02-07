@@ -1,3 +1,10 @@
+export interface ClientEntity{
+    client_id:string,
+    client_name:string,
+    client_secret:string,
+    client_ability?:string[],
+}
+
 export interface FieldType{
     id:string,
     field_name:string,

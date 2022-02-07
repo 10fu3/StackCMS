@@ -7,6 +7,7 @@ import (
 
 type ClientAbility interface {
 	GetClientAbility() map[string][]string
+	GetClientAbilityByClientId(clientId string) []model.Ability
 	AppendClientAbilities(role model.Role, ability []string)
 	AppendClientAbility(role *model.Role, ability model.Ability)
 	LeaveClientAbility(role *model.Role)
@@ -45,6 +46,14 @@ func (d *Db) GetClientAbility() map[string][]string {
 		r[ability.ClientId] = append(r[ability.ClientId], ability.AbilityId)
 	}
 	return r
+}
+
+func (d *Db) GetClientAbilityByClientId(clientId string) []model.Ability {
+	dbr := []model.Ability{}
+	if err := d.Db.Select(&dbr, "SELECT ability_id FROM client_ability WHERE client_id = ?", clientId); err != nil {
+		return make([]model.Ability, 0)
+	}
+	return dbr
 }
 
 func (d *Db) AppendClientAbilities(client model.Client, ability []model.Ability) {

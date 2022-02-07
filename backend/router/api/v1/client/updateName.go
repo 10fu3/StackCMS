@@ -9,15 +9,14 @@ import (
 )
 
 type updateClientNameRequest struct {
-	Name string
+	Name string `json:"client_name"`
 }
 
 func UpdateName() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		var r updateClientNameRequest
-
-		if r.Name == "" {
+		if ctx.ShouldBindJSON(&r) != nil || r.Name == "" {
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"message": "bad_params",
 			})

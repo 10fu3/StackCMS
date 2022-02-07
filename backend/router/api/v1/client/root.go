@@ -9,5 +9,6 @@ func RegisterRoutes(g *gin.RouterGroup) {
 	clientsRoot.PATCH("/:client_id/permissions", UpdateAbility())
 	clientsRoot.PATCH("/:client_id/secret", UpdateSecret())
 	clientsRoot.GET("", ReadAll())
+	clientsRoot.GET("/:client_id", Read())
 	clientsRoot.DELETE("/:client_id", Delete())
 }

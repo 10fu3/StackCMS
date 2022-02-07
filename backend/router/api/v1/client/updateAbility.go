@@ -9,7 +9,7 @@ import (
 )
 
 type updateAbilityRequest struct {
-	ClientAbility []model.Ability
+	ClientAbility []model.Ability `json:"client_ability"`
 }
 
 func UpdateAbility() gin.HandlerFunc {

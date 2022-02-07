@@ -22,7 +22,7 @@ const ProfilePage = ()=>{
 
     useEffect(()=>{
         (async ()=>{
-            const r = (await CMSApi.getUsers())
+            const r = (await CMSApi.User.getAll())
             if(!r){
                 window.location.href = "/login"
                 return
@@ -53,7 +53,7 @@ const ProfilePage = ()=>{
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
             <Box w="100%" pt="10px" pb="20px" pl={5} pr={5} overflow="auto" h={"100%"}>
                 <Center h="100%">
-                    <Box p={5} w="500px" bgColor="white" borderWidth="1px" borderRadius="3px">
+                    <Box p={5} maxW="500px" w="100%" bgColor="white" borderWidth="1px" borderRadius="3px">
                         <chakra.p fontSize={20} pl={4}>
                             プロフィール
                         </chakra.p>
@@ -99,7 +99,7 @@ const ProfilePage = ()=>{
                                 <Center pt={5}>
                                     <Button w={"full"} onClick={()=>{
                                         (async ()=>{
-                                            if(await CMSApi.deleteUser(user?.user_id ? user?.user_id : "")){
+                                            if(await CMSApi.User.delete(user?.user_id ? user?.user_id : "")){
                                                 nav(-1)
                                             }
                                         })()}

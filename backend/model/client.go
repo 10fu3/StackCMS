@@ -8,9 +8,10 @@ var ClientAbilities map[string]Ability = map[string]Ability{
 }
 
 type Client struct {
-	Id     string `db:"client_id"`
-	Name   string `db:"client_name"`
-	Secret string `db:"client_secret"`
+	Id      string    `json:"client_id" db:"client_id"`
+	Name    string    `json:"client_name" db:"client_name"`
+	Secret  string    `json:"client_secret" db:"client_secret"`
+	Ability []Ability `json:"client_ability" db:"-"`
 }
 
 type ClientAbility struct {

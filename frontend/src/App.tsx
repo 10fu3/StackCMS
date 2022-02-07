@@ -24,6 +24,10 @@ import ProfilePage from "./component/ProfilePage";
 import RoleEditPage from "./component/manage/role/RoleEdit";
 import MemberCreate from "./component/manage/member/MemberCreate";
 import ProfileUpdatePage from "./component/manage/member/MemberUpdate";
+import ClientList from "./component/manage/client/ClientList";
+import ClientCreate from "./component/manage/client/ClientCreate";
+import ClientDetail from "./component/manage/client/ClientDetail";
+import ClientEdit from "./component/manage/client/ClientEdit";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
@@ -39,8 +43,10 @@ const App:React.FC = ()=>{
         <Route path="manage/role/create" element={<RoleCreatePage/>}/>
         <Route path="manage/role/:role_id" element={<RoleDetailPage/>}/>
         <Route path="manage/role/:role_id/edit" element={<RoleEditPage/>}/>
-        <Route path="manage/clients" element={<DisplayList category={"manage"}/>}/>
-        <Route path="manage/clients/create" element={<DisplayList category={"manage"}/>}/>
+        <Route path="manage/client" element={<ClientList/>}/>
+        <Route path="manage/client/:client_id" element={<ClientDetail/>}/>
+        <Route path="manage/client/:client_id/edit" element={<ClientEdit/>}/>
+        <Route path="manage/client/create" element={<ClientCreate/>}/>
         {/*コンテンツ(API)ページ*/}
         <Route path="api" element={<DisplayList category={"api"}/>}/>
         <Route path="api/create" element={<ApiCreate/>}/>

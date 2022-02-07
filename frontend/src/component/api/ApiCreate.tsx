@@ -104,7 +104,7 @@ const ApiCreate = ()=>{
             setIsOpenComplete(true)
         }else{
             (async ()=>{
-                const result = await CMSApi.createApi(api)
+                const result = await CMSApi.Api.create(api)
                 if(result){
                     setErrorMessage([])
                     store.dispatch(setApis())

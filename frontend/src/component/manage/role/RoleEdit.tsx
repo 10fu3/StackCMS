@@ -241,7 +241,7 @@ const RoleEditPage:React.FC = (props)=>{
             if(!role){
                 return
             }
-            setApplyResult(await CMSApi.updateRole(role.id,sendName,sendPerms))
+            setApplyResult(await CMSApi.Role.update(role.id,sendName,sendPerms))
             store.dispatch(setRoles())
         })()
     }
