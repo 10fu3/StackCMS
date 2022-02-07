@@ -1,3 +1,3 @@
 export const API_LOC = ()=>{
-    return process.env.REACT_APP_API ? process.env.REACT_APP_API : "http://localhost:8080/api/v1/"
+    return process.env.REACT_APP_API ? process.env.REACT_APP_API : "https://stackcms-gljpiks5ka-an.a.run.app/api/v1/"
 }
