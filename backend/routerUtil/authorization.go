@@ -48,7 +48,13 @@ func IsAuthorization(ctx *gin.Context, abilityFunc []AbilityFunc) {
 			return
 		} else {
 			//client
-			if !store.Access.HasClientAuthority(auth.GetClient().Id, a.Abilities) {
+			if !store.Access.HasClientAuthority(auth.GetClient().Id, func() []string {
+				r := []string{}
+				for _, ab := range a.Abilities {
+					r = append(r, ab.String())
+				}
+				return r
+			}()) {
 				if len(abilityFunc)-1 > i {
 					continue
 				}

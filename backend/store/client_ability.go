@@ -14,22 +14,14 @@ type ClientAbility interface {
 	//LeaveAbilitiesByRoleId(role *model.Role)
 }
 
-func (d *Db) HasClientAuthority(clientId string, abilities []model.Ability) bool {
-	q := "SELECT * FROM client_ability where client_id = ? having ability_id IN (?)"
+func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
+	q := "ability_id IN (?)"
 
-	args := func() []string {
-		a := []string{clientId}
-		for _, arg := range abilities {
-			a = append(a, arg.String())
-		}
-		return a
-	}
-
-	query, interfaceArgs, err := sqlx.In(q, args())
+	query, interfaceArgs, err := sqlx.In(q, abilities)
 	if err != nil {
 		return false
 	}
-	rows, err := d.Db.Query(query, interfaceArgs)
+	rows, err := d.Db.Query("SELECT * FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
 	if err != nil {
 		return false
 	}

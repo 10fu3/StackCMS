@@ -27,11 +27,13 @@ func Update() gin.HandlerFunc {
 					ctx.JSON(http.StatusNotFound, gin.H{
 						"message": "cant_parse",
 					})
+					return
 				}
 				if err = store.Access.UpdateContent(api.UniqueId, ctx.Param("content_id"), updatedBy, j); err != nil {
 					ctx.JSON(http.StatusBadRequest, gin.H{
 						"message": err.Error(),
 					})
+					return
 				}
 			},
 		}})

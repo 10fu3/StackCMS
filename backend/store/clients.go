@@ -48,11 +48,11 @@ func (d *Db) GetClientById(id string) *model.Client {
 }
 
 func (d *Db) GetClientBySecret(apiSecret string) *model.Client {
-	var r *model.Client
+	var r model.Client
 	if d.Db.Get(&r, "SELECT * FROM clients WHERE client_secret = ?", apiSecret) != nil {
 		return nil
 	}
-	return r
+	return &r
 }
 
 func (d *Db) DeleteClientByClientId(clientId string) {
