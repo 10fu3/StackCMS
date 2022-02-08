@@ -124,41 +124,9 @@ func DefineAdminRole(db *sqlx.DB) error {
 	return nil
 }
 
-func Db() error {
+func ConnectMongoDB() error {
+
 	var err error
-	store.Access = &store.Db{}
-	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
-	if err != nil {
-		return err
-	}
-	
-	store.Access.Db.SetMaxIdleConns(100)
-	store.Access.Db.SetMaxOpenConns(100)
-	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
-
-	config.Values = config.GetFirstSetupConfig()
-
-	if err = DefineTables(store.Access.Db); err != nil {
-		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-			if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
-				return err
-			}
-		}
-	}
-	if err = DefineRootUser(store.Access.Db, *config.Values); err != nil {
-		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-			if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
-				return err
-			}
-		}
-	}
-	if err = DefineAdminRole(store.Access.Db); err != nil {
-		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-			if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
-				return err
-			}
-		}
-	}
 
 	var mongoClient *mongo.Client
 	var mongoSettings = config.GetDocumentDatabaseConfig()
@@ -177,12 +145,48 @@ func Db() error {
 	if err != nil {
 		return err
 	}
-
-	//if err = mongoClient.Connect(mongoCtx);err != nil{
-	//	return err
-	//}
-
 	store.Access.ContentDb = mongoClient.Database("stack_cms")
-
 	return nil
+}
+
+func Db() error {
+	var err error
+	store.Access = &store.Db{}
+	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+	if err != nil {
+		return err
+	}
+
+	store.Access.Db.SetMaxIdleConns(100)
+	store.Access.Db.SetMaxOpenConns(100)
+	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+
+	config.Values = config.GetFirstSetupConfig()
+
+	if config.Values.CreateTable {
+		fmt.Println("CREATE TABLE MODE IS ON")
+		if err = DefineTables(store.Access.Db); err != nil {
+			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+				if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
+					return err
+				}
+			}
+		}
+		if err = DefineRootUser(store.Access.Db, *config.Values); err != nil {
+			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+				if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
+					return err
+				}
+			}
+		}
+		if err = DefineAdminRole(store.Access.Db); err != nil {
+			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+				if !(SqlError.Error(mysqlErr.Number) == SqlError.DuplicateEntry) {
+					return err
+				}
+			}
+		}
+	}
+
+	return ConnectMongoDB()
 }

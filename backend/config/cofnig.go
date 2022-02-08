@@ -48,6 +48,7 @@ type FirstSetupConfig struct {
 	AdminName     string
 	AdminPassword string
 	AppPort       string
+	CreateTable   bool
 }
 
 func GetFirstSetupConfig() *FirstSetupConfig {
@@ -58,9 +59,14 @@ func GetFirstSetupConfig() *FirstSetupConfig {
 		return nil
 	}
 
+	createTable := func() bool {
+		return os.Getenv("CREATE_TABLE") == "true"
+	}()
+
 	return &FirstSetupConfig{
 		AdminName:     "root",
 		AdminPassword: adminPass,
 		AppPort:       port,
+		CreateTable:   createTable,
 	}
 }
