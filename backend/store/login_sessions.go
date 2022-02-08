@@ -2,6 +2,7 @@ package store
 
 import (
 	"StackCMS/model"
+	"fmt"
 	"github.com/google/uuid"
 	"time"
 )
@@ -35,6 +36,7 @@ func (s *Db) GetSessionUser(authorization string) string {
 	sqlErr := s.Db.QueryRowx("SELECT * FROM login_session WHERE session_id = ?", authorization).StructScan(&u)
 
 	if sqlErr != nil {
+		fmt.Println(sqlErr.Error())
 		return ""
 	}
 

@@ -3,9 +3,7 @@ package store
 import (
 	"StackCMS/model"
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"time"
 )
@@ -196,11 +194,11 @@ func (d *Db) GetContent(query model.GetQuery) []map[string]interface{} {
 		return 0
 	}())
 
-	b, _ := json.Marshal(mondoQuery)
+	//b, _ := json.Marshal(mondoQuery)
 
-	fmt.Println("")
-	fmt.Println(string(b))
-	fmt.Println("")
+	//fmt.Println("")
+	//fmt.Println(string(b))
+	//fmt.Println("")
 
 	content, err := d.ContentDb.Collection(query.ApiId).Aggregate(d.Ctx, mondoQuery)
 	if err != nil {
