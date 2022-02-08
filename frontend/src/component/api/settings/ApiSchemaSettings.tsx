@@ -126,75 +126,100 @@ const ApiSchemaSettings = () => {
         <Box>
             <Box overflow="auto" pt={3} pb={5} pl={5} pr={5} w={"100%"} h={"100%"} borderRadius="5px" borderWidth="1px" bgColor={"white"}>
                 <chakra.h1 fontWeight="bold" pt={3} pb={3} fontSize="23px">API スキーマ編集</chakra.h1>
+                <chakra.p color="#888" pt={"10px"} pb="20px" fontWeight="bold">
+                    ※優先度は各コンテンツの新規作成画面, 編集画面の項目を描画する際に, 先頭への順番を決めるために使用します. <br/>
+                    優先度の値が小さい項目ほど先頭に描画されます.
+                </chakra.p>
                 {
                     fields.map((e, i) => {
                         return <Box pt="10px" pb="10px">
                             <Flex borderWidth="1px" p="10px 26px 10px 26px" bgColor="white" w={"100%"}>
-                                <Box p="10px" flex="1 1 0%">
-                                    <chakra.p pb="20px" fontWeight="bold">
-                                        フィールドID
-                                    </chakra.p>
-                                    <Input onChange={(e) => {
-                                        let t = [...fields]
-                                        t[i] = {
-                                            ...t[i],
-                                            field_name: e.target.value
-                                        }
-                                        setFields(t)
-                                    }} value={fields[i].field_name}/>
-                                </Box>
-                                <Box p="10px" flex="1 1 0%">
-                                    <chakra.p pb="20px" fontWeight="bold">
-                                        種類
+                                <Box pr={"5px"}>
+                                    <chakra.p pt={"10px"} pb="20px" fontWeight="bold">
+                                        優先度
                                     </chakra.p>
                                     <Select onChange={(e) => {
                                         let t = [...fields]
                                         t[i] = {
                                             ...t[i],
-                                            type: e.target.value
+                                            priority: Number(e.target.value)
                                         }
                                         setFields(t)
-                                    }} value={fields[i].type} defaultValue='string' placeholder='未選択'>
-                                        <option value='string'>テキスト型</option>
-                                        <option value='number'>数値型</option>
-                                        <option value='boolean'>真偽値</option>
-                                        <option value='date'>日付型</option>
-                                        <option value='relation'>参照型</option>
+                                    }} value={fields[i].priority} defaultValue={String(e.priority)}>
+                                        {
+                                            Array.from({length: fields.length}, (v, k) => k).map(i=>{
+                                                return <option value={i}>{i}</option>
+                                            })
+                                        }
                                     </Select>
                                 </Box>
-                                {
-                                    e.type === "relation" ? <Box p="10px" flex="1 1 0%">
+                                <Flex w={"calc(100% - 100px)"}>
+                                    <Box p="10px" flex="1 1 0%">
                                         <chakra.p pb="20px" fontWeight="bold">
-                                            参照先API
+                                            フィールドID
+                                        </chakra.p>
+                                        <Input onChange={(e) => {
+                                            let t = [...fields]
+                                            t[i] = {
+                                                ...t[i],
+                                                field_name: e.target.value
+                                            }
+                                            setFields(t)
+                                        }} value={fields[i].field_name}/>
+                                    </Box>
+                                    <Box p="10px" flex="1 1 0%">
+                                        <chakra.p pb="20px" fontWeight="bold">
+                                            種類
                                         </chakra.p>
                                         <Select onChange={(e) => {
                                             let t = [...fields]
                                             t[i] = {
                                                 ...t[i],
-                                                relation_api: e.target.value
+                                                type: e.target.value
                                             }
                                             setFields(t)
-                                        }} value={fields[i].relation_api} defaultValue={undefined} placeholder='未選択'>
-                                            {
-                                                apis.map((e) => {
-                                                    return <option value={e.unique_id.valueOf()}>{apis.filter(i=>i.api_id === e.api_id)[0].api_id}</option>
-                                                })
-                                            }
+                                        }} value={fields[i].type} defaultValue='string' placeholder='未選択'>
+                                            <option value='string'>テキスト型</option>
+                                            <option value='number'>数値型</option>
+                                            <option value='boolean'>真偽値</option>
+                                            <option value='date'>日付型</option>
+                                            <option value='relation'>参照型</option>
                                         </Select>
-                                    </Box> : <></>
-                                }
-                                <Center>
+                                    </Box>
                                     {
-                                        fields.length > 1 ? <Button colorScheme="red" onClick={() => {
-                                            if (fields.length > 0) {
-                                                let t = fields.filter((j) => {
-                                                    return j.id !== e.id
-                                                })
+                                        e.type === "relation" ? <Box p="10px" flex="1 1 0%">
+                                            <chakra.p pb="20px" fontWeight="bold">
+                                                参照先API
+                                            </chakra.p>
+                                            <Select onChange={(e) => {
+                                                let t = [...fields]
+                                                t[i] = {
+                                                    ...t[i],
+                                                    relation_api: e.target.value
+                                                }
                                                 setFields(t)
-                                            }
-                                        }}>削除</Button> : <></>
+                                            }} value={fields[i].relation_api} defaultValue={undefined} placeholder='未選択'>
+                                                {
+                                                    apis.map((e) => {
+                                                        return <option value={e.unique_id.valueOf()}>{apis.filter(i=>i.api_id === e.api_id)[0].api_id}</option>
+                                                    })
+                                                }
+                                            </Select>
+                                        </Box> : <></>
                                     }
-                                </Center>
+                                    <Center>
+                                        {
+                                            fields.length > 1 ? <Button colorScheme="red" onClick={() => {
+                                                if (fields.length > 0) {
+                                                    let t = fields.filter((j) => {
+                                                        return j.id !== e.id
+                                                    })
+                                                    setFields(t)
+                                                }
+                                            }}>削除</Button> : <></>
+                                        }
+                                    </Center>
+                                </Flex>
                             </Flex>
                         </Box>
                     })
@@ -208,7 +233,8 @@ const ApiSchemaSettings = () => {
                             id: UUID.generate(),
                             field_name: "",
                             relation_api: "",
-                            type: ""
+                            type: "",
+                            priority: 0,
                         }])
                     }} aria-label={""}>
                         <AddIcon/>

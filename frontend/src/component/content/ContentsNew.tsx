@@ -21,7 +21,7 @@ const ContentsNew = () =>{
 
     const nav = useNavigate()
 
-    const fields = useSelector(getFields)[params.id ? params.id : ""]
+    const fields = useSelector(getFields)[params.id ? params.id : ""].map(i=>{return Object.assign({},i)}).sort((a,b)=> a.priority - b.priority)
 
     const [createContents,setCreateContents] = useState<{[id:string]:any}>((()=>{
         return fields.reduce(function(target, key, index) {

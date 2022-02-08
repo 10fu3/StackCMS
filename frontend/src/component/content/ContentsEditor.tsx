@@ -190,7 +190,7 @@ const ContentsEditor  = ()=>{
             <Box w="100%" pb="20px" pt={5} pl={1} pr={1} overflow="auto" h={"100%"}>
                 <Box w="100%">
                     {
-                        fields.map(f=>{
+                        fields.sort((a,b)=> a.priority - b.priority).map(f=>{
                             return <Box p={5}>
                                 <Box p={5} bgColor="white" borderWidth="1px" borderRadius="5px">
                                     <Box>

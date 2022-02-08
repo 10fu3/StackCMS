@@ -94,7 +94,8 @@ const ApiCreateField :React.FC<{
                         id: UUID.generate(),
                         field_name: "",
                         relation_api: "",
-                        type: ""
+                        type: "",
+                        priority: 0,
                     }]})
             }} aria-label={""}>
                 <AddIcon/>

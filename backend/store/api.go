@@ -58,7 +58,7 @@ func (d *Db) CreateApi(api model.Api) {
 
 		fmt.Println(f.RelationApiId)
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)", strings.ReplaceAll("a"+uuid.New().String(), "-", "_"), api.UniqueId, f.Name, f.Type, f.RelationApiId); err != nil {
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api,priority) VALUES(?,?,?,?,?,?)", strings.ReplaceAll("a"+uuid.New().String(), "-", "_"), api.UniqueId, f.Name, f.Type, f.RelationApiId, 0); err != nil {
 			continue
 		}
 	}

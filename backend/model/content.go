@@ -24,10 +24,11 @@ type Api struct {
 }
 
 type Field struct {
-	Id            string  `json:"id" db:"field_id"`
-	Name          string  `json:"field_name" db:"field_name"`
-	ApiId         string  `json:"api_id" db:"api_id"`
-	Type          string  `json:"type" db:"field_type"`
+	Id            string  `json:"id"          db:"field_id"`
+	Name          string  `json:"field_name"  db:"field_name"`
+	ApiId         string  `json:"api_id"      db:"api_id"`
+	Type          string  `json:"type"        db:"field_type"`
+	Priority      int     `json:"priority"    db:"priority"`
 	RelationApiId *string `json:"relation_api" db:"relation_api"`
 }
 

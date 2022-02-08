@@ -11,6 +11,7 @@ export interface FieldType{
     api_id:string,
     type:string,
     relation_api?:string
+    priority: number
 }
 
 export interface UpdateUserEntity {
@@ -20,19 +21,21 @@ export interface UpdateUserEntity {
     role: string[]
 }
 
-export interface RelationField extends FieldType{
-    id:string
-    field_name:string
-    api_id:string
-    type:string
-    relation_api?:string
-}
+// export interface RelationField extends FieldType{
+//     id:string
+//     field_name:string
+//     api_id:string
+//     type:string
+//     relation_api?:string
+//     priority: number
+// }
 
 export interface NormalField extends FieldType{
     id:string
     field_name:string
     api_id:string
     type:string
+    priority: number
 }
 
 export interface Role{

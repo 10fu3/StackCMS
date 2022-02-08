@@ -42,14 +42,14 @@ func (d *Db) CreateFields(apiId string, fields []model.Field, isUpdate bool) {
 			continue
 		}
 
-		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api) VALUES(?,?,?,?,?)",
+		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api,priority) VALUES(?,?,?,?,?,?)",
 			func() string {
 				if isUpdate {
 					return strings.ReplaceAll(f.Id, "-", "_")
 				}
 				return strings.ReplaceAll("a"+uuid.New().String(), "-", "_")
 			}(),
-			apiId, f.Name, f.Type, f.RelationApiId); err != nil {
+			apiId, f.Name, f.Type, f.RelationApiId, f.Priority); err != nil {
 			continue
 		}
 	}
