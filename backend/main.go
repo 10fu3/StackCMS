@@ -36,7 +36,13 @@ func main() {
 				"message": "config_error",
 			})
 		})
+		g.Run(fmt.Sprintf(":%s", config.Values.AppPort))
+		return
 	}
+
+	g.GET("/", func(ctx *gin.Context) {
+		ctx.Status(200)
+	})
 
 	g.Run(fmt.Sprintf(":%s", config.Values.AppPort))
 }
