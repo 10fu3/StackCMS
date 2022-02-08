@@ -131,6 +131,11 @@ func Db() error {
 	if err != nil {
 		return err
 	}
+	
+	store.Access.Db.SetMaxIdleConns(100)
+	store.Access.Db.SetMaxOpenConns(100)
+	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+
 	config.Values = config.GetFirstSetupConfig()
 
 	if err = DefineTables(store.Access.Db); err != nil {
