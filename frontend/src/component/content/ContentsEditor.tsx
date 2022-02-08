@@ -9,9 +9,18 @@ import {
     AlertDialogBody,
     AlertDialogContent, AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogOverlay, Button, chakra, Flex, Spacer
+    AlertDialogOverlay, Button, chakra, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer
 } from "@chakra-ui/react";
-import {ArrowBackIcon} from "@chakra-ui/icons";
+import {
+    AddIcon,
+    ArrowBackIcon,
+    CheckIcon,
+    DeleteIcon,
+    EditIcon,
+    HamburgerIcon,
+    RepeatIcon,
+    ViewIcon
+} from "@chakra-ui/icons";
 import {BooleanEditor, NumberEditor, RelationEditor, TextEditor} from "./ContentEditorComponent";
 import {getContents} from "../../store/contents";
 import NotFound from "../NotFound";
@@ -135,43 +144,47 @@ const ContentsEditor  = ()=>{
             </AlertDialogOverlay>
         </AlertDialog>
 
-        <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
-            <Flex w={"100%"}>
-                <Center>
-                    <Link to={`/api/${params.id}`}>
-                        <ArrowBackIcon/>
-                    </Link>
-                </Center>
-                <Center>
-                    <Box pl={4}>
-                        <chakra.p fontWeight="bold">{params.id} / 編集</chakra.p>
-                    </Box>
-                </Center>
-                <Spacer/>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme="red" onClick={handleDelete}>
-                        削除
-                    </Button>
-                </Box>
-                <Box pl={2} pr={2}>
-                    <Button onClick={handleGoPreview}>
-                        下書きをプレビュー
-                    </Button>
-                </Box>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme={(contents as ContentMeta).published_at ? "yellow" : "blue"} onClick={handleChangePublish}>
-                        {
-                            (contents as ContentMeta).published_at ? "下書きに戻す" : "公開する"
-                        }
-                    </Button>
-                </Box>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme="green" onClick={handleUpdate}>
-                        更新
-                    </Button>
-                </Box>
-            </Flex>
-        </Center>
+        <Box pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
+            <Center h={"100%"}>
+                <Flex w={"100%"}>
+                    <Center>
+                        <Link to={`/api/${params.id}`}>
+                            <ArrowBackIcon/>
+                        </Link>
+                    </Center>
+                    <Center>
+                        <Box pl={4}>
+                            <chakra.p fontWeight="bold">{params.id} / 編集</chakra.p>
+                        </Box>
+                    </Center>
+                    <Spacer/>
+                    <Menu>
+                        <MenuButton
+                            as={IconButton}
+                            aria-label='Options'
+                            icon={<HamburgerIcon />}
+                            variant='outline'
+                        />
+                        <MenuList>
+                            <MenuItem icon={<DeleteIcon color={"#E53E3E"}/>} onClick={handleDelete}>
+                                削除
+                            </MenuItem>
+                            <MenuItem icon={<ViewIcon/>} onClick={handleGoPreview}>
+                                下書きをプレビュー
+                            </MenuItem>
+                            <MenuItem icon={(contents as ContentMeta).published_at ? <EditIcon color={"#319795"}/> : <CheckIcon color={"#3182ce"}/>} onClick={handleChangePublish}>
+                                {
+                                    (contents as ContentMeta).published_at ? "下書きに戻す" : "公開"
+                                }
+                            </MenuItem>
+                            <MenuItem icon={<RepeatIcon color={"#38A169"}/>} colorScheme="green" onClick={handleUpdate}>
+                                更新
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </Flex>
+            </Center>
+        </Box>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
             <Box w="100%" pb="20px" pt={5} pl={1} pr={1} overflow="auto" h={"100%"}>
