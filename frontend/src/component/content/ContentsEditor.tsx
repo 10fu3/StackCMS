@@ -16,11 +16,14 @@ import {BooleanEditor, NumberEditor, RelationEditor, TextEditor} from "./Content
 import {getContents} from "../../store/contents";
 import NotFound from "../NotFound";
 import {ContentMeta} from "../../model/model";
+import {getApis} from "../../store/apis";
 
 const ContentsEditor  = ()=>{
     const params = useParams<"id"|"contents_id">()
 
     const fields = useSelector(getFields)[params.id ? params.id : ""]
+
+    const api = useSelector(getApis).filter(i=>i.api_id === params.id)
 
     const [contents,setContents] = useState<{[id:string]:any}>({})
 
@@ -71,6 +74,15 @@ const ContentsEditor  = ()=>{
                 nav(-1)
             }
         })()
+    }
+
+    const handleGoPreview = ()=>{
+        if(api.length === 1 && api[0].preview_url && api[0].preview_url.length > 0){
+            const link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",contents["_id"])
+            window.open(link)
+            return
+        }
+        alert("APIにプレビュー用のURLが設定されていません.")
     }
 
     const handleChangePublish = ()=>{
@@ -139,6 +151,11 @@ const ContentsEditor  = ()=>{
                 <Box pl={2} pr={2}>
                     <Button colorScheme="red" onClick={handleDelete}>
                         削除
+                    </Button>
+                </Box>
+                <Box pl={2} pr={2}>
+                    <Button onClick={handleGoPreview}>
+                        下書きをプレビュー
                     </Button>
                 </Box>
                 <Box pl={2} pr={2}>

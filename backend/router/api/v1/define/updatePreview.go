@@ -5,7 +5,6 @@ import (
 	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -36,14 +35,14 @@ func UpdatePreview() gin.HandlerFunc {
 		routerUtil.IsAuthorization(ctx, []routerUtil.AbilityFunc{{
 			Abilities: []model.Ability{model.AbilityUpdateApi},
 			WhenYes: func(id string) {
-
-				if req.PreviewURL == nil {
-					key := uuid.NewString() + "-" + uuid.NewString()
-					api.PreviewSecret = &key
-				} else {
-					api.PreviewURL = req.PreviewURL
+				newApi := model.Api{
+					UniqueId:        api.UniqueId,
+					IsSingleContent: api.IsSingleContent,
+					Id:              api.Id,
+					Fields:          nil,
+					PreviewURL:      req.PreviewURL,
 				}
-				store.Access.UpdateApi(api.UniqueId, *api)
+				store.Access.UpdateApi(api.UniqueId, newApi)
 			},
 		}})
 	}

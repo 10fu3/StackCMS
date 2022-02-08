@@ -1,5 +1,5 @@
 import {Box, Center} from "@chakra-ui/layout";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {Button, chakra, Flex, Spacer} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {ClientEntity} from "../../../model/model";
@@ -24,9 +24,19 @@ const ClientDetail = ()=>{
         "Content.Delete.All":"削除",
     }
 
+    const nav = useNavigate()
+
     useEffect(()=>{
         store.dispatch(setClientById(params.client_id ? params.client_id : ""))
     },[])
+
+    const deleteHandle = ()=>{
+        (async ()=>{
+            if(await CMSApi.Clients.delete(params.client_id ? params.client_id : "")){
+                nav(-1)
+            }
+        })()
+    }
 
     return <Box w={"100%"} h={"100vh"}>
         <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
@@ -46,6 +56,11 @@ const ClientDetail = ()=>{
                             編集
                         </Button>
                     </Link>
+                </Box>
+                <Box pl={2} pr={2}>
+                    <Button onClick={deleteHandle} colorScheme="red">
+                        削除
+                    </Button>
                 </Box>
             </Flex>
         </Center>

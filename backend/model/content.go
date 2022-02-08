@@ -20,7 +20,7 @@ type Api struct {
 	Id              string  `json:"api_id" db:"api_id"`
 	Fields          []Field `json:"fields" db:"-"`
 	PreviewURL      *string `json:"preview_url" db:"preview_url"`
-	PreviewSecret   *string `json:"preview_secret" db:"preview_secret"`
+	//PreviewSecret   *string `json:"preview_secret" db:"preview_secret"`
 }
 
 type Field struct {

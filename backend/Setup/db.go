@@ -42,7 +42,7 @@ func DefineTables(db *sqlx.DB) error {
 		"CREATE TABLE IF NOT EXISTS user_role (user_role_id VARCHAR(80) not null primary key,user_id VARCHAR(40),role_id VARCHAR(40))",
 		"CREATE TABLE IF NOT EXISTS role_ability(role_ability_id VARCHAR(80) not null primary key,role_id VARCHAR(40),ability_id VARCHAR(512))",
 		"CREATE TABLE IF NOT EXISTS client_ability(client_ability_id VARCHAR(80) not null primary key,client_id VARCHAR(40),ability_id VARCHAR(512))",
-		"CREATE TABLE IF NOT EXISTS apis (id VARCHAR(40) not null primary key,is_single BOOLEAN not null, preview_url VARCHAR(2000), preview_secret VARCHAR(50), api_id VARCHAR(40))",
+		"CREATE TABLE IF NOT EXISTS apis (id VARCHAR(40) not null primary key,is_single BOOLEAN not null, preview_url VARCHAR(2000), api_id VARCHAR(40))",
 		"CREATE TABLE IF NOT EXISTS fields (field_id VARCHAR(40) not null primary key, api_id VARCHAR(40), field_name VARCHAR(40),field_type VARCHAR(40), relation_api VARCHAR(40))",
 		"CREATE TABLE IF NOT EXISTS clients (client_id VARCHAR(80) primary key , client_name VARCHAR(80), client_secret VARCHAR(512) not null )",
 	}

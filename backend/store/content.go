@@ -53,7 +53,7 @@ func (d *Db) buildQuery(
 	nowDepth int,
 	maxDepth int) []bson.M {
 
-	parent := []bson.M{}
+	var parent []bson.M
 
 	if maxDepth < nowDepth {
 		return parent
@@ -66,6 +66,24 @@ func (d *Db) buildQuery(
 	}
 
 	if query != nil {
+		if len(query.Filter) == 0 {
+			query.Filter = map[string]interface{}{}
+		}
+		if !query.GetDraft {
+			parent = append(parent, bson.M{
+				"$match": bson.M{
+					"$and": []bson.M{{
+						"published_at": bson.M{
+							"$exists": true,
+						},
+					}, {
+						"published_at": bson.M{
+							"$ne": nil,
+						},
+					}},
+				},
+			})
+		}
 		parent = append(parent, bson.M{
 			"$sort": func() bson.M {
 				if query.GetDraft {

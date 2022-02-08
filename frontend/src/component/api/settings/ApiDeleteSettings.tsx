@@ -109,6 +109,7 @@ const ApiDeleteSettings:React.FC<{}> = (props)=>{
             </AlertDialogOverlay>
         </AlertDialog>
         <Box overflow="auto" p={10} w={"100%"} h={"100%"} borderRadius="5px" borderWidth="1px" bgColor={"white"}>
+            <chakra.h1 fontWeight="bold" pt={3} pb={3} fontSize="23px">削除</chakra.h1>
             <chakra.p>
                 <chakra.p fontWeight="bold">
                     {params.id} APIの全コンテンツを削除

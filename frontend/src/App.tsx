@@ -28,6 +28,7 @@ import ClientList from "./component/manage/client/ClientList";
 import ClientCreate from "./component/manage/client/ClientCreate";
 import ClientDetail from "./component/manage/client/ClientDetail";
 import ClientEdit from "./component/manage/client/ClientEdit";
+import ApiPreviewSettings from "./component/api/settings/ApiPreviewSettings";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
@@ -59,7 +60,7 @@ const App:React.FC = ()=>{
         <Route path="api/:id/settings/" element={<ApiSettings/>}>
           <Route path="" element={<Box>1</Box>}/>
           <Route path="schema" element={<ApiSchemaSettings/>}/>
-          <Route path="preview" element={<Box>2</Box>}/>
+          <Route path="preview" element={<ApiPreviewSettings/>}/>
           <Route path="webhook" element={<Box>3</Box>}/>
           <Route path="delete" element={<ApiDeleteSettings/>}/>
         </Route>

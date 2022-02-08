@@ -70,7 +70,7 @@ func (d *Db) CreateApi(api model.Api) {
 }
 
 func (d *Db) UpdateApi(id string, api model.Api) {
-	d.Db.Exec("UPDATE apis SET api_id = ?, is_single = ? WHERE id = ?", api.Id, api.IsSingleContent, id)
+	d.Db.Exec("UPDATE apis SET api_id = ?, is_single = ?, preview_url = ? WHERE id = ?", api.Id, api.IsSingleContent, api.PreviewURL, id)
 }
 
 func (d *Db) GetApis() []model.Api {

@@ -125,6 +125,7 @@ const ApiSchemaSettings = () => {
 
         <Box>
             <Box overflow="auto" pt={3} pb={5} pl={5} pr={5} w={"100%"} h={"100%"} borderRadius="5px" borderWidth="1px" bgColor={"white"}>
+                <chakra.h1 fontWeight="bold" pt={3} pb={3} fontSize="23px">API スキーマ編集</chakra.h1>
                 {
                     fields.map((e, i) => {
                         return <Box pt="10px" pb="10px">

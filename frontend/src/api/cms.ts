@@ -71,15 +71,15 @@ export const CMSApi = (()=>{
                 },
                 update: (()=>{
                     return {
-                        Preview: async (api_id:string,changedName?:string)=>{
+                        Preview: async (api_id:string,url?:string)=>{
                             const k = localStorage.getItem("authorization");
-                            const r = (await fetch(API_LOC()+`define/${api_id}/preview_url`,{
+                            const r = (await fetch(API_LOC()+`define/${api_id}/preview`,{
                                 headers: new Headers({
                                     authorization: k ? k : ""
                                 }),
                                 method: "PATCH",
-                                body: JSON.stringify(changedName ? {
-                                    preview_url: changedName
+                                body: JSON.stringify(url ? {
+                                    preview_url: url
                                 } : {})
                             }))
                             if (r.status === 401){
