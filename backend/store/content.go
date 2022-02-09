@@ -27,6 +27,7 @@ func getFieldMeta(d *Db) map[string]map[string]model.Field {
 		rs[api.UniqueId] = map[string]model.Field{}
 		for _, field := range api.Fields {
 			rs[api.UniqueId][field.Id] = field
+			rs[api.UniqueId][field.Name] = field
 		}
 	}
 
@@ -63,10 +64,9 @@ func (d *Db) buildQuery(
 		fieldCache = getFieldMeta(d)
 	}
 
+	thisApiFields := fieldCache[apiId]
+
 	if query != nil {
-		if len(query.Filter) == 0 {
-			query.Filter = map[string]interface{}{}
-		}
 		if !query.GetDraft {
 			parent = append(parent, bson.M{
 				"$match": bson.M{
@@ -84,9 +84,11 @@ func (d *Db) buildQuery(
 		}
 		parent = append(parent, bson.M{
 			"$sort": func() bson.M {
-				if query.GetDraft {
-					return bson.M{
-						"created_at": -1,
+				if len(query.Order) == 0 {
+					if query.GetDraft {
+						return bson.M{
+							"created_at": -1,
+						}
 					}
 				}
 				return bson.M{
@@ -106,8 +108,6 @@ func (d *Db) buildQuery(
 			})
 		}
 	}
-
-	thisApiFields := fieldCache[apiId]
 
 	for fieldId, field := range thisApiFields {
 
@@ -194,12 +194,6 @@ func (d *Db) GetContent(query model.GetQuery) []map[string]interface{} {
 		return 0
 	}())
 
-	//b, _ := json.Marshal(mondoQuery)
-
-	//fmt.Println("")
-	//fmt.Println(string(b))
-	//fmt.Println("")
-
 	content, err := d.ContentDb.Collection(query.ApiId).Aggregate(d.Ctx, mondoQuery)
 	if err != nil {
 		return nil
@@ -249,18 +243,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	meta.CreatedBy = createdBy
 	meta.UpdatedBy = createdBy
 
-	for _, k := range []string{
-		"_id",
-		"created_at",
-		"created_by",
-		"deleted_at",
-		"published_at",
-		"revised_at",
-		"updated_at",
-		"updated_by",
-		"publish_will",
-		"stop_will",
-	} {
+	for _, k := range model.DefinedMeta {
 		delete(content, k)
 	}
 

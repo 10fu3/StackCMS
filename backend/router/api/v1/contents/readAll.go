@@ -11,7 +11,15 @@ import (
 	"strings"
 )
 
-func buildQuery(fields map[string]bool, apiId string, userFilter map[string]interface{}, isDraft bool, offset int64, limit int64, depth int, serverFilter map[string]interface{}) model.GetQuery {
+func buildQuery(
+	fields map[string]bool, apiId string,
+	userFilter map[string]interface{},
+	isDraft bool,
+	offset int64,
+	limit int64,
+	depth int,
+	order []model.OrderRequest,
+	serverFilter map[string]interface{}) model.GetQuery {
 
 	filter := userFilter
 
@@ -29,6 +37,7 @@ func buildQuery(fields map[string]bool, apiId string, userFilter map[string]inte
 		Fields:   fields,
 		GetMeta:  false,
 		GetDraft: isDraft,
+		Order:    order,
 		Depth:    depth,
 	}
 }
@@ -84,7 +93,29 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 		return s
 	}()
 
-	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit, depth, serverFilter)
+	order := func() []model.OrderRequest {
+		r := []model.OrderRequest{}
+		rawQuery := ctx.Query("orders")
+		if len(rawQuery) == 0 {
+			return r
+		}
+		for _, fieldMode := range strings.Split(rawQuery, ",") {
+			if len(fieldMode) == 0 {
+				continue
+			}
+			in := model.OrderRequest{
+				Field:      strings.Replace(fieldMode, "-", "", 1),
+				Descending: false,
+			}
+			if !strings.HasPrefix("-", fieldMode) {
+				in.Descending = true
+			}
+			r = append(r, in)
+		}
+		return r
+	}()
+
+	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit, depth, order, serverFilter)
 }
 
 type response struct {

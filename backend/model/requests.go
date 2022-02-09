@@ -19,6 +19,18 @@ func (a *AuthType) GetClient() *Client {
 	return nil
 }
 
+type ResultCount struct {
+	Offset int64
+	Limit  int64
+}
+
+type SortOrder string
+
+type OrderRequest struct {
+	Field      string
+	Descending bool
+}
+
 type GetQuery struct {
 	Count    ResultCount
 	ApiId    string
@@ -27,4 +39,5 @@ type GetQuery struct {
 	GetMeta  bool
 	GetDraft bool
 	Depth    int
+	Order    []OrderRequest
 }

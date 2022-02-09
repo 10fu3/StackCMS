@@ -9,3 +9,11 @@ package util
 //		}
 //	}
 //}
+
+func StringSliceToBooleanMap(l []string) map[string]bool {
+	r := map[string]bool{}
+	for _, k := range l {
+		r[k] = true
+	}
+	return r
+}
