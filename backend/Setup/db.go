@@ -161,7 +161,20 @@ func Db() error {
 	store.Access.Db.SetMaxOpenConns(100)
 	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
 
-	config.Values = config.GetFirstSetupConfig()
+	func() {
+		tickChan := time.NewTicker(time.Minute * 14).C
+		for {
+			select {
+			case <-tickChan:
+				fmt.Println("re-connect sql")
+				if e := store.Access.Db.Close(); err != nil {
+					fmt.Println(e.Error())
+				}
+				store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+				fmt.Println(err.Error())
+			}
+		}
+	}()
 
 	if config.Values.CreateTable {
 		fmt.Println("CREATE TABLE MODE IS ON")
@@ -187,6 +200,5 @@ func Db() error {
 			}
 		}
 	}
-
-	return ConnectMongoDB()
+	return err
 }
