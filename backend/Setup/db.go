@@ -161,19 +161,23 @@ func Db() error {
 	store.Access.Db.SetMaxOpenConns(100)
 	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
 
-	func() {
-		tickChan := time.NewTicker(time.Minute * 14).C
-		for {
-			select {
-			case <-tickChan:
-				fmt.Println("re-connect sql")
-				if e := store.Access.Db.Close(); err != nil {
-					fmt.Println(e.Error())
+	go func() {
+		_ = time.AfterFunc(time.Minute, func() {
+			go func() {
+				tickChan := time.NewTicker(time.Minute * 14).C
+				for {
+					select {
+					case <-tickChan:
+						fmt.Println("re-connect sql")
+						if e := store.Access.Db.Close(); err != nil {
+							fmt.Println(e.Error())
+						}
+						store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+						fmt.Println(err.Error())
+					}
 				}
-				store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
-				fmt.Println(err.Error())
-			}
-		}
+			}()
+		})
 	}()
 
 	if config.Values.CreateTable {
