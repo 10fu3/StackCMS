@@ -31,6 +31,13 @@ type OrderRequest struct {
 	Descending bool
 }
 
+func (o OrderRequest) DescendingToRaw() int {
+	if o.Descending {
+		return -1
+	}
+	return 1
+}
+
 type GetQuery struct {
 	Count    ResultCount
 	ApiId    string

@@ -107,7 +107,7 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 				Field:      strings.Replace(fieldMode, "-", "", 1),
 				Descending: false,
 			}
-			if !strings.HasPrefix("-", fieldMode) {
+			if strings.HasPrefix(fieldMode, "-") {
 				in.Descending = true
 			}
 			r = append(r, in)

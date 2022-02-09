@@ -1,6 +1,7 @@
 package model
 
 import (
+	"StackCMS/util"
 	"github.com/google/uuid"
 	"time"
 )
@@ -67,6 +68,8 @@ var DefinedMeta = []string{
 	"publish_will",
 	"stop_will",
 }
+
+var DefinedMetaMap = util.StringSliceToBooleanMap(DefinedMeta)
 
 func (c *Content) ToJson() map[string]interface{} {
 	r := map[string]interface{}{}

@@ -281,6 +281,8 @@ export const CMSApi = (()=>{
                         return []
                     }
                     const url = new URL(API_LOC()+`contents/${api_id}`)
+                    url.searchParams.append('depth','1')
+                    url.searchParams.append('orders','-created_at')
                     url.searchParams.append('draft','true')
 
                     const r = (await fetch(url.toString(),{

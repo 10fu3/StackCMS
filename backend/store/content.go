@@ -18,15 +18,18 @@ type Contents interface {
 }
 
 // API -> FieldId -> Field
-func getFieldMeta(d *Db) map[string]map[string]model.Field {
+func getFieldMeta(d *Db) (map[string]map[string]model.Field, map[string]map[string]model.Field) {
 	rs := map[string]map[string]model.Field{}
+	rFieldName := map[string]map[string]model.Field{}
 	for _, api := range d.GetApis() {
 		if _, ok := rs[api.UniqueId]; ok {
 			continue
 		}
 		rs[api.UniqueId] = map[string]model.Field{}
+		rFieldName[api.UniqueId] = map[string]model.Field{}
 		for _, field := range api.Fields {
 			rs[api.UniqueId][field.Id] = field
+			rFieldName[api.UniqueId][field.Name] = field
 		}
 	}
 
@@ -37,17 +40,19 @@ func getFieldMeta(d *Db) map[string]map[string]model.Field {
 			}
 			if _, ok := rs[*field.RelationApiId]; !ok {
 				delete(rs[k], fName)
+				delete(rFieldName[k], fName)
 			}
 		}
 	}
 
-	return rs
+	return rs, rFieldName
 }
 
 func (d *Db) buildQuery(
 	query *model.GetQuery,
 	apiId string,
 	fieldCache map[string]map[string]model.Field,
+	fieldNameCache map[string]map[string]model.Field,
 	nowDepth int,
 	maxDepth int) []bson.M {
 
@@ -59,8 +64,8 @@ func (d *Db) buildQuery(
 
 	displayFieldNames := map[string]interface{}{}
 
-	if len(fieldCache) == 0 {
-		fieldCache = getFieldMeta(d)
+	if len(fieldCache) == 0 || len(fieldNameCache) == 0 {
+		fieldCache, fieldNameCache = getFieldMeta(d)
 	}
 
 	if query != nil {
@@ -84,16 +89,31 @@ func (d *Db) buildQuery(
 		}
 		parent = append(parent, bson.M{
 			"$sort": func() bson.M {
-				if query.GetDraft {
+				if len(query.Order) == 0 {
+					if query.GetDraft {
+						return bson.M{
+							"created_at": -1,
+						}
+					}
 					return bson.M{
-						"created_at": -1,
+						"published_at": -1,
 					}
 				}
-				return bson.M{
-					"published_at": -1,
-				}
+				return func() bson.M {
+					option := bson.M{}
+					fieldMap := model.DefinedMetaMap
+					for _, o := range query.Order {
+						if _, ok := fieldMap[o.Field]; ok {
+							option[o.Field] = o.DescendingToRaw()
+							continue
+						}
+						option[fieldNameCache[apiId][o.Field].Id] = o.DescendingToRaw()
+					}
+					return option
+				}()
 			}(),
 		})
+
 		if query.Count.Limit > 0 {
 			parent = append(parent, bson.M{
 				"$limit": query.Count.Limit,
@@ -125,7 +145,7 @@ func (d *Db) buildQuery(
 
 				displayFieldNames[field.Name] = 1
 
-				findResult := d.buildQuery(nil, *field.RelationApiId, fieldCache, nowDepth+1, maxDepth)
+				findResult := d.buildQuery(nil, *field.RelationApiId, fieldCache, fieldNameCache, nowDepth+1, maxDepth)
 
 				if len(findResult) > 0 {
 					option["$lookup"] = bson.M{
@@ -187,17 +207,12 @@ func (d *Db) GetContent(query model.GetQuery) []map[string]interface{} {
 		return nil
 	}
 
-	mondoQuery := d.buildQuery(&query, api.UniqueId, map[string]map[string]model.Field{}, 0, func() int {
+	mondoQuery := d.buildQuery(&query, api.UniqueId, map[string]map[string]model.Field{}, map[string]map[string]model.Field{}, 0, func() int {
 		if query.Depth <= 5 && 0 <= query.Depth {
 			return query.Depth
 		}
 		return 0
 	}())
-
-	//b, _ := json.Marshal(mondoQuery)
-	//fmt.Println("")
-	//fmt.Println(string(b))
-	//fmt.Println("")
 
 	content, err := d.ContentDb.Collection(query.ApiId).Aggregate(d.Ctx, mondoQuery)
 	if err != nil {
