@@ -195,7 +195,6 @@ func (d *Db) GetContent(query model.GetQuery) []map[string]interface{} {
 	}())
 
 	//b, _ := json.Marshal(mondoQuery)
-
 	//fmt.Println("")
 	//fmt.Println(string(b))
 	//fmt.Println("")
