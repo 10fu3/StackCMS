@@ -173,7 +173,9 @@ func Db() error {
 							fmt.Println(e.Error())
 						}
 						store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
-						fmt.Println(err.Error())
+						if err != nil {
+							fmt.Println(err.Error())
+						}
 					}
 				}
 			}()
