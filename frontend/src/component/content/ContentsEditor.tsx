@@ -219,7 +219,7 @@ const ContentsEditor  = ()=>{
                                             if("boolean" === f.type){
                                                 return <BooleanEditor value={contents[f.field_name]} onChange={(e)=>{
                                                     const c = {...contents}
-                                                    c[f.field_name] = e
+                                                    c[f.field_name] = String(c[f.field_name]) !== "true"
                                                     setContents(c)
                                                 }}/>
                                             }

@@ -197,7 +197,7 @@ const ContentsList = ()=>{
                                                             </ul>
                                                         }
                                                         return ""
-                                                    })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
+                                                    })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{String(e[i.field_name])}</chakra.p></Box>
                                                 }
                                             </chakra.th>
                                         })

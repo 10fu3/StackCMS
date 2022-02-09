@@ -23,7 +23,10 @@ export interface EditorProps{
 
 export const TextEditor:React.FC<EditorProps> = (props)=>{
     return <Box pt={1}>
-        <Textarea value={props.value} onChange={(e)=>{
+        <Textarea
+                  rows={String(props.value).split("\n").length}
+                  value={props.value}
+                  onChange={(e)=>{
             props.onChange(e.target.value)
         }} placeholder='ここにテキストをタイプします' />
     </Box>
@@ -31,7 +34,7 @@ export const TextEditor:React.FC<EditorProps> = (props)=>{
 
 export const BooleanEditor:React.FC<EditorProps> = (props)=>{
     return <Box pt={1}>
-        <Switch onClick={(e)=>{props.onChange(e)}} colorScheme="green"/>
+        <Switch isChecked={props.value} onChange={(e)=>{props.onChange(e)}} colorScheme="green"/>
     </Box>
 }
 
