@@ -1,5 +1,5 @@
 import {Box, Center} from "@chakra-ui/layout";
-import {Button, chakra, Flex, Spacer, Table} from "@chakra-ui/react";
+import {Button, chakra, Divider, Flex, Spacer, Table} from "@chakra-ui/react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {CSSProperties, useEffect, useState} from "react";
 import {getContents, setContents} from "../../store/contents";
@@ -9,6 +9,7 @@ import {ContentMeta, FieldType} from "../../model/model";
 import {toJapaneseFromFieldType} from "../../api/cms";
 import store from "../../store";
 import {getApis} from "../../store/apis";
+import { Virtuoso } from "react-virtuoso";
 
 const ContentsList = ()=>{
 
@@ -56,7 +57,7 @@ const ContentsList = ()=>{
             }
             inputs.push(input)
         }
-        setFields(inputs)
+        setFields(inputs.map(i=>Object.assign({},{...i})).sort((a,b)=> a.priority - b.priority))
     },[rawFields])
 
     return rawFields[params.id ? params.id : ""] ? <Box w={"100%"} h={"100vh"}>
@@ -86,12 +87,12 @@ const ContentsList = ()=>{
         </Center>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
-            <Box w="100%" pt="10px" pb="20px" pl={5} pr={5} overflow="auto" h={"100%"}>
+            <Box w="100%" pt="10px" pb="20px" pl={5} pr={5}>
                 <Box w="100%">
-                    <chakra.table style={{width:"100%",tableLayout:"fixed"}}>
+                    <chakra.table style={{width:"calc(100% - 14px)",tableLayout:"fixed"}}>
                         <chakra.thead style={{width:"100%"}}>
-                        <chakra.tr>
-                            <chakra.th style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
+                            <chakra.tr h={"100%"}>
+                            <chakra.th h={"100%"} style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
                                 <Box>
                                     ステータス
                                 </Box>
@@ -132,20 +133,21 @@ const ContentsList = ()=>{
                         </chakra.tr>
                         </chakra.thead>
                     </chakra.table>
-                    <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
-                        <tbody style={{width:"100%"}}>
-                        {
-                            contents ? contents.map((e,j)=>{
-                                return <tr
+                    <Box style={{width:"100%",paddingTop:10,borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
+                        <Virtuoso style={{height: 'calc( 100vh - 175px)',width:"100%"}} followOutput={true} totalCount={contents ? contents.length : 0} itemContent={
+                            i => {
+                                let e = contents[i]
+                                return <Flex
                                     onClick={()=>{
                                         nav(`/api/${params.id}/${e["_id"]}`)
                                     }}
                                     style={{
+                                        paddingBottom:"10px",
                                         width:"100%",
                                         cursor:"pointer",
                                     }}>
                                     {
-                                        <th style={{
+                                        <Center style={{
                                             backgroundColor:"white",
                                             width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
                                             borderRadius:"5px 0 0 5px",
@@ -159,19 +161,20 @@ const ContentsList = ()=>{
                                                 <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>
                                                     {
                                                         e["published_at"] ? <Box>
-                                                            <Box>公開済み</Box>
-                                                            <Box>{new Date(e["published_at"]).toLocaleString()}</Box></Box> :
+                                                                <Box>公開済み</Box>
+                                                                <Box>{new Date(e["published_at"]).toLocaleString()}</Box></Box> :
                                                             "下書き"
                                                     }
                                                 </Box>
                                             </Center>
-                                        </th>
+                                        </Center>
                                     }
                                     {
-                                        rawFields[params.id !== undefined ? params.id : ""].map((i,j)=>{
+                                        fields.map((i,j)=>{
                                             const fs = rawFields[params.id !== undefined ? params.id : ""]
-                                            return <chakra.th
+                                            return <Center
                                                 style={{
+                                                    //overflow: "hidden",
                                                     backgroundColor:"white",
                                                     ...unionCellCss,
                                                     width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
@@ -186,27 +189,28 @@ const ContentsList = ()=>{
                                                     borderRight: j === fs.length-1 ? "1px solid #e7e7e7" : "",
                                                     fontWeight:"normal",
                                                 }}>
-                                                {
-                                                    (typeof e[i.field_name]) === "object" ? (()=>{
-                                                        const r = (e[i.field_name] as ContentMeta[])
-                                                        if(r && r.length > 0){
-                                                            return <ul style={{maxHeight:"100px"}}>
-                                                                {
-                                                                    r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
-                                                                }
-                                                            </ul>
-                                                        }
-                                                        return ""
-                                                    })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{String(e[i.field_name])}</chakra.p></Box>
-                                                }
-                                            </chakra.th>
+                                                <Box overflow="hidden">
+                                                    {
+                                                        (typeof e[i.field_name]) === "object" ? (()=>{
+                                                            const r = (e[i.field_name] as ContentMeta[])
+                                                            if(r && r.length > 0){
+                                                                return <ul style={{maxHeight:"100px"}}>
+                                                                    {
+                                                                        r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                            return ""
+                                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{String(e[i.field_name])}</chakra.p></Box>
+                                                    }
+                                                </Box>
+                                            </Center>
                                         })
                                     }
-                                </tr>
-                            }) : <></>
-                        }
-                        </tbody>
-                    </table>
+                                </Flex>
+                            }
+                        }/>
+                    </Box>
                 </Box>
             </Box>
         </Box>

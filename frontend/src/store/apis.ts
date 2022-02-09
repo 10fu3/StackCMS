@@ -1,5 +1,5 @@
 import {createSlice, Dispatch} from "@reduxjs/toolkit";
-import {Api, FieldType, Role} from "../model/model";
+import {Api} from "../model/model";
 import {CMSApi} from "../api/cms";
 
 const initialState:Api[] = []
