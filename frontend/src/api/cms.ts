@@ -280,7 +280,7 @@ export const CMSApi = (()=>{
                     if(k === null){
                         return []
                     }
-                    const url = new URL(API_LOC()+`contents/${api_id}?depth=1`)
+                    const url = new URL(API_LOC()+`contents/${api_id}`)
                     url.searchParams.append('draft','true')
 
                     const r = (await fetch(url.toString(),{
