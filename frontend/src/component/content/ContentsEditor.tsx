@@ -30,7 +30,7 @@ import {getApis} from "../../store/apis";
 const ContentsEditor  = ()=>{
     const params = useParams<"id"|"contents_id">()
 
-    const fields = useSelector(getFields)[params.id ? params.id : ""]
+    const fields = useSelector(getFields)[params.id ? params.id : ""].map(i=>{return Object.assign({},i)}).sort((a,b)=> a.priority - b.priority)
 
     const api = useSelector(getApis).filter(i=>i.api_id === params.id)
 
@@ -190,7 +190,7 @@ const ContentsEditor  = ()=>{
             <Box w="100%" pb="20px" pt={5} pl={1} pr={1} overflow="auto" h={"100%"}>
                 <Box w="100%">
                     {
-                        fields.sort((a,b)=> a.priority - b.priority).map(f=>{
+                        fields.map(f=>{
                             return <Box p={5}>
                                 <Box p={5} bgColor="white" borderWidth="1px" borderRadius="5px">
                                     <Box>
