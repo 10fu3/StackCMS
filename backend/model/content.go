@@ -9,11 +9,6 @@ type JSON map[string]interface{}
 
 type FilterType string
 
-type ResultCount struct {
-	Offset int64
-	Limit  int64
-}
-
 type Api struct {
 	UniqueId        string  `json:"unique_id" db:"id"`
 	IsSingleContent bool    `json:"is_single" db:"is_single"`
