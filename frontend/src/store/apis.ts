@@ -11,7 +11,11 @@ export const getApis = (state:{ apis:Api[] }):Api[] => {
 export function setApis(){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            dispatch(slice.actions.setApis(await CMSApi.Api.getAll()));
+            let d : Api[] = await CMSApi.Api.getAll()
+            if(!d.length){
+               d = []
+            }
+            dispatch(slice.actions.setApis(d));
         })()
     }
 }
@@ -23,6 +27,9 @@ const slice = createSlice({
         setApis: (state, action) => {
             if(!action.payload){
                 return undefined
+            }
+            if(action.payload["message"]){
+                return []
             }
             return [
                 ...action.payload

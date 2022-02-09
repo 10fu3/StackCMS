@@ -1,6 +1,6 @@
 import {createSlice, Dispatch} from "@reduxjs/toolkit";
 import {CMSApi} from "../api/cms";
-import {ClientEntity} from "../model/model";
+import {Api, ClientEntity} from "../model/model";
 
 const initialState:ClientEntity[] = []
 
@@ -11,7 +11,11 @@ export const getClients = (state:{ clients:ClientEntity[] }):ClientEntity[] => {
 export function setClients(){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            dispatch(slice.actions.setClients(await CMSApi.Clients.getAll()));
+            let d = await CMSApi.Clients.getAll()
+            if(!d || d.length === 0){
+                d = []
+            }
+            dispatch(slice.actions.setClients(d));
         })()
     }
 }
@@ -32,6 +36,9 @@ const slice = createSlice({
             if(!action.payload){
                 return []
             }
+            if(action.payload["message"]){
+                return []
+            }
             return [
                 ...action.payload
             ];
@@ -40,7 +47,6 @@ const slice = createSlice({
             if(!action.payload){
                 return state
             }
-
             return state.map(i=>{
                 if (i.client_id === action.payload["client_id"]){
                     return Object.assign({},action.payload)
