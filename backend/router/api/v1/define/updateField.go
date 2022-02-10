@@ -32,26 +32,26 @@ func calcDiff(base, up []model.Field) []model.Field {
 	return r
 }
 
-func calcChange(old, new []model.Field, removeIds []string) []model.Field {
+func calcChange(old, new []model.Field, removes []model.Field) []model.Field {
 	r := []model.Field{}
-	oldM := map[string]*model.Field{}
-	newM := map[string]*model.Field{}
+	oldM := map[string]model.Field{}
+	newM := map[string]model.Field{}
 	removeIdMap := map[string]bool{}
-	for _, id := range removeIds {
-		removeIdMap[id] = true
+	for _, f := range removes {
+		removeIdMap[f.Id] = true
 	}
 	for _, field := range old {
-		oldM[field.Id] = &field
+		oldM[field.Id] = field
 	}
 	for _, field := range new {
-		newM[field.Id] = &field
+		newM[field.Id] = field
 	}
 	for fieldId, field := range oldM {
 		if _, ok := removeIdMap[fieldId]; ok {
 			continue
 		}
 		if !field.Equals(newM[fieldId]) {
-			r = append(r, *field)
+			r = append(r, field)
 		}
 	}
 	return r
@@ -89,7 +89,7 @@ func UpdateField() gin.HandlerFunc {
 					}
 					return r
 				}())
-				store.Access.UpdateField(req.Fields)
+				store.Access.UpdateField(api.UniqueId, calcChange(oldFields, req.Fields, removeFields))
 				store.Access.CreateFields(api.UniqueId, calcDiff(req.Fields, oldFields))
 			},
 		}})

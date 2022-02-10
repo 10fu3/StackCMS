@@ -28,10 +28,7 @@ type Field struct {
 	RelationApiId *string `json:"relation_api" db:"relation_api"`
 }
 
-func (f1 *Field) Equals(f2 *Field) bool {
-	if f2 == nil {
-		return false
-	}
+func (f1 *Field) Equals(f2 Field) bool {
 	if f1.Name != f2.Name {
 		return false
 	}

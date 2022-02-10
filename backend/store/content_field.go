@@ -76,7 +76,10 @@ func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	return r
 }
 
-func (d *Db) UpdateField(fields []model.Field) {
+func (d *Db) UpdateField(apiId string, fields []model.Field) {
+	if len(fields) == 0 {
+		return
+	}
 	tx, e := d.Db.Beginx()
 	if e != nil {
 		return
@@ -96,6 +99,15 @@ func (d *Db) UpdateField(fields []model.Field) {
 	if e = tx.Commit(); e != nil {
 		return
 	}
+	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, bson.M{}, bson.M{
+		"$set": func() bson.M {
+			r := bson.M{}
+			for _, f := range fields {
+				r[f.Id] = nil
+			}
+			return r
+		}(),
+	})
 }
 
 func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {

@@ -177,8 +177,9 @@ func (d *Db) buildQuery(
 				}
 			}
 		}()
-
-		parent = append(parent, option)
+		if len(option) > 0 {
+			parent = append(parent, option)
+		}
 	}
 
 	if (query != nil && len(query.Fields) == 0) || query == nil {
