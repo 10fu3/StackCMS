@@ -134,7 +134,7 @@ const ContentsList = ()=>{
                         </chakra.thead>
                     </chakra.table>
                     <Box style={{width:"100%",paddingTop:10,borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
-                        <Virtuoso style={{height: 'calc( 100vh - 175px)',width:"100%"}} followOutput={true} totalCount={contents ? contents.length : 0} itemContent={
+                        <Virtuoso style={{height: 'calc( 100vh - 175px)',width:"100%"}} totalCount={contents ? contents.length : 0} itemContent={
                             i => {
                                 let e = contents[i]
                                 return <Flex
