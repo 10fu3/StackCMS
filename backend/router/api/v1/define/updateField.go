@@ -89,7 +89,7 @@ func UpdateField() gin.HandlerFunc {
 					}
 					return r
 				}())
-				store.Access.UpdateField(api.UniqueId, req.Fields)
+				store.Access.UpdateField(req.Fields)
 				store.Access.CreateFields(api.UniqueId, calcDiff(req.Fields, oldFields))
 			},
 		}})

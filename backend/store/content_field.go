@@ -76,7 +76,7 @@ func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	return r
 }
 
-func (d *Db) UpdateField(apiId string, fields []model.Field) {
+func (d *Db) UpdateField(fields []model.Field) {
 	tx, e := d.Db.Beginx()
 	if e != nil {
 		return
@@ -96,16 +96,6 @@ func (d *Db) UpdateField(apiId string, fields []model.Field) {
 	if e = tx.Commit(); e != nil {
 		return
 	}
-	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, map[string]interface{}{}, func() map[string]interface{} {
-		r := map[string]interface{}{}
-		rename := map[string]interface{}{}
-		for _, field := range fields {
-			r[field.Name] = 1
-		}
-		r["$rename"] = rename
-		return r
-	}())
-
 }
 
 func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
@@ -122,7 +112,18 @@ func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 	if e != nil {
 		return
 	}
-	d.Db.Exec("DELETE FROM fields WHERE api_id = ? AND"+q, append(a, apiId)...)
+	if _, e = d.Db.Exec("DELETE FROM fields WHERE api_id = ? AND "+q, append([]interface{}{apiId}, a...)...); e != nil {
+		return
+	}
+	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, bson.M{}, bson.M{
+		"$unset": func() bson.M {
+			r := bson.M{}
+			for _, id := range fieldIds {
+				r[id] = 1
+			}
+			return r
+		}(),
+	})
 }
 
 func (d *Db) DeleteFieldByRelationApi(relationApiUnique string) {

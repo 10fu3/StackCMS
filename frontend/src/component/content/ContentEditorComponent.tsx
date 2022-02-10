@@ -228,7 +228,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                                 return r.map(i=>i._id ? <Box>{i._id}</Box> : <Box/>)
                                             }
                                             return ""
-                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
+                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{String(e[i.field_name] ? e[i.field_name] : "")}</chakra.p></Box>
                                     }
                                 </chakra.th>
                             })
