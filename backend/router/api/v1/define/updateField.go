@@ -4,9 +4,7 @@ import (
 	"StackCMS/model"
 	"StackCMS/routerUtil"
 	"StackCMS/store"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 )
 
@@ -17,35 +15,44 @@ type updateFieldRequest struct {
 // 差集合
 //https://selfnote.work/20210211/programming/intersection-union-with-golang/
 //数字ではなくfieldを文字列にシリアライズしてmapに格納
-func calcDifference(l1, l2 []model.Field) []model.Field {
-	s := make(map[string]struct{}, len(l1))
-
-	for _, data := range l2 {
-		i := data.Name + data.Type + (func() string {
-			if data.RelationApiId == nil {
-				return ""
-			} else {
-				return *data.RelationApiId
-			}
-		}())
-		s[i] = struct{}{}
+func calcDiff(base, up []model.Field) []model.Field {
+	s := make(map[string]model.Field, len(base))
+	r := []model.Field{}
+	for _, data := range base {
+		s[data.Id] = data
 	}
+	for _, data := range up {
+		if _, ok := s[data.Id]; ok {
+			delete(s, data.Id)
+		}
+	}
+	for _, v := range s {
+		r = append(r, v)
+	}
+	return r
+}
 
-	r := make([]model.Field, 0, len(l2))
-
-	for _, data := range l1 {
-		i := data.Name + data.Type + (func() string {
-			if data.RelationApiId == nil {
-				return ""
-			} else {
-				return *data.RelationApiId
-			}
-		}())
-		if _, ok := s[i]; ok {
+func calcChange(old, new []model.Field, removeIds []string) []model.Field {
+	r := []model.Field{}
+	oldM := map[string]*model.Field{}
+	newM := map[string]*model.Field{}
+	removeIdMap := map[string]bool{}
+	for _, id := range removeIds {
+		removeIdMap[id] = true
+	}
+	for _, field := range old {
+		oldM[field.Id] = &field
+	}
+	for _, field := range new {
+		newM[field.Id] = &field
+	}
+	for fieldId, field := range oldM {
+		if _, ok := removeIdMap[fieldId]; ok {
 			continue
 		}
-
-		r = append(r, data)
+		if !field.Equals(newM[fieldId]) {
+			r = append(r, *field)
+		}
 	}
 	return r
 }
@@ -74,24 +81,16 @@ func UpdateField() gin.HandlerFunc {
 			Abilities: []model.Ability{model.AbilityUpdateApi},
 			WhenYes: func(id string) {
 				oldFields := store.Access.GetFieldsByApiUniqueId(api.UniqueId)
-
-				createField := []model.Field{}
-				for i := 0; i < len(req.Fields); i++ {
-					createField = append(createField, req.Fields[i])
-				}
-
-				diffField := calcDifference(oldFields, createField)
-
-				store.Access.DeleteFieldsByApiUniqueId(api.UniqueId)
-
-				store.Access.CreateFields(api.UniqueId, createField, true)
-
-				for _, field := range diffField {
-					fmt.Println(field.Name)
-					if _, err := store.Access.ContentDb.Collection(api.UniqueId).UpdateMany(store.Access.Ctx, bson.M{}, bson.M{"$unset": bson.M{field.Id: ""}}); err != nil {
-						fmt.Println("fault " + err.Error())
+				removeFields := calcDiff(oldFields, req.Fields)
+				store.Access.DeleteFields(api.UniqueId, func() []string {
+					r := []string{}
+					for _, f := range removeFields {
+						r = append(r, f.Id)
 					}
-				}
+					return r
+				}())
+				store.Access.UpdateField(api.UniqueId, req.Fields)
+				store.Access.CreateFields(api.UniqueId, calcDiff(req.Fields, oldFields))
 			},
 		}})
 	}

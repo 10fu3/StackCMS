@@ -3,7 +3,9 @@ package store
 import (
 	"StackCMS/model"
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"time"
 )
@@ -138,6 +140,11 @@ func (d *Db) buildQuery(
 		}
 
 		displayFieldNames[field.Name] = "$" + fieldId
+
+		if field.Type != "relation" {
+			continue
+		}
+
 		option := bson.M{}
 
 		func() {
@@ -167,12 +174,6 @@ func (d *Db) buildQuery(
 						}, findResult...),
 						"as": field.Name,
 					}
-				}
-			} else {
-				option["$match"] = bson.M{
-					field.Id: bson.M{
-						"$exists": true,
-					},
 				}
 			}
 		}()
@@ -213,6 +214,10 @@ func (d *Db) GetContent(query model.GetQuery) []map[string]interface{} {
 		}
 		return 0
 	}())
+
+	if b, e := json.Marshal(mondoQuery); e == nil {
+		fmt.Println(string(b))
+	}
 
 	content, err := d.ContentDb.Collection(query.ApiId).Aggregate(d.Ctx, mondoQuery)
 	if err != nil {
@@ -399,6 +404,11 @@ func (d *Db) DeleteContentByApiId(apiId string) error {
 	if e != nil {
 		return e
 	}
+	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, map[string]interface{}{}, map[string]interface{}{
+		"$unset": bson.M{
+			apiId: 1,
+		},
+	})
 	//d.Db.Exec("DELETE FROM contents WHERE api_id = ?", apiId)
 	return e
 }

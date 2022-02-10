@@ -5,6 +5,7 @@ import (
 	"StackCMS/util"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"go.mongodb.org/mongo-driver/bson"
 	"strings"
 )
@@ -16,7 +17,7 @@ type ContentFields interface {
 	DeleteField(field model.Field)
 }
 
-func (d *Db) CreateFields(apiId string, fields []model.Field, isUpdate bool) {
+func (d *Db) CreateFields(apiId string, fields []model.Field) {
 
 	baseColumns := []string{
 		"_id",
@@ -43,12 +44,7 @@ func (d *Db) CreateFields(apiId string, fields []model.Field, isUpdate bool) {
 		}
 
 		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api,priority) VALUES(?,?,?,?,?,?)",
-			func() string {
-				if isUpdate {
-					return strings.ReplaceAll(f.Id, "-", "_")
-				}
-				return strings.ReplaceAll("a"+uuid.New().String(), "-", "_")
-			}(),
+			strings.ReplaceAll("a"+uuid.New().String(), "-", "_"),
 			apiId, f.Name, f.Type, f.RelationApiId, f.Priority); err != nil {
 			continue
 		}
@@ -80,12 +76,53 @@ func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	return r
 }
 
+func (d *Db) UpdateField(apiId string, fields []model.Field) {
+	tx, e := d.Db.Beginx()
+	if e != nil {
+		return
+	}
+	for _, field := range fields {
+		if _, e = tx.Exec("UPDATE fields SET api_id = ?,field_name = ?,field_type = ?,relation_api = ?,priority = ? WHERE field_id = ?",
+			field.ApiId,
+			field.Name,
+			field.Type,
+			field.RelationApiId,
+			field.Priority,
+			field.Id,
+		); e != nil {
+			tx.Rollback()
+		}
+	}
+	if e = tx.Commit(); e != nil {
+		return
+	}
+	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, map[string]interface{}{}, func() map[string]interface{} {
+		r := map[string]interface{}{}
+		rename := map[string]interface{}{}
+		for _, field := range fields {
+			r[field.Name] = 1
+		}
+		r["$rename"] = rename
+		return r
+	}())
+
+}
+
 func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
 	d.Db.Exec("DELETE FROM fields WHERE api_id = ?", apiId)
 }
 
 func (d *Db) DeleteField(field model.Field) {
 	d.Db.Exec("DELETE FROM fields WHERE field_id = ? AND api_id = ?", field.Id, field.ApiId)
+}
+
+func (d *Db) DeleteFields(apiId string, fieldIds []string) {
+	in := "field_id IN (?)"
+	q, a, e := sqlx.In(in, fieldIds)
+	if e != nil {
+		return
+	}
+	d.Db.Exec("DELETE FROM fields WHERE api_id = ? AND"+q, append(a, apiId)...)
 }
 
 func (d *Db) DeleteFieldByRelationApi(relationApiUnique string) {

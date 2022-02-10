@@ -28,6 +28,24 @@ type Field struct {
 	RelationApiId *string `json:"relation_api" db:"relation_api"`
 }
 
+func (f1 *Field) Equals(f2 *Field) bool {
+	if f2 == nil {
+		return false
+	}
+	if f1.Name != f2.Name {
+		return false
+	}
+	if f1.Type != f2.Type {
+		return false
+	}
+	if f1.RelationApiId != nil && f2.RelationApiId != nil {
+		return *f1.RelationApiId == *f2.RelationApiId
+	} else if f1.RelationApiId == nil && f2.RelationApiId == nil {
+		return true
+	}
+	return false
+}
+
 type Content struct {
 	Id          string     `json:"_id"          bson:"_id,omitempty"`
 	ApiId       string     `json:"api_id"       bson:"api_id,omitempty"`
