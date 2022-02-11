@@ -159,7 +159,9 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                         }}>
                         {
                             <Center style={{
-                                backgroundColor:"white",
+                                backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
+                                    ? "#f0f9ff"
+                                    : "white" ,
                                 width:`calc( 100% / ${fields.length+1})`,
                                 borderRadius:"5px 0 0 5px",
                                 borderTop: "1px solid #e7e7e7",
@@ -189,7 +191,9 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                 return <Center
                                     style={{
                                         //overflow: "hidden",
-                                        backgroundColor:"white",
+                                        backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
+                                            ? "#f0f9ff"
+                                            : "white" ,
                                         ...unionCellCss,
                                         width:`calc( 100% / ${fields.length+1})`,
                                         borderRadius: (()=>{
