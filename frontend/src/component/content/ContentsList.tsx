@@ -87,10 +87,10 @@ const ContentsList = ()=>{
         </Center>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
-            <Box w="100%" pt="10px" pb="20px" pl={5} pr={5}>
-                <Box w="100%">
+            <Box w="100%" h={"100%"} pb="20px" pl={5} pr={5}>
+                <Box w="100%" h={"100%"}>
                     <chakra.table style={{width:"calc(100% - 14px)",tableLayout:"fixed"}}>
-                        <chakra.thead style={{width:"100%"}}>
+                        <chakra.thead style={{width:"100%",fontSize:"12px"}}>
                             <chakra.tr h={"100%"}>
                             <chakra.th h={"100%"} style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
                                 <Box>
@@ -115,13 +115,13 @@ const ContentsList = ()=>{
                                                     }
                                                     return e.relation_api ? <Center>
                                                         <Flex>
-                                                            参照先: <Link to={'/api/' + e.relation_api}>
-                                                            <Box textDecoration="underline">
-                                                                {
-                                                                    e.relation_api
-                                                                }
-                                                            </Box>
-                                                        </Link>
+                                                            <Link to={'/api/' + e.relation_api}>
+                                                                <Box textDecoration="underline">
+                                                                    {
+                                                                        e.relation_api
+                                                                    }
+                                                                </Box>
+                                                            </Link>
                                                         </Flex>
                                                     </Center> : <></>
                                                 })()
@@ -133,7 +133,7 @@ const ContentsList = ()=>{
                         </chakra.tr>
                         </chakra.thead>
                     </chakra.table>
-                    <Box style={{width:"100%",paddingTop:10,borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
+                    <Box style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed",fontSize:"13px"}}>
                         <Virtuoso style={{height: 'calc( 100vh - 175px)',width:"100%"}} totalCount={contents ? contents.length : 0} itemContent={
                             i => {
                                 let e = contents[i]
