@@ -115,7 +115,7 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 		return r
 	}()
 
-	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit, depth, order, serverFilter)
+	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit+offset, depth, order, serverFilter)
 }
 
 type response struct {
