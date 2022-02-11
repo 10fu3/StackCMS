@@ -154,7 +154,10 @@ const ContentsList = ()=>{
                                             borderRight: "0px",
                                             borderWidth: 1,
                                         }}>
-                                            <Center>
+                                            <Center style={{
+                                                paddingRight:5,
+                                                paddingLeft:5,
+                                            }}>
                                                 <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>
                                                     {
                                                         e["published_at"] ? <Box>
@@ -186,6 +189,8 @@ const ContentsList = ()=>{
                                                     borderRight: j === fs.length-1 ? "1px solid #e7e7e7" : "",
                                                     fontWeight:"normal",
                                                     minHeight:"60px",
+                                                    paddingRight:5,
+                                                    paddingLeft:5,
                                                 }}>
                                                 <Box overflow="hidden">
                                                     {

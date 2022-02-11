@@ -102,67 +102,50 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
     }
 
     return apis.length > 0 ? <Box w="100%">
-        <chakra.table style={{width:"100%",tableLayout:"fixed"}}>
-            <chakra.thead style={{width:"100%"}}>
-                <chakra.tr>
-                    <chakra.th style={{padding:10,width:`calc( 100%/ ${fields.length+1})`}}>
-                        <Box>
-                            ステータス
-                        </Box>
-                    </chakra.th>
-                    {
-                        fields.map((e)=>{
-
-                            if(e.relation_api){
-                                const a = apis.filter(i=>i.api_id === e.relation_api)
-                                if(a && a.length > 0){
-                                    e.relation_api = a[0].api_id
+        <Box style={{width:"100%",maxHeight:"56px",overflowY:"scroll"}}>
+            <Flex style={{width:"100%",maxHeight:"56px",fontSize:"12px"}}>
+                <Box style={{padding:10,width:`calc( 100%/ ${fields.length+1})`}}>
+                    <Center h={"100%"}>
+                        ステータス
+                    </Center>
+                </Box>
+                {
+                    fields.map((e)=>{
+                        return <Box style={{padding:10,width:`calc( 100%/ ${fields.length+1})`}}>
+                            <Center>
+                                {
+                                    e.field_name
                                 }
-                            }
-
-                            return <chakra.th style={{padding:10,width:`calc( 100%/ ${fields.length}+1)`}}>
-                                <Box>
-                                    {
-                                        e.field_name
-                                    }
-                                </Box>
-                                <Box color="#777">
-                                    {
-                                        e.type === "relation" && e.relation_api ?
-                                            <Center>
-                                                <Flex>
-                                                    参照先: <Link to={'/api/'+e.relation_api}>
-                                                    <Box textDecoration="underline">
-                                                        {
-                                                            e.relation_api
-                                                        }
-                                                    </Box>
-                                                </Link>
-                                                </Flex>
-                                            </Center> : <Box>
+                            </Center>
+                            <Center fontSize="10px" fontWeight="bold" color="#777">
+                                {
+                                    (()=> {
+                                        if (!(e.type === "relation" && e.relation_api)) {
+                                            return <Box>
                                                 {toJapaneseFromFieldType(e.type)}
                                             </Box>
-                                    }
-                                </Box>
-                            </chakra.th>
-                        })
-                    }
-                </chakra.tr>
-            </chakra.thead>
-        </chakra.table>
-        <Box style={{
-            // height: contents.length > 5 ? "400px" : "100%",
-            padding:5,
-            borderRadius:10,
-            borderWidth:2}}
-        >
-            <Virtuoso
-                style={{
-                    height:`calc(78px * ${contents.length > 5 ? 5 : contents.length})`,
-                    maxHeight: 'calc( 100vh - 175px)',
-                    width:"100%"}}
-                totalCount={contents ? contents.length : 0}
-                itemContent={
+                                        }
+                                        return e.relation_api ? <Center>
+                                            <Flex>
+                                                <Link to={'/api/' + e.relation_api}>
+                                                    <Box textDecoration="underline">
+                                                        参照先:{
+                                                        e.relation_api
+                                                    }
+                                                    </Box>
+                                                </Link>
+                                            </Flex>
+                                        </Center> : <></>
+                                    })()
+                                }
+                            </Center>
+                        </Box>
+                    })
+                }
+            </Flex>
+        </Box>
+        <Box style={{height: 'calc(100% - 56px)',paddingTop:20,width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed",fontSize:"13px"}}>
+            <Virtuoso style={{height: contents.length > 3 ? '300px' : '100px' ,width:"100%"}} totalCount={contents ? contents.length : 0} itemContent={
                 i => {
                     let e = contents[i]
                     return <Flex
@@ -176,9 +159,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                         }}>
                         {
                             <Center style={{
-                                backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
-                                    ? "#f0f9ff"
-                                    : "white" ,
+                                backgroundColor:"white",
                                 width:`calc( 100% / ${fields.length+1})`,
                                 borderRadius:"5px 0 0 5px",
                                 borderTop: "1px solid #e7e7e7",
@@ -187,7 +168,10 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                 borderRight: "0px",
                                 borderWidth: 1,
                             }}>
-                                <Center>
+                                <Center style={{
+                                    paddingRight:5,
+                                    paddingLeft:5,
+                                }}>
                                     <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>
                                         {
                                             e["published_at"] ? <Box>
@@ -201,36 +185,47 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                         }
                         {
                             fields.map((i,j)=>{
-
-                                return <chakra.th
+                                const fs = fields
+                                return <Center
                                     style={{
-                                        //backgroundColor:"white",
+                                        //overflow: "hidden",
+                                        backgroundColor:"white",
                                         ...unionCellCss,
                                         width:`calc( 100% / ${fields.length+1})`,
                                         borderRadius: (()=>{
-                                            if(j === fields.length-1){
+                                            if(j === fs.length-1){
                                                 return "0px 5px 5px 0px"
                                             }
                                             return ""
                                         })(),
                                         borderTop: "1px solid #e7e7e7",
                                         borderBottom: "1px solid #e7e7e7",
-                                        borderRight: j === fields.length-1 ? "1px solid #e7e7e7" : "",
+                                        borderRight: j === fs.length-1 ? "1px solid #e7e7e7" : "",
                                         fontWeight:"normal",
-                                        backgroundColor: (props.selected ? props.selected : []).includes((e as ContentMeta)._id)
-                                            ? "#f0f9ff"
-                                            : "white" ,
+                                        maxHeight:"100px",
+                                        minHeight:"60px",
+                                        paddingRight:5,
+                                        paddingLeft:5,
                                     }}>
-                                    {
-                                        (typeof e[i.field_name]) === "object" ? (()=>{
-                                            const r = (e[i.field_name] as ContentMeta[])
-                                            if(r && r.length > 0){
-                                                return r.map(i=>i._id ? <Box>{i._id}</Box> : <Box/>)
-                                            }
-                                            return ""
-                                        })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{String(e[i.field_name] ? e[i.field_name] : "")}</chakra.p></Box>
-                                    }
-                                </chakra.th>
+                                    <Box overflow="hidden">
+                                        {
+                                            (typeof e[i.field_name]) === "object" ? (()=>{
+                                                const r = (e[i.field_name] as ContentMeta[])
+                                                if(r && r.length > 0){
+                                                    return <ul >
+                                                        {
+                                                            r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
+                                                        }
+                                                    </ul>
+                                                }
+                                                return ""
+                                            })() : <Box>
+                                                <chakra.p style={{maxHeight:"100px"}} fontWeight="">
+                                                    {String(e[i.field_name] ? e[i.field_name] : "")}
+                                                </chakra.p></Box>
+                                        }
+                                    </Box>
+                                </Center>
                             })
                         }
                     </Flex>
