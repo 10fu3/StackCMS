@@ -35,6 +35,9 @@ func (f1 *Field) Equals(f2 Field) bool {
 	if f1.Type != f2.Type {
 		return false
 	}
+	if f1.Priority != f2.Priority {
+		return false
+	}
 	if f1.RelationApiId != nil && f2.RelationApiId != nil {
 		return *f1.RelationApiId == *f2.RelationApiId
 	} else if f1.RelationApiId == nil && f2.RelationApiId == nil {

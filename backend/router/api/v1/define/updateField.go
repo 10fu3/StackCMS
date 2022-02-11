@@ -50,7 +50,7 @@ func calcChange(old, new []model.Field, removes []model.Field) []model.Field {
 		if _, ok := removeIdMap[fieldId]; ok {
 			continue
 		}
-		if !field.Equals(newM[fieldId]) {
+		if !(field.Equals(newM[fieldId])) {
 			r = append(r, field)
 		}
 	}
@@ -89,7 +89,7 @@ func UpdateField() gin.HandlerFunc {
 					}
 					return r
 				}())
-				store.Access.UpdateField(api.UniqueId, calcChange(oldFields, req.Fields, removeFields))
+				store.Access.UpdateField(calcChange(oldFields, req.Fields, removeFields))
 				store.Access.CreateFields(api.UniqueId, calcDiff(req.Fields, oldFields))
 			},
 		}})
