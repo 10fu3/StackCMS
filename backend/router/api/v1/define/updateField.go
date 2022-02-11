@@ -51,7 +51,7 @@ func calcChange(old, new []model.Field, removes []model.Field) []model.Field {
 			continue
 		}
 		if !(field.Equals(newM[fieldId])) {
-			r = append(r, field)
+			r = append(r, newM[fieldId])
 		}
 	}
 	return r
