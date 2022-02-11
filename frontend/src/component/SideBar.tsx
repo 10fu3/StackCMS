@@ -24,7 +24,7 @@ const SideBar:React.FC = ()=>{
     })
 
     return <Box h={"100vh"}>
-        <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">
+        <Box w={"200px"} h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">
             {
                 list ?
                     index.map((e)=> {
@@ -46,13 +46,13 @@ const SideBar:React.FC = ()=>{
                                     }
                                 </Flex>
                             </chakra.dt>
-                            <chakra.dd>
+                            <chakra.dd fontSize={"13px"}>
                                 {
                                     list[e].item.map((j,i)=>{
                                         return <chakra.ul>
                                             <chakra.li
                                                 pt={"10px"}
-                                                pl={"20px"}
+                                                pl={"10px"}
                                                 mr={"20px"}
                                                 pb={"10px"}
                                                 mt={"1.5px"}

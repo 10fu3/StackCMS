@@ -7,8 +7,6 @@ import {ChakraProvider} from "@chakra-ui/react";
 import store from "./store";
 import {Provider} from "react-redux";
 import {setCurrentUser} from "./store/auth";
-import {setApis} from "./store/apis";
-import {setRoles} from "./store/roles";
 
 ReactDOM.render(
   <React.StrictMode>

@@ -18,10 +18,10 @@ const Top = ()=>{
     },[])
     return <Box>
         <Flex h="100vh">
-            <Box minW="260px" bgColor="teal.700">
+            <Box maxW="200px" bgColor="teal.700">
                 <SideBar/>
             </Box>
-            <Box w="calc(100% - 260px)">
+            <Box minW="525px" w="calc(100% - 200px)">
                 <Outlet/>
             </Box>
         </Flex>
