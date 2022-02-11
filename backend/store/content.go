@@ -188,6 +188,15 @@ func (d *Db) buildQuery(
 		}
 	}
 
+	for _, m := range model.DefinedMeta {
+		if query != nil {
+			if _, ok := query.Fields[m]; !ok {
+				continue
+			}
+		}
+		displayFieldNames[m] = 1
+	}
+
 	parent = append(parent, bson.M{
 		"$project": displayFieldNames,
 	})
