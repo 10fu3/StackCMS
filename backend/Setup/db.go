@@ -17,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
-	"os"
 	"reflect"
 	"time"
 )
@@ -158,25 +157,25 @@ func Db() error {
 		return err
 	}
 
-	store.Access.Db.SetMaxIdleConns(100)
-	store.Access.Db.SetMaxOpenConns(100)
-	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+	store.Access.Db.SetMaxIdleConns(10)
+	store.Access.Db.SetMaxOpenConns(10)
+	store.Access.Db.SetConnMaxLifetime(time.Minute)
 
-	if config.Values.UseCloudRun {
-		go func() {
-			_ = time.AfterFunc(time.Minute, func() {
-				go func() {
-					tickChan := time.NewTicker(time.Minute * 15).C
-					for {
-						select {
-						case <-tickChan:
-							os.Exit(1)
-						}
-					}
-				}()
-			})
-		}()
-	}
+	//if config.Values.UseCloudRun {
+	//	go func() {
+	//		_ = time.AfterFunc(time.Minute, func() {
+	//			go func() {
+	//				tickChan := time.NewTicker(time.Minute * 15).C
+	//				for {
+	//					select {
+	//					case <-tickChan:
+	//						os.Exit(1)
+	//					}
+	//				}
+	//			}()
+	//		})
+	//	}()
+	//}
 
 	if config.Values.CreateTable {
 		fmt.Println("CREATE TABLE MODE IS ON")
