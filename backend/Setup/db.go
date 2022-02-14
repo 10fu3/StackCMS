@@ -17,6 +17,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
+	"os"
 	"reflect"
 	"time"
 )
@@ -161,26 +162,21 @@ func Db() error {
 	store.Access.Db.SetMaxOpenConns(100)
 	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
 
-	go func() {
-		_ = time.AfterFunc(time.Minute, func() {
-			go func() {
-				tickChan := time.NewTicker(time.Minute * 5).C
-				for {
-					select {
-					case <-tickChan:
-						fmt.Println("re-connect sql")
-						if e := store.Access.Db.Close(); err != nil {
-							fmt.Println(e.Error())
-						}
-						store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
-						if err != nil {
-							fmt.Println(err.Error())
+	if config.Values.UseCloudRun {
+		go func() {
+			_ = time.AfterFunc(time.Minute, func() {
+				go func() {
+					tickChan := time.NewTicker(time.Minute * 15).C
+					for {
+						select {
+						case <-tickChan:
+							os.Exit(1)
 						}
 					}
-				}
-			}()
-		})
-	}()
+				}()
+			})
+		}()
+	}
 
 	if config.Values.CreateTable {
 		fmt.Println("CREATE TABLE MODE IS ON")

@@ -49,6 +49,7 @@ type FirstSetupConfig struct {
 	AdminPassword string
 	AppPort       string
 	CreateTable   bool
+	UseCloudRun   bool
 }
 
 func GetFirstSetupConfig() *FirstSetupConfig {
@@ -63,10 +64,15 @@ func GetFirstSetupConfig() *FirstSetupConfig {
 		return os.Getenv("CREATE_TABLE") == "true"
 	}()
 
+	useCloudRun := func() bool {
+		return os.Getenv("CLOUD_RUN") == "true"
+	}()
+
 	return &FirstSetupConfig{
 		AdminName:     "root",
 		AdminPassword: adminPass,
 		AppPort:       port,
 		CreateTable:   createTable,
+		UseCloudRun:   useCloudRun,
 	}
 }
