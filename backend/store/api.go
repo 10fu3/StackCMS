@@ -17,6 +17,13 @@ type Apis interface {
 
 func (d *Db) CreateApi(api model.Api) {
 
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return
+		}
+	}
+
 	t, err := d.Db.Beginx()
 
 	if err != nil {
@@ -70,10 +77,22 @@ func (d *Db) CreateApi(api model.Api) {
 }
 
 func (d *Db) UpdateApi(id string, api model.Api) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return
+		}
+	}
 	d.Db.Exec("UPDATE apis SET api_id = ?, is_single = ?, preview_url = ? WHERE id = ?", api.Id, api.IsSingleContent, api.PreviewURL, id)
 }
 
 func (d *Db) GetApis() []model.Api {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return []model.Api{}
+		}
+	}
 	apis := []model.Api{}
 	if err := d.Db.Select(&apis, "SELECT * FROM apis"); err != nil {
 		fmt.Println(err)
@@ -85,6 +104,12 @@ func (d *Db) GetApis() []model.Api {
 }
 
 func (d *Db) GetApiByUniqueId(id string) *model.Api {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return nil
+		}
+	}
 	var api model.Api
 	var err error
 	r := d.Db.QueryRowx("SELECT * FROM apis WHERE id = ?", id)
@@ -104,6 +129,12 @@ func (d *Db) GetApiByUniqueId(id string) *model.Api {
 }
 
 func (d *Db) GetApi(id string) *model.Api {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return nil
+		}
+	}
 	var api model.Api
 	var err error
 	r := d.Db.QueryRowx("SELECT * FROM apis WHERE api_id = ?", id)
@@ -123,5 +154,11 @@ func (d *Db) GetApi(id string) *model.Api {
 }
 
 func (d *Db) DeleteApi(id string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if _, err = SetupDb(); err != nil {
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM apis WHERE id = ?", id)
 }

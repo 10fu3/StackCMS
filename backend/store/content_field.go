@@ -18,7 +18,13 @@ type ContentFields interface {
 }
 
 func (d *Db) CreateFields(apiId string, fields []model.Field) {
-
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	baseColumns := []string{
 		"_id",
 		"created_at",
@@ -67,6 +73,13 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 }
 
 func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return []model.Field{}
+		}
+	}
 	var r []model.Field
 	var err = d.Db.Select(&r, "SELECT * FROM fields WHERE api_id = ?", unique)
 	if err != nil {
@@ -77,6 +90,13 @@ func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 }
 
 func (d *Db) UpdateField(fields []model.Field) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	if len(fields) == 0 {
 		return
 	}
@@ -102,14 +122,35 @@ func (d *Db) UpdateField(fields []model.Field) {
 }
 
 func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM fields WHERE api_id = ?", apiId)
 }
 
 func (d *Db) DeleteField(field model.Field) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM fields WHERE field_id = ? AND api_id = ?", field.Id, field.ApiId)
 }
 
 func (d *Db) DeleteFields(apiId string, fieldIds []string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	in := "field_id IN (?)"
 	q, a, e := sqlx.In(in, fieldIds)
 	if e != nil {
@@ -130,5 +171,12 @@ func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 }
 
 func (d *Db) DeleteFieldByRelationApi(relationApiUnique string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM fields WHERE relation_api = ?", relationApiUnique)
 }

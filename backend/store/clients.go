@@ -16,18 +16,46 @@ type Clients interface {
 }
 
 func (d *Db) CreateClient(client model.Client) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("INSERT INTO clients (client_id,client_name,client_secret) VALUES (?,?,?)", client.Id, client.Name, client.Secret)
 }
 
 func (d *Db) UpdateClient(client model.Client) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("UPDATE clients SET client_name = ?,client_secret = ? WHERE client_id = ?", client.Name, client.Secret, client.Id)
 }
 
 func (d *Db) UpdateClientSecret(clientId string, newSecret string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("UPDATE clients SET client_secret = ? WHERE client_id = ?", newSecret, clientId)
 }
 
 func (d *Db) GetClients() []model.Client {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return []model.Client{}
+		}
+	}
 	var r []model.Client
 	if err := d.Db.Select(&r, "SELECT * FROM clients"); err != nil {
 		return []model.Client{}
@@ -39,6 +67,13 @@ func (d *Db) GetClients() []model.Client {
 }
 
 func (d *Db) GetClientById(id string) *model.Client {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return nil
+		}
+	}
 	var r model.Client
 	if err := d.Db.Get(&r, "SELECT * FROM clients WHERE client_id = ?", id); err != nil {
 		return nil
@@ -48,6 +83,13 @@ func (d *Db) GetClientById(id string) *model.Client {
 }
 
 func (d *Db) GetClientBySecret(apiSecret string) *model.Client {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return nil
+		}
+	}
 	var r model.Client
 	if d.Db.Get(&r, "SELECT * FROM clients WHERE client_secret = ?", apiSecret) != nil {
 		return nil
@@ -56,5 +98,12 @@ func (d *Db) GetClientBySecret(apiSecret string) *model.Client {
 }
 
 func (d *Db) DeleteClientByClientId(clientId string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM clients WHERE client_id = ?", clientId)
 }

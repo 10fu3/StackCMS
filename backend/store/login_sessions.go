@@ -2,6 +2,7 @@ package store
 
 import (
 	"StackCMS/model"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"time"
@@ -31,7 +32,11 @@ type LoginSessionStore interface {
 }
 
 func (s *Db) GetSessionUser(authorization string) string {
-
+	if err := s.Db.Ping(); err != nil {
+		if _, err = SetupDb(); err != nil {
+			return ""
+		}
+	}
 	var u sqlLoginSessionLine
 	sqlErr := s.Db.QueryRowx("SELECT * FROM login_session WHERE session_id = ?", authorization).StructScan(&u)
 
@@ -49,7 +54,11 @@ func (s *Db) GetSessionUser(authorization string) string {
 }
 
 func (s *Db) AddSessionUser(user *model.User) (string, error) {
-
+	if err := s.Db.Ping(); err != nil {
+		if _, err = SetupDb(); err != nil {
+			return "", errors.New("internal error")
+		}
+	}
 	u, uuidErr := uuid.NewRandom()
 	if uuidErr != nil {
 		return "", uuidErr
@@ -62,9 +71,19 @@ func (s *Db) AddSessionUser(user *model.User) (string, error) {
 }
 
 func (s *Db) DeleteSessionUserBySession(authorization string) {
+	if err := s.Db.Ping(); err != nil {
+		if _, err = SetupDb(); err != nil {
+			return
+		}
+	}
 	s.Db.Exec("DELETE FROM login_session where session_id = ?", authorization)
 }
 
 func (s *Db) DeleteSessionUserByUser(user *model.User) {
+	if err := s.Db.Ping(); err != nil {
+		if _, err = SetupDb(); err != nil {
+			return
+		}
+	}
 	s.Db.Exec("DELETE FROM login_session where user_id = ?", user.Id)
 }

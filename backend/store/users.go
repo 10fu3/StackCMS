@@ -18,6 +18,13 @@ type Users interface {
 }
 
 func (d *Db) CreateUser(mail string, nick *string, password string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	rawPass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 
 	d.Db.Exec("INSERT INTO users (user_id,nick_name,mail,password_hash,is_lock) VALUES(?,?,?,?,?)",
@@ -35,11 +42,25 @@ func (d *Db) CreateUser(mail string, nick *string, password string) {
 
 func (d *Db) GetUsersAll() []model.User {
 	r := []model.User{}
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return r
+		}
+	}
 	d.Db.Select(&r, "SELECT * FROM users")
 	return r
 }
 
 func (d *Db) GetUserById(id string) *model.User {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return nil
+		}
+	}
 	var r model.User
 	if err := d.Db.Get(&r, "SELECT * FROM users WHERE user_id = ?", id); err != nil {
 		return nil
@@ -48,6 +69,13 @@ func (d *Db) GetUserById(id string) *model.User {
 }
 
 func (d *Db) GetUserByMail(mail string) *model.User {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return nil
+		}
+	}
 	var r model.User
 	if err := d.Db.Get(&r, "SELECT * FROM users WHERE mail = ?", mail); err != nil {
 		return nil
@@ -57,6 +85,13 @@ func (d *Db) GetUserByMail(mail string) *model.User {
 
 func (d *Db) GetUsersByRole(roleId string) []model.User {
 	r := []model.User{}
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return r
+		}
+	}
 	if err := d.Db.Select(&r, "SELECT * FROM users JOIN user_role ON user.id = user_role.user_id WHERE role_id = ?", roleId); err != nil {
 		return nil
 	}
@@ -64,6 +99,13 @@ func (d *Db) GetUsersByRole(roleId string) []model.User {
 }
 
 func (d *Db) UpdateUser(new model.User) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return
+		}
+	}
 	user := d.GetUserById(new.Id)
 	if user == nil {
 		return
@@ -80,6 +122,13 @@ func (d *Db) UpdateUser(new model.User) {
 }
 
 func (d *Db) DeleteUser(id string) error {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if  _, err = SetupDb()
+		err != nil{
+			return errors.New("internal error")
+		}
+	}
 	exec, err := d.Db.Exec("DELETE FROM users WHERE user_id = ? AND is_lock = false", id)
 	if err != nil {
 		return err
