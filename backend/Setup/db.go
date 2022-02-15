@@ -178,7 +178,6 @@ func Db() error {
 						case <-tickChan:
 							{
 								store.Access.Db.Close()
-								store.Access = &store.Db{}
 								store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
 								store.Access.Db.SetMaxIdleConns(20)
 								store.Access.Db.SetMaxOpenConns(20)
