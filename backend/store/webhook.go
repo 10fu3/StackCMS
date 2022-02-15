@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 )
 
@@ -16,7 +15,8 @@ type Webhooks interface {
 func (d *Db) CreateWebhook(hook model.WebHook) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -28,7 +28,8 @@ func (d *Db) CreateWebhook(hook model.WebHook) {
 func (d *Db) UpdateWebhook(hook model.WebHook) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -40,7 +41,8 @@ func (d *Db) GetWebhooks() []model.WebHook {
 	var r []model.WebHook
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return r
 		}
 	}
@@ -51,7 +53,8 @@ func (d *Db) GetWebhooks() []model.WebHook {
 func (d *Db) GetWebhook(id string) *model.WebHook {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -65,7 +68,8 @@ func (d *Db) GetWebhook(id string) *model.WebHook {
 func (d *Db) DeleteWebhookById(id string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -75,7 +79,8 @@ func (d *Db) DeleteWebhookById(id string) {
 func (d *Db) DeleteWebhookByApi(api string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}

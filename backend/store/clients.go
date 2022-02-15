@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 )
 
@@ -19,7 +18,8 @@ type Clients interface {
 func (d *Db) CreateClient(client model.Client) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -29,7 +29,8 @@ func (d *Db) CreateClient(client model.Client) {
 func (d *Db) UpdateClient(client model.Client) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -39,7 +40,8 @@ func (d *Db) UpdateClient(client model.Client) {
 func (d *Db) UpdateClientSecret(clientId string, newSecret string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -49,7 +51,8 @@ func (d *Db) UpdateClientSecret(clientId string, newSecret string) {
 func (d *Db) GetClients() []model.Client {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return []model.Client{}
 		}
 	}
@@ -66,7 +69,8 @@ func (d *Db) GetClients() []model.Client {
 func (d *Db) GetClientById(id string) *model.Client {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -81,7 +85,8 @@ func (d *Db) GetClientById(id string) *model.Client {
 func (d *Db) GetClientBySecret(apiSecret string) *model.Client {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -95,7 +100,8 @@ func (d *Db) GetClientBySecret(apiSecret string) *model.Client {
 func (d *Db) DeleteClientByClientId(clientId string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}

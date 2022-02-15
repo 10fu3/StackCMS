@@ -21,19 +21,6 @@ import (
 	"time"
 )
 
-func ConnectDatabase(config config.RelationalDatabaseConfig) (*sqlx.DB, error) {
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.User, config.Password, config.Host, config.Port, config.DatabaseName)
-
-	db, err := sqlx.Connect("mysql", dsn+"?parseTime=true")
-
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
 func DefineTables(db *sqlx.DB) error {
 	sqls := []string{
 		"CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(40) not null , nick_name VARCHAR(128), mail VARCHAR(256) not null , password_hash VARCHAR(512),is_lock BOOLEAN not null , primary key (user_id,mail))",
@@ -152,7 +139,7 @@ func ConnectMongoDB() error {
 func SetupDb() error {
 	var err error
 	store.Access = &store.Db{}
-	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+	store.Access.Db, err = store.ConnectDatabase(config.GetRelationalDatabaseConfig())
 	if err != nil {
 		return err
 	}
@@ -178,7 +165,6 @@ func Db() error {
 					for {
 						select {
 						case <-tickChan:
-							store.Access.Db.Close()
 							SetupDb()
 						}
 					}

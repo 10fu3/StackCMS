@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 )
 
@@ -16,7 +15,8 @@ type RolesAbility interface {
 func (d *Db) GetAbility() map[string][]string {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return map[string][]string{}
 		}
 	}
@@ -34,7 +34,8 @@ func (d *Db) GetAbility() map[string][]string {
 func (d *Db) AppendAbilities(role model.Role, ability []string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -56,7 +57,8 @@ func (d *Db) AppendAbilities(role model.Role, ability []string) {
 func (d *Db) AppendAbility(role *model.Role, ability model.Ability) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -66,7 +68,8 @@ func (d *Db) AppendAbility(role *model.Role, ability model.Ability) {
 func (d *Db) LeaveAbility(role *model.Role, ability model.Ability) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -76,7 +79,8 @@ func (d *Db) LeaveAbility(role *model.Role, ability model.Ability) {
 func (d *Db) LeaveAbilitiesByRoleId(role *model.Role) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}

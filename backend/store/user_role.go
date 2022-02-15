@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 )
 
@@ -17,7 +16,8 @@ func (d *Db) GetUserRoles(userId string) []model.Role {
 	r := []model.Role{}
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return r
 		}
 	}
@@ -28,7 +28,8 @@ func (d *Db) GetUserRoles(userId string) []model.Role {
 func (d *Db) JoinRoleUser(userId string, roleIds []string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -48,7 +49,8 @@ func (d *Db) JoinRoleUser(userId string, roleIds []string) {
 func (d *Db) LeaveRoleUser(userId string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -58,7 +60,8 @@ func (d *Db) LeaveRoleUser(userId string) {
 func (d *Db) LeaveRole(roleId string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -68,7 +71,8 @@ func (d *Db) LeaveRole(roleId string) {
 func (d *Db) SameJoinedRole(aUserId string, bUserId string) []model.Role {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return []model.Role{}
 		}
 	}

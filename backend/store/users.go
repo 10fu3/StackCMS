@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 	"errors"
 	"github.com/google/uuid"
@@ -21,7 +20,8 @@ type Users interface {
 func (d *Db) CreateUser(mail string, nick *string, password string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -44,7 +44,8 @@ func (d *Db) GetUsersAll() []model.User {
 	r := []model.User{}
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return r
 		}
 	}
@@ -55,7 +56,8 @@ func (d *Db) GetUsersAll() []model.User {
 func (d *Db) GetUserById(id string) *model.User {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -69,7 +71,8 @@ func (d *Db) GetUserById(id string) *model.User {
 func (d *Db) GetUserByMail(mail string) *model.User {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -84,7 +87,8 @@ func (d *Db) GetUsersByRole(roleId string) []model.User {
 	r := []model.User{}
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return r
 		}
 	}
@@ -97,7 +101,8 @@ func (d *Db) GetUsersByRole(roleId string) []model.User {
 func (d *Db) UpdateUser(new model.User) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -119,7 +124,8 @@ func (d *Db) UpdateUser(new model.User) {
 func (d *Db) DeleteUser(id string) error {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return errors.New("internal error")
 		}
 	}

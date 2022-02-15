@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 	"errors"
 	"fmt"
@@ -34,7 +33,7 @@ type LoginSessionStore interface {
 
 func (s *Db) GetSessionUser(authorization string) string {
 	if err := s.Db.Ping(); err != nil {
-		if err = Setup.SetupDb(); err != nil {
+		if _, err = SetupDb(); err != nil {
 			return ""
 		}
 	}
@@ -56,7 +55,7 @@ func (s *Db) GetSessionUser(authorization string) string {
 
 func (s *Db) AddSessionUser(user *model.User) (string, error) {
 	if err := s.Db.Ping(); err != nil {
-		if err = Setup.SetupDb(); err != nil {
+		if _, err = SetupDb(); err != nil {
 			return "", errors.New("internal error")
 		}
 	}
@@ -73,7 +72,7 @@ func (s *Db) AddSessionUser(user *model.User) (string, error) {
 
 func (s *Db) DeleteSessionUserBySession(authorization string) {
 	if err := s.Db.Ping(); err != nil {
-		if err = Setup.SetupDb(); err != nil {
+		if _, err = SetupDb(); err != nil {
 			return
 		}
 	}
@@ -82,7 +81,7 @@ func (s *Db) DeleteSessionUserBySession(authorization string) {
 
 func (s *Db) DeleteSessionUserByUser(user *model.User) {
 	if err := s.Db.Ping(); err != nil {
-		if err = Setup.SetupDb(); err != nil {
+		if _, err = SetupDb(); err != nil {
 			return
 		}
 	}

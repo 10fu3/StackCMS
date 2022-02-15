@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 	"StackCMS/util"
 	"fmt"
@@ -21,7 +20,8 @@ type ContentFields interface {
 func (d *Db) CreateFields(apiId string, fields []model.Field) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -75,7 +75,8 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return []model.Field{}
 		}
 	}
@@ -91,7 +92,8 @@ func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 func (d *Db) UpdateField(fields []model.Field) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -122,7 +124,8 @@ func (d *Db) UpdateField(fields []model.Field) {
 func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -132,7 +135,8 @@ func (d *Db) DeleteFieldsByApiUniqueId(apiId string) {
 func (d *Db) DeleteField(field model.Field) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -142,7 +146,8 @@ func (d *Db) DeleteField(field model.Field) {
 func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -168,7 +173,8 @@ func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 func (d *Db) DeleteFieldByRelationApi(relationApiUnique string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}

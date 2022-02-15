@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 	"github.com/jmoiron/sqlx"
 )
@@ -18,7 +17,8 @@ type ClientAbility interface {
 func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return false
 		}
 	}
@@ -38,7 +38,8 @@ func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
 func (d *Db) GetClientAbility() map[string][]string {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return map[string][]string{}
 		}
 	}
@@ -56,7 +57,8 @@ func (d *Db) GetClientAbility() map[string][]string {
 func (d *Db) GetClientAbilityByClientId(clientId string) []model.Ability {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return []model.Ability{}
 		}
 	}
@@ -70,7 +72,8 @@ func (d *Db) GetClientAbilityByClientId(clientId string) []model.Ability {
 func (d *Db) AppendClientAbilities(client model.Client, ability []model.Ability) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -95,7 +98,8 @@ func (d *Db) AppendClientAbilities(client model.Client, ability []model.Ability)
 func (d *Db) AppendClientAbility(client model.Client, ability model.Ability) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -108,7 +112,8 @@ func (d *Db) AppendClientAbility(client model.Client, ability model.Ability) {
 func (d *Db) DeleteClientAbility(clientId string) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}

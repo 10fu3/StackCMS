@@ -1,7 +1,6 @@
 package store
 
 import (
-	"StackCMS/Setup"
 	"StackCMS/model"
 )
 
@@ -16,7 +15,8 @@ func (d *Db) GetAllRole() []model.Role {
 	var r []model.Role
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return r
 		}
 	}
@@ -27,7 +27,8 @@ func (d *Db) GetAllRole() []model.Role {
 func (d *Db) GetRole(roleId string) *model.Role {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return nil
 		}
 	}
@@ -41,7 +42,8 @@ func (d *Db) GetRole(roleId string) *model.Role {
 func (d *Db) CreateRole(role model.Role) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -51,7 +53,8 @@ func (d *Db) CreateRole(role model.Role) {
 func (d *Db) UpdateRole(role model.Role) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
@@ -63,7 +66,8 @@ func (d *Db) UpdateRole(role model.Role) {
 func (d *Db) DeleteRole(role model.Role) {
 	if err := d.Db.Ping(); err != nil {
 		d.Db.Close()
-		if err = Setup.SetupDb(); err != nil {
+		if  _, err = SetupDb()
+		err != nil{
 			return
 		}
 	}
