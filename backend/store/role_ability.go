@@ -13,13 +13,6 @@ type RolesAbility interface {
 }
 
 func (d *Db) GetAbility() map[string][]string {
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if  _, err = SetupDb()
-		err != nil{
-			return map[string][]string{}
-		}
-	}
 	r := map[string][]string{}
 
 	dbr := []model.RoleAbility{}
@@ -32,13 +25,6 @@ func (d *Db) GetAbility() map[string][]string {
 }
 
 func (d *Db) AppendAbilities(role model.Role, ability []string) {
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if  _, err = SetupDb()
-		err != nil{
-			return
-		}
-	}
 	t, err := d.Db.Beginx()
 	if err != nil {
 		return
@@ -55,34 +41,13 @@ func (d *Db) AppendAbilities(role model.Role, ability []string) {
 }
 
 func (d *Db) AppendAbility(role *model.Role, ability model.Ability) {
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if  _, err = SetupDb()
-		err != nil{
-			return
-		}
-	}
 	d.Db.Exec("INSERT INTO role_ability (role_ability_id,role_id,ability_id) VALUES (?,?,?)", role.Id+"_"+ability.String(), role.Id, ability.String())
 }
 
 func (d *Db) LeaveAbility(role *model.Role, ability model.Ability) {
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if  _, err = SetupDb()
-		err != nil{
-			return
-		}
-	}
 	d.Db.Exec("DELETE FROM role_ability WHERE role_abiltiy = ?", role.Id+"_"+ability.String())
 }
 
 func (d *Db) LeaveAbilitiesByRoleId(role *model.Role) {
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if  _, err = SetupDb()
-		err != nil{
-			return
-		}
-	}
 	d.Db.Exec("DELETE FROM role_ability WHERE role_id = ?", role.Id)
 }
