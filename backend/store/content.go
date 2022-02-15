@@ -279,7 +279,6 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	meta.UpdatedBy = createdBy
 
 	for _, k := range []string{
-		"_id",
 		"created_at",
 		"created_by",
 		"deleted_at",

@@ -1,12 +1,17 @@
 package store
 
 import (
+	"StackCMS/Setup"
 	"StackCMS/model"
 	"github.com/jmoiron/sqlx"
 )
 
 func (d *Db) HasUserAuthority(userId string, abilities []model.Ability) bool {
 
+		if err = Setup.SetupDb();err != nil{
+			return false
+		}
+	}
 	args := func() []string {
 		a := []string{}
 		for _, ability := range abilities {

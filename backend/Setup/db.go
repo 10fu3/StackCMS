@@ -149,7 +149,7 @@ func ConnectMongoDB() error {
 	return nil
 }
 
-func Db() error {
+func SetupDb() error {
 	var err error
 	store.Access = &store.Db{}
 	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
@@ -157,25 +157,35 @@ func Db() error {
 		return err
 	}
 
-	store.Access.Db.SetMaxIdleConns(10)
-	store.Access.Db.SetMaxOpenConns(10)
-	store.Access.Db.SetConnMaxLifetime(time.Minute)
+	store.Access.Db.SetMaxIdleConns(20)
+	store.Access.Db.SetMaxOpenConns(20)
+	store.Access.Db.SetConnMaxLifetime(0)
+	return nil
+}
 
-	//if config.Values.UseCloudRun {
-	//	go func() {
-	//		_ = time.AfterFunc(time.Minute, func() {
-	//			go func() {
-	//				tickChan := time.NewTicker(time.Minute * 15).C
-	//				for {
-	//					select {
-	//					case <-tickChan:
-	//						os.Exit(1)
-	//					}
-	//				}
-	//			}()
-	//		})
-	//	}()
-	//}
+func Db() error {
+	var err error
+
+	if err = SetupDb(); err != nil {
+		return err
+	}
+
+	if config.Values.UseCloudRun {
+		go func() {
+			_ = time.AfterFunc(time.Minute, func() {
+				go func() {
+					tickChan := time.NewTicker(time.Minute * 5).C
+					for {
+						select {
+						case <-tickChan:
+							store.Access.Db.Close()
+							SetupDb()
+						}
+					}
+				}()
+			})
+		}()
+	}
 
 	if config.Values.CreateTable {
 		fmt.Println("CREATE TABLE MODE IS ON")

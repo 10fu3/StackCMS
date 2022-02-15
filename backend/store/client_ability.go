@@ -1,6 +1,7 @@
 package store
 
 import (
+	"StackCMS/Setup"
 	"StackCMS/model"
 	"github.com/jmoiron/sqlx"
 )
@@ -15,20 +16,32 @@ type ClientAbility interface {
 }
 
 func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return false
+		}
+	}
 	q := "ability_id IN (?)"
 
 	query, interfaceArgs, err := sqlx.In(q, abilities)
 	if err != nil {
 		return false
 	}
-	rows, err := d.Db.Query("SELECT * FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
-	if err != nil {
+	rows := d.Db.QueryRow("SELECT * FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
+	if rows.Err() != nil {
 		return false
 	}
-	return rows.Next()
+	return true
 }
 
 func (d *Db) GetClientAbility() map[string][]string {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return map[string][]string{}
+		}
+	}
 	r := map[string][]string{}
 
 	dbr := []model.ClientAbility{}
@@ -41,6 +54,12 @@ func (d *Db) GetClientAbility() map[string][]string {
 }
 
 func (d *Db) GetClientAbilityByClientId(clientId string) []model.Ability {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return []model.Ability{}
+		}
+	}
 	dbr := []model.Ability{}
 	if err := d.Db.Select(&dbr, "SELECT ability_id FROM client_ability WHERE client_id = ?", clientId); err != nil {
 		return make([]model.Ability, 0)
@@ -49,6 +68,12 @@ func (d *Db) GetClientAbilityByClientId(clientId string) []model.Ability {
 }
 
 func (d *Db) AppendClientAbilities(client model.Client, ability []model.Ability) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return
+		}
+	}
 	t, err := d.Db.Beginx()
 	if err != nil {
 		return
@@ -68,6 +93,12 @@ func (d *Db) AppendClientAbilities(client model.Client, ability []model.Ability)
 }
 
 func (d *Db) AppendClientAbility(client model.Client, ability model.Ability) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return
+		}
+	}
 	if _, ok := model.ClientAbilities[string(ability)]; !ok {
 		return
 	}
@@ -75,5 +106,11 @@ func (d *Db) AppendClientAbility(client model.Client, ability model.Ability) {
 }
 
 func (d *Db) DeleteClientAbility(clientId string) {
+	if err := d.Db.Ping(); err != nil {
+		d.Db.Close()
+		if err = Setup.SetupDb(); err != nil {
+			return
+		}
+	}
 	d.Db.Exec("DELETE FROM client_ability WHERE client_id = ?", clientId)
 }
