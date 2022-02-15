@@ -154,6 +154,7 @@ func Db() error {
 	store.Access = &store.Db{}
 	store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 
@@ -170,7 +171,7 @@ func Db() error {
 
 	if config.Values.UseCloudRun {
 		go func() {
-			_ = time.AfterFunc(time.Minute, func() {
+			_ = time.AfterFunc(5*time.Minute, func() {
 				go func() {
 					tickChan := time.NewTicker(time.Minute * 5).C
 					for {

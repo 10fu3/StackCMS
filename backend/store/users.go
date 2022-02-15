@@ -35,12 +35,6 @@ func (d *Db) CreateUser(mail string, nick *string, password string) {
 
 func (d *Db) GetUsersAll() []model.User {
 	r := []model.User{}
-	if err := d.Db.Ping(); err != nil {
-		d.Db.Close()
-		if _, err = SetupDb(); err != nil {
-			return r
-		}
-	}
 	d.Db.Select(&r, "SELECT * FROM users")
 	return r
 }

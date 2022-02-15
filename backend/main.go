@@ -4,7 +4,6 @@ import (
 	"StackCMS/Setup"
 	"StackCMS/config"
 	"StackCMS/router"
-	"StackCMS/store"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,8 +25,6 @@ func main() {
 	g := gin.Default()
 
 	if err == nil {
-		// CORS 対応
-		defer store.Access.Db.Close()
 		corsConfig := cors.DefaultConfig()
 		corsConfig.AllowOrigins = []string{"*"}
 		corsConfig.AllowHeaders = []string{"authorization"}
