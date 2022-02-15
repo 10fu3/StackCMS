@@ -17,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
-	"os"
 	"reflect"
 	"time"
 )
@@ -158,19 +157,33 @@ func Db() error {
 		return err
 	}
 
-	store.Access.Db.SetMaxIdleConns(100)
-	store.Access.Db.SetMaxOpenConns(100)
+	store.Access.Db.SetMaxIdleConns(20)
+	store.Access.Db.SetMaxOpenConns(20)
 	store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+
+	if err := store.Access.Db.Ping(); err != nil {
+		store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+		store.Access.Db.SetMaxIdleConns(20)
+		store.Access.Db.SetMaxOpenConns(20)
+		store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+	}
 
 	if config.Values.UseCloudRun {
 		go func() {
 			_ = time.AfterFunc(time.Minute, func() {
 				go func() {
-					tickChan := time.NewTicker(time.Minute * 15).C
+					tickChan := time.NewTicker(time.Minute * 5).C
 					for {
 						select {
 						case <-tickChan:
-							os.Exit(1)
+							{
+								store.Access.Db.Close()
+								store.Access = &store.Db{}
+								store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
+								store.Access.Db.SetMaxIdleConns(20)
+								store.Access.Db.SetMaxOpenConns(20)
+								store.Access.Db.SetConnMaxLifetime(90 * time.Second)
+							}
 						}
 					}
 				}()
