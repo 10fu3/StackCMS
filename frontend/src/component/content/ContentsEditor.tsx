@@ -35,34 +35,23 @@ const ContentsEditor  = ()=>{
 
     const api = useSelector(getApis).filter(i=>i.api_id === params.id)
 
-    const [contents,setContents] = useState<{[id:string]:any}>({})
-
     const [sendFaultResult,setSendFaultResult] = useState<boolean|undefined>(undefined)
 
     const cancelRef = useRef<HTMLButtonElement|null>(null)
 
-    const editContents = useSelector(getContents).filter((i)=>{
-        return i["_id"] === params.contents_id
-    })
+    const [displayContent,setDisplayContent] = useState<{[key:string]:any}>((()=>{
+        const r = useSelector(getContents).filter((i)=>{
+            return i["_id"] === params.contents_id
+        })
+        if(r.length > 0){
+            return Object.assign({},r[0])
+        }
+        return {}
+    })())
 
     const nav = useNavigate()
 
     const toast = useToast()
-
-    useEffect(()=>{
-
-        if(editContents.length > 0){
-            let contents: {[id:string]:any} = Object.assign({},editContents[0])
-            for (const f of fields) {
-                const r:ContentMeta[] = contents[f.field_name]
-                if(!r || (typeof r) !== "object") {
-                    continue
-                }
-                contents[f.field_name] = r.map(i=>i._id)
-            }
-            setContents(contents)
-        }
-    },[])
 
     const handleDelete = ()=>{
         (async ()=>{
@@ -80,26 +69,13 @@ const ContentsEditor  = ()=>{
             setSendFaultResult(undefined)
             const r = (await CMSApi.Content.update(params.id ? params.id : "",
                 params.contents_id ? params.contents_id : "",
-                contents))
+                displayContent))
             setSendFaultResult(!r)
             if(r){
-                store.dispatch(setContents(params.id ? params.id : ""))
-
-                const newContent =  useSelector(getContents).filter((i)=>{
-                    return i["_id"] === params.contents_id
-                })
-
-                if(newContent.length > 0){
-                    let contents: {[id:string]:any} = Object.assign({},editContents[0])
-                    for (const f of fields) {
-                        const r:ContentMeta[] = contents[f.field_name]
-                        if(!r || (typeof r) !== "object") {
-                            continue
-                        }
-                        contents[f.field_name] = r.map(i=>i._id)
-                    }
-                    setContents(contents)
-                }
+                (async ()=>{
+                    const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
+                    setDisplayContent(newContent)
+                })()
                 toast({
                     title: 'Success!',
                     description: "コンテンツの更新に成功しました",
@@ -113,7 +89,7 @@ const ContentsEditor  = ()=>{
 
     const handleGoPreview = ()=>{
         if(api.length === 1 && api[0].preview_url && api[0].preview_url.length > 0){
-            const link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",contents["_id"])
+            const link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",displayContent["_id"])
             window.open(link)
             return
         }
@@ -122,7 +98,7 @@ const ContentsEditor  = ()=>{
 
     const handleChangePublish = ()=>{
 
-        const publishFlag = !(contents as ContentMeta).published_at;
+        const publishFlag = !(displayContent as ContentMeta).published_at;
 
         (async ()=>{
             setSendFaultResult(undefined)
@@ -130,10 +106,13 @@ const ContentsEditor  = ()=>{
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
-
+                (async ()=>{
+                    const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
+                    setDisplayContent(newContent)
+                })()
                 toast({
                     title: 'Success!',
-                    description: `コンテンツの公開状態を${publishFlag ? "\"公開\"" : "\"非公開\""}に変更しました`,
+                    description: `コンテンツの公開状態を${!publishFlag ? "\"公開\"" : "\"非公開\""}に変更しました`,
                     status: 'success',
                     duration: 5000,
                     isClosable: true,
@@ -142,7 +121,9 @@ const ContentsEditor  = ()=>{
         })()
     }
 
-    if(editContents.length === 0){
+    if(useSelector(getContents).filter((i)=>{
+        return i["_id"] === params.contents_id
+    }).length === 0){
         return <NotFound/>
     }
 
@@ -205,9 +186,9 @@ const ContentsEditor  = ()=>{
                             <MenuItem icon={<ViewIcon/>} onClick={handleGoPreview}>
                                 下書きをプレビュー
                             </MenuItem>
-                            <MenuItem icon={(contents as ContentMeta).published_at ? <EditIcon color={"#319795"}/> : <CheckIcon color={"#3182ce"}/>} onClick={handleChangePublish}>
+                            <MenuItem icon={(displayContent as ContentMeta).published_at ? <EditIcon color={"#319795"}/> : <CheckIcon color={"#3182ce"}/>} onClick={handleChangePublish}>
                                 {
-                                    (contents as ContentMeta).published_at ? "下書きに戻す" : "公開"
+                                    (displayContent as ContentMeta).published_at ? "下書きに戻す" : "公開"
                                 }
                             </MenuItem>
                             <MenuItem icon={<RepeatIcon color={"#38A169"}/>} colorScheme="green" onClick={handleUpdate}>
@@ -234,33 +215,33 @@ const ContentsEditor  = ()=>{
                                         (()=>{
                                             if("string" === f.type){
                                                 return <TextEditor
-                                                    value={contents[f.field_name]}
+                                                    value={displayContent[f.field_name]}
                                                     onChange={(e)=>{
-                                                        const c = {...contents}
+                                                        const c = {...displayContent}
                                                         c[f.field_name] = e
-                                                        setContents(c)
+                                                        setDisplayContent(c)
                                                     }}/>
                                             }
                                             if("number" === f.type){
-                                                return <NumberEditor value={contents[f.field_name]}
+                                                return <NumberEditor value={displayContent[f.field_name]}
                                                                      onChange={(e)=>{
-                                                                         const c = {...contents}
+                                                                         const c = {...displayContent}
                                                                          c[f.field_name] = e
-                                                                         setContents(c)
+                                                                         setDisplayContent(c)
                                                                      }}/>
                                             }
                                             if("boolean" === f.type){
-                                                return <BooleanEditor value={contents[f.field_name]} onChange={(e)=>{
-                                                    const c = {...contents}
+                                                return <BooleanEditor value={displayContent[f.field_name]} onChange={(e)=>{
+                                                    const c = {...displayContent}
                                                     c[f.field_name] = String(c[f.field_name]) !== "true"
-                                                    setContents(c)
+                                                    setDisplayContent(c)
                                                 }}/>
                                             }
                                             if("relation" === f.type){
                                                 return <RelationEditor
                                                     apiId={f.relation_api ? f.relation_api : ""}
                                                     onClickItem={(i,e)=>{
-                                                        let c: {[id:string]:any} = Object.assign({},contents)
+                                                        let c: {[id:string]:any} = Object.assign({},displayContent)
                                                         const relations = c[f.field_name] as string[]
                                                         if(relations){
                                                             if(relations.includes(e._id)){
@@ -271,9 +252,9 @@ const ContentsEditor  = ()=>{
                                                         }else{
                                                             c[f.field_name] = [e._id]
                                                         }
-                                                        setContents(c)
+                                                        setDisplayContent(c)
                                                     }}
-                                                    selected={contents[f.field_name] as string[]}
+                                                    selected={displayContent[f.field_name] as string[]}
                                                 />
                                             }
                                         })()

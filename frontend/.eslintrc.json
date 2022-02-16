@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "react-hooks/rules-of-hooks": 0
+  },
+  "parser": "@typescript-eslint/parser"
+}

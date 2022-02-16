@@ -195,13 +195,13 @@ const ContentsList = ()=>{
                                                 <Box overflow="hidden">
                                                     {
                                                         (typeof e[i.field_name]) === "object" ? (()=>{
-                                                            const r = (e[i.field_name] as ContentMeta[])
+                                                            const r = (e[i.field_name] as string[])
                                                             if(r && r.length > 0){
-                                                                return <ul >
+                                                                return <chakra.ul>
                                                                     {
-                                                                        r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
+                                                                        r.map(i=><chakra.li style={{listStyleType:"disc"}}>・{i}</chakra.li>)
                                                                     }
-                                                                </ul>
+                                                                </chakra.ul>
                                                             }
                                                             return ""
                                                         })() : <Box>

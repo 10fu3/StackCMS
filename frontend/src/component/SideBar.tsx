@@ -93,7 +93,6 @@ const SideBar:React.FC = ()=>{
                 <Center h={"100%"} color="white">
                     {
                         (()=>{
-                            // eslint-disable-next-line react-hooks/rules-of-hooks
                             const a = useSelector(getProfile)
                             return a ? <Flex>"<div style={{fontWeight:"bold"}}>{a.nick_name}</div>"としてログイン中</Flex> : <p>未ログイン</p>
                         })()

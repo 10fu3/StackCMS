@@ -346,7 +346,7 @@ export const CMSApi = (()=>{
                             return []
                         }
                         const url = new URL(API_LOC()+`contents/${api_id}`)
-                        url.searchParams.append('depth','1')
+                        url.searchParams.append('depth','0')
                         url.searchParams.append('orders','-created_at')
                         url.searchParams.append('draft','true')
 
@@ -358,6 +358,36 @@ export const CMSApi = (()=>{
                         if (r.ok){
                             const d = await r.json()
                             const result = (d as JsonResultArray).contents;
+                            if(result) {
+                                return result
+                            }
+                        }
+                        if (r.status === 401){
+                            return undefined
+                        }
+                        return []
+                    }catch (e){
+                        return undefined
+                    }
+                },
+                getByContentId: async (api_id:string,content_id:string) => {
+                    try{
+                        const k = localStorage.getItem("authorization")
+                        if(k === null){
+                            return []
+                        }
+                        const url = new URL(API_LOC()+`contents/${api_id}/${content_id}`)
+                        url.searchParams.append('depth','1')
+                        url.searchParams.append('draft','true')
+
+                        const r = (await fetch(url.toString(),{
+                            headers: new Headers({
+                                authorization:k
+                            })
+                        }))
+                        if (r.ok){
+                            const d = await r.json()
+                            const result = (d as {[key:string]:any});
                             if(result) {
                                 return result
                             }
