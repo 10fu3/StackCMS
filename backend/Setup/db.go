@@ -169,28 +169,6 @@ func Db() error {
 		store.Access.Db.SetConnMaxLifetime(90 * time.Second)
 	}
 
-	if config.Values.UseCloudRun {
-		go func() {
-			_ = time.AfterFunc(5*time.Minute, func() {
-				go func() {
-					tickChan := time.NewTicker(time.Minute * 5).C
-					for {
-						select {
-						case <-tickChan:
-							{
-								store.Access.Db.Close()
-								store.Access.Db, err = ConnectDatabase(config.GetRelationalDatabaseConfig())
-								store.Access.Db.SetMaxIdleConns(20)
-								store.Access.Db.SetMaxOpenConns(20)
-								store.Access.Db.SetConnMaxLifetime(90 * time.Second)
-							}
-						}
-					}
-				}()
-			})
-		}()
-	}
-
 	if config.Values.CreateTable {
 		fmt.Println("CREATE TABLE MODE IS ON")
 		if err = DefineTables(store.Access.Db); err != nil {
