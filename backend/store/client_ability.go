@@ -2,6 +2,7 @@ package store
 
 import (
 	"StackCMS/model"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,9 +22,18 @@ func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
 	if err != nil {
 		return false
 	}
-	rows := d.Db.QueryRow("SELECT * FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
+	rows, e := d.Db.Query("SELECT client_id FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
+
+	if e != nil {
+		fmt.Println("client authority error " + e.Error())
+		return false
+	}
 	if rows.Err() != nil {
 		return false
+	}
+	var temp = ""
+	for rows.Next() {
+		rows.Scan(&temp)
 	}
 	return true
 }

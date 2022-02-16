@@ -4,6 +4,7 @@ import (
 	"StackCMS/model"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"strings"
 )
 
 func (d *Db) HasUserAuthority(userId string, abilities []model.Ability) bool {
@@ -23,16 +24,21 @@ func (d *Db) HasUserAuthority(userId string, abilities []model.Ability) bool {
 		return false
 	}
 
-	q = "select user_id from user_role where role_id IN ( " + q + ") AND user_id = ? LIMIT 1"
+	q = "select user_id from user_role where role_id IN ( " + q + ") AND user_id = ?"
 
-	r := d.Db.QueryRowx(q, append(a, userId)...)
-	if r.Err() != nil {
-		fmt.Println(r.Err().Error())
+	r, e := d.Db.Query(q, append(a, userId)...)
+
+	if e != nil {
+		if strings.Contains(e.Error(), "sync") {
+			fmt.Println("user authority occurred command sync error sql")
+		}
 		return false
 	}
-	if err := r.MapScan(map[string]interface{}{}); err != nil {
-		fmt.Println(err.Error())
-		return false
+
+	var flag = false
+
+	for r.Next() {
+		flag = true
 	}
-	return true
+	return flag
 }

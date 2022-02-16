@@ -12,6 +12,10 @@ type Db struct {
 	Ctx       context.Context
 }
 
+type DB struct {
+	Db *sqlx.DB
+}
+
 type IDb interface {
 	Apis
 	Clients
