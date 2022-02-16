@@ -22,7 +22,7 @@ func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
 	if err != nil {
 		return false
 	}
-	rows, e := d.Db.Query("SELECT client_id FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
+	rows, e := d.Db.Query("SELECT * FROM client_ability where client_id = ? having "+query, append([]interface{}{clientId}, interfaceArgs...)...)
 
 	if e != nil {
 		fmt.Println("client authority error " + e.Error())
@@ -31,11 +31,18 @@ func (d *Db) HasClientAuthority(clientId string, abilities []string) bool {
 	if rows.Err() != nil {
 		return false
 	}
-	var temp = ""
+	temp := struct {
+		ClientId        string `db:"client_id"`
+		ClientAbilityId string `db:"client_ability_id"`
+		AbilityId       string `db:"ability_id"`
+	}{}
+
+	var flag = false
 	for rows.Next() {
 		rows.Scan(&temp)
+		flag = true
 	}
-	return true
+	return flag
 }
 
 func (d *Db) GetClientAbility() map[string][]string {
