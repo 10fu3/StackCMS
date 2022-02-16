@@ -38,7 +38,7 @@ const ContentsEditor  = ()=>{
 
     const [sendFaultResult,setSendFaultResult] = useState<boolean|undefined>(undefined)
 
-    const cancelRef = useRef<HTMLButtonElement>(null)
+    const cancelRef = useRef<HTMLButtonElement|null>(null)
 
     const editContents = useSelector(getContents).filter((i)=>{
         return i["_id"] === params.contents_id
