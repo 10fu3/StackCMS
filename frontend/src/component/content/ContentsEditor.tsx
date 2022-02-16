@@ -22,10 +22,11 @@ import {
     ViewIcon
 } from "@chakra-ui/icons";
 import {BooleanEditor, NumberEditor, RelationEditor, TextEditor} from "./ContentEditorComponent";
-import {getContents} from "../../store/contents";
+import {getContents, setContents} from "../../store/contents";
 import NotFound from "../NotFound";
 import {ContentMeta} from "../../model/model";
 import {getApis} from "../../store/apis";
+import store from "../../store";
 
 const ContentsEditor  = ()=>{
     const params = useParams<"id"|"contents_id">()
@@ -82,6 +83,23 @@ const ContentsEditor  = ()=>{
                 contents))
             setSendFaultResult(!r)
             if(r){
+                store.dispatch(setContents(params.id ? params.id : ""))
+
+                const newContent =  useSelector(getContents).filter((i)=>{
+                    return i["_id"] === params.contents_id
+                })
+
+                if(newContent.length > 0){
+                    let contents: {[id:string]:any} = Object.assign({},editContents[0])
+                    for (const f of fields) {
+                        const r:ContentMeta[] = contents[f.field_name]
+                        if(!r || (typeof r) !== "object") {
+                            continue
+                        }
+                        contents[f.field_name] = r.map(i=>i._id)
+                    }
+                    setContents(contents)
+                }
                 toast({
                     title: 'Success!',
                     description: "コンテンツの更新に成功しました",
@@ -112,6 +130,7 @@ const ContentsEditor  = ()=>{
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
+
                 toast({
                     title: 'Success!',
                     description: `コンテンツの公開状態を${publishFlag ? "\"公開\"" : "\"非公開\""}に変更しました`,
