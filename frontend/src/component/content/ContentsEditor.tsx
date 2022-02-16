@@ -74,7 +74,9 @@ const ContentsEditor  = ()=>{
             if(r){
                 (async ()=>{
                     const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
-                    setDisplayContent(newContent)
+                    if(newContent){
+                        setDisplayContent(newContent)
+                    }
                 })()
                 toast({
                     title: 'Success!',
@@ -108,7 +110,9 @@ const ContentsEditor  = ()=>{
             if(r){
                 (async ()=>{
                     const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
-                    setDisplayContent(newContent)
+                    if(newContent){
+                        setDisplayContent(newContent)
+                    }
                 })()
                 toast({
                     title: 'Success!',
