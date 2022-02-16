@@ -9,7 +9,7 @@ import {
     AlertDialogBody,
     AlertDialogContent, AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogOverlay, Button, chakra, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer
+    AlertDialogOverlay, Button, chakra, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, useToast
 } from "@chakra-ui/react";
 import {
     AddIcon,
@@ -46,6 +46,8 @@ const ContentsEditor  = ()=>{
 
     const nav = useNavigate()
 
+    const toast = useToast()
+
     useEffect(()=>{
 
         if(editContents.length > 0){
@@ -80,7 +82,13 @@ const ContentsEditor  = ()=>{
                 contents))
             setSendFaultResult(!r)
             if(r){
-                nav(-1)
+                toast({
+                    title: 'Success!',
+                    description: "コンテンツの更新に成功しました",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                })
             }
         })()
     }
@@ -104,7 +112,13 @@ const ContentsEditor  = ()=>{
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
-                nav(-1)
+                toast({
+                    title: 'Success!',
+                    description: `コンテンツの公開状態を${publishFlag ? "\"公開\"" : "\"非公開\""}に変更しました`,
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                })
             }
         })()
     }
