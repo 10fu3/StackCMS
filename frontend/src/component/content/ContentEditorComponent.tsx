@@ -218,7 +218,7 @@ export const RelationList :React.FC<RelationListProps> = (props)=>{
                                                 if(r && r.length > 0){
                                                     return <ul >
                                                         {
-                                                            r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
+                                                            r.map(i=><li>{i}</li>)
                                                         }
                                                     </ul>
                                                 }
