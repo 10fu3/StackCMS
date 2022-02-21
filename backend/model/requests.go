@@ -45,6 +45,7 @@ type GetQuery struct {
 	Fields   map[string]bool
 	GetMeta  bool
 	GetDraft bool
+	DraftKey *string
 	Depth    int
 	Order    []OrderRequest
 }

@@ -6,16 +6,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"time"
 )
 
 type Contents interface {
-	GetContent(query model.GetQuery) interface{}
-	ChangePublishStatusContent(contentId string, publishBy string) error
+	GetContent(query model.GetQuery) []map[string]interface{}
+	GetContentMetaById(apiId string, contentId string) *model.Content
+	GetContentMetaByApiId(apiId string) []model.Content
+	ChangePublishStatusContent(apiId string, contentId string, changeStatus ContentStatus) error
+	ChangeDraftKey(apiId string, contentId string) (error, string)
 	CreateContent(apiId string, createdBy string, content model.JSON) (string, error)
-	UpdateContent(contentId string, content model.JSON) error
-	DeleteContent(contentId string) error
+	UpdateContent(apiId string, contentId string, updateBy string, content model.JSON) error
+	DeleteContent(apiId string, contentId string) error
 	DeleteContentByApiId(apiId string) error
 }
 
@@ -75,19 +79,25 @@ func (d *Db) buildQuery(
 			query.Filter = map[string]interface{}{}
 		}
 		if !query.GetDraft {
-			parent = append(parent, bson.M{
-				"$match": bson.M{
-					"$and": []bson.M{{
-						"published_at": bson.M{
-							"$exists": true,
-						},
-					}, {
-						"published_at": bson.M{
-							"$ne": nil,
-						},
-					}},
-				},
-			})
+			if query.DraftKey != nil {
+				parent = append(parent, bson.M{"$match": bson.M{
+					"draft_key": *query.DraftKey,
+				}})
+			} else {
+				parent = append(parent, bson.M{
+					"$match": bson.M{
+						"$and": []bson.M{{
+							"published_at": bson.M{
+								"$exists": true,
+							},
+						}, {
+							"published_at": bson.M{
+								"$ne": nil,
+							},
+						}},
+					},
+				})
+			}
 		}
 		parent = append(parent, bson.M{
 			"$sort": func() bson.M {
@@ -278,17 +288,7 @@ func (d *Db) CreateContent(apiId string, createdBy string, content model.JSON) (
 	meta.CreatedBy = createdBy
 	meta.UpdatedBy = createdBy
 
-	for _, k := range []string{
-		"created_at",
-		"created_by",
-		"deleted_at",
-		"published_at",
-		"revised_at",
-		"updated_at",
-		"updated_by",
-		"publish_will",
-		"stop_will",
-	} {
+	for _, k := range model.DefinedMeta {
 		delete(content, k)
 	}
 
@@ -329,7 +329,6 @@ func (d *Db) ChangePublishStatusContent(apiId string, contentId string, changeSt
 	}
 
 	c.UpdatedAt = now
-
 	c.PublishedAt = func() *time.Time {
 		switch changeStatus {
 		case "published":
@@ -349,6 +348,25 @@ func (d *Db) ChangePublishStatusContent(apiId string, contentId string, changeSt
 	}
 
 	return nil
+}
+
+func (d *Db) ChangeDraftKey(apiId string, contentId string) (error, string) {
+	f := d.ContentDb.Collection(apiId).FindOne(context.Background(), bson.D{{"_id", contentId}})
+	var c model.Content
+	if err := f.Decode(&c); err != nil {
+		return err, ""
+	}
+	newKey := uuid.NewString()
+	c.DraftKey = newKey
+	_, err := d.ContentDb.Collection(apiId).UpdateOne(Access.Ctx,
+		bson.M{"_id": contentId},
+		bson.D{
+			{"$set", c.ToJson()},
+		})
+	if err != nil {
+		return err, ""
+	}
+	return nil, newKey
 }
 
 func (d *Db) UpdateContent(apiId string, contentId string, updateBy string, content model.JSON) error {

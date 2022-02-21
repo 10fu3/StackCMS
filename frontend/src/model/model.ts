@@ -78,4 +78,5 @@ export interface ContentMeta{
     updated_by:string
     publish_will:string
     stop_will:string
+    draft_key?:string
 }

@@ -18,27 +18,13 @@ type ContentFields interface {
 }
 
 func (d *Db) CreateFields(apiId string, fields []model.Field) {
-	baseColumns := []string{
-		"_id",
-		"created_at",
-		"created_by",
-		"deleted_at",
-		"published_at",
-		"api_id",
-		"revised_at",
-		"updated_at",
-		"updated_by",
-		"publish_will",
-		"stop_will",
-	}
-
 	t, e := d.Db.Begin()
 	if e != nil {
 		return
 	}
 
 	for _, f := range fields {
-		if util.Contains(baseColumns, f.Id) {
+		if util.Contains(model.DefinedMeta, f.Id) {
 			continue
 		}
 
@@ -84,6 +70,9 @@ func (d *Db) UpdateField(fields []model.Field) {
 		return
 	}
 	for _, field := range fields {
+		if util.Contains(model.DefinedMeta, field.Name) {
+			continue
+		}
 		if _, e = tx.Exec("UPDATE fields SET api_id = ?,field_name = ?,field_type = ?,relation_api = ?,priority = ? WHERE field_id = ?",
 			field.ApiId,
 			field.Name,
@@ -109,8 +98,17 @@ func (d *Db) DeleteField(field model.Field) {
 }
 
 func (d *Db) DeleteFields(apiId string, fieldIds []string) {
+
+	fieldsIds := []string{}
+	for _, f := range fieldIds {
+		if !util.Contains(model.DefinedMeta, fieldIds) {
+			continue
+		}
+		fieldsIds = append(fieldsIds, f)
+	}
+
 	in := "field_id IN (?)"
-	q, a, e := sqlx.In(in, fieldIds)
+	q, a, e := sqlx.In(in, fieldsIds)
 	if e != nil {
 		return
 	}
@@ -120,7 +118,7 @@ func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 	d.ContentDb.Collection(apiId).UpdateMany(d.Ctx, bson.M{}, bson.M{
 		"$unset": func() bson.M {
 			r := bson.M{}
-			for _, id := range fieldIds {
+			for _, id := range fieldsIds {
 				r[id] = 1
 			}
 			return r

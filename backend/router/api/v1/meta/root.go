@@ -11,4 +11,6 @@ func RegisterRoutes(g *gin.RouterGroup) {
 	contentsRoute.GET("", Read())
 	//
 	contentsRoute.PATCH("/:content_id/status", ChangeStatus())
+
+	contentsRoute.PATCH("/:content_id/draft_key", DraftUpdate())
 }

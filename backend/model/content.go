@@ -48,6 +48,7 @@ func (f1 *Field) Equals(f2 Field) bool {
 
 type Content struct {
 	Id          string     `json:"_id"          bson:"_id,omitempty"`
+	DraftKey    string     `json:"draft_key"    bson:"draft_key,omitempty"`
 	ApiId       string     `json:"api_id"       bson:"api_id,omitempty"`
 	CreatedAt   time.Time  `json:"created_at"   bson:"created_at,omitempty"`
 	UpdatedAt   time.Time  `json:"updated_at"   bson:"updated_at,omitempty"`
@@ -62,6 +63,7 @@ type Content struct {
 func NewContent() Content {
 	return Content{
 		Id:          uuid.NewString(),
+		DraftKey:    uuid.NewString(),
 		ApiId:       "",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -76,6 +78,7 @@ func NewContent() Content {
 
 var DefinedMeta = []string{
 	"_id",
+	"draft_key",
 	"created_at",
 	"created_by",
 	"deleted_at",
@@ -92,6 +95,7 @@ var DefinedMetaMap = util.StringSliceToBooleanMap(DefinedMeta)
 func (c *Content) ToJson() map[string]interface{} {
 	r := map[string]interface{}{}
 	r["_id"] = c.Id
+	r["draft_key"] = c.DraftKey
 	r["updated_at"] = c.UpdatedAt
 	r["created_at"] = c.CreatedAt
 	r["published_at"] = c.PublishedAt

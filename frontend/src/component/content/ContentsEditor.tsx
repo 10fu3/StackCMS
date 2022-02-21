@@ -91,7 +91,10 @@ const ContentsEditor  = ()=>{
 
     const handleGoPreview = ()=>{
         if(api.length === 1 && api[0].preview_url && api[0].preview_url.length > 0){
-            const link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",displayContent["_id"])
+            let link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",displayContent["_id"])
+            if(displayContent["draft_key"]){
+                link = link.replaceAll("{DRAFT_KEY}",displayContent["draft_key"])
+            }
             window.open(link)
             return
         }

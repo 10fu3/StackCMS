@@ -19,6 +19,7 @@ func buildQuery(
 	limit int64,
 	depth int,
 	order []model.OrderRequest,
+	draftKey *string,
 	serverFilter map[string]interface{}) model.GetQuery {
 
 	filter := userFilter
@@ -37,6 +38,7 @@ func buildQuery(
 		Fields:   fields,
 		GetMeta:  false,
 		GetDraft: isDraft,
+		DraftKey: draftKey,
 		Order:    order,
 		Depth:    depth,
 	}
@@ -54,7 +56,21 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 	//filter["api_id"] = ctx.Param("api_id")
 
 	isGetDraft := func() bool {
+		if authInfo, exists := ctx.Get("auth"); exists {
+			who := authInfo.(model.AuthType)
+			if !who.IsUser {
+				return false
+			}
+		}
 		return ctx.Query("draft") == "true"
+	}()
+
+	DraftKey := func() *string {
+		if ctx.Query("draft_key") == "" {
+			return nil
+		}
+		key := ctx.Query("draft_key")
+		return &key
 	}()
 
 	fields := func() map[string]bool {
@@ -115,7 +131,7 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 		return r
 	}()
 
-	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit+offset, depth, order, serverFilter)
+	return buildQuery(fields, apiId, filter, isGetDraft, offset, limit+offset, depth, order, DraftKey, serverFilter)
 }
 
 type response struct {
