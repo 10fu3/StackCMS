@@ -422,6 +422,22 @@ func (d *Db) DeleteContent(apiId string, contentId string) error {
 	if e != nil {
 		return e
 	}
+
+	relation := d.GetFieldsByRelationApi(apiId)
+
+	for _, field := range relation {
+		_, e := d.ContentDb.Collection(field.ApiId).UpdateOne(d.Ctx,
+			bson.M{},
+			bson.M{
+				"$pull": bson.M{
+					field.Id: contentId,
+				},
+			})
+		if e != nil {
+			fmt.Println(e.Error())
+		}
+	}
+
 	//d.Db.Exec("DELETE FROM contents WHERE content_id = ?", contentId)
 	return e
 }

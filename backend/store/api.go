@@ -10,8 +10,10 @@ import (
 
 type Apis interface {
 	CreateApi(api model.Api)
-	UpdateApi(api model.Api)
-	GetApi(apiId string) *model.Api
+	UpdateApi(id string, api model.Api)
+	GetApis() []model.Api
+	GetApi(id string) *model.Api
+	GetApiByUniqueId(id string) *model.Api
 	DeleteApi(apiId string)
 }
 

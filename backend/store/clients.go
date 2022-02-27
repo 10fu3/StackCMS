@@ -9,8 +9,8 @@ type Clients interface {
 	UpdateClient(client model.Client)
 	UpdateClientSecret(clientId string, newSecret string)
 	GetClientById(id string) *model.Client
-	GetClients() []*model.Client
-	GetClientBySecret(secret string) *model.Client
+	GetClients() []model.Client
+	GetClientBySecret(apiSecret string) *model.Client
 	DeleteClientByApiId(apiId string)
 	DeleteClientByClientId(clientId string)
 }

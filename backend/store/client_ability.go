@@ -7,11 +7,12 @@ import (
 )
 
 type ClientAbility interface {
+	HasClientAuthority(clientId string, abilities []string) bool
 	GetClientAbility() map[string][]string
 	GetClientAbilityByClientId(clientId string) []model.Ability
-	AppendClientAbilities(role model.Role, ability []string)
-	AppendClientAbility(role *model.Role, ability model.Ability)
-	LeaveClientAbility(role *model.Role)
+	AppendClientAbilities(client model.Client, ability []model.Ability)
+	AppendClientAbility(client model.Client, ability model.Ability)
+	DeleteClientAbility(clientId string)
 	//LeaveAbilitiesByRoleId(role *model.Role)
 }
 

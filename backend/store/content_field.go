@@ -11,10 +11,14 @@ import (
 )
 
 type ContentFields interface {
-	CreateFields(apiId string, fields []model.Field, isUpdate bool)
+	CreateFields(apiId string, fields []model.Field)
 	GetFieldsByApiUniqueId(apiId string) []model.Field
 	DeleteFieldsByApiUniqueId(apiId string)
 	DeleteField(field model.Field)
+	DeleteFields(apiId string, fieldIds []string)
+	DeleteFieldByRelationApi(relationApiUnique string)
+	UpdateField(fields []model.Field)
+	GetFieldsByRelationApi(relationApiUniqueId string) []model.Field
 }
 
 func (d *Db) CreateFields(apiId string, fields []model.Field) {
@@ -54,6 +58,16 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 func (d *Db) GetFieldsByApiUniqueId(unique string) []model.Field {
 	var r []model.Field
 	var err = d.Db.Select(&r, "SELECT * FROM fields WHERE api_id = ?", unique)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+	return r
+}
+
+func (d *Db) GetFieldsByRelationApi(relationApiUniqueId string) []model.Field {
+	var r []model.Field
+	var err = d.Db.Select(&r, "SELECT * FROM fields WHERE relation_api = ?", relationApiUniqueId)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
