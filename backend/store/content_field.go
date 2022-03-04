@@ -50,6 +50,8 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 					},
 				})
 		}
+	} else {
+		t.Rollback()
 	}
 }
 
