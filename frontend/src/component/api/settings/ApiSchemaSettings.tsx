@@ -45,7 +45,7 @@ const ApiSchemaSettings = () => {
         if (api.length !== 1) {
             return
         }
-        setFields(api[0].fields)
+        setFields(api[0].fields.slice())
         setBase(JSON.stringify(api[0].fields))
     }, [])
 
