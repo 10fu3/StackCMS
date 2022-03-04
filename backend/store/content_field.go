@@ -27,28 +27,26 @@ func (d *Db) CreateFields(apiId string, fields []model.Field) {
 		return
 	}
 
-	for _, f := range fields {
+	for i, f := range fields {
 		if util.Contains(model.DefinedMeta, f.Id) {
 			continue
 		}
 
+		fields[i].Id = strings.ReplaceAll("a"+uuid.New().String(), "-", "_")
+
 		if _, err := t.Exec("INSERT INTO fields (field_id,api_id,field_name,field_type,relation_api,priority) VALUES(?,?,?,?,?,?)",
-			strings.ReplaceAll("a"+uuid.New().String(), "-", "_"),
+			fields[i].Id,
 			apiId, f.Name, f.Type, f.RelationApiId, f.Priority); err != nil {
 			continue
 		}
 	}
 	if t.Commit() == nil {
-		for _, f := range fields {
+		for i, _ := range fields {
 			d.ContentDb.Collection(apiId).UpdateMany(d.Ctx,
-				bson.M{
-					f.Id: bson.M{
-						"$exists": false,
-					},
-				},
+				bson.M{},
 				bson.M{
 					"$set": bson.M{
-						strings.ReplaceAll(f.Id, "-", "_"): nil,
+						fields[i].Id: nil,
 					},
 				})
 		}
@@ -115,7 +113,7 @@ func (d *Db) DeleteFields(apiId string, fieldIds []string) {
 
 	fieldsIds := []string{}
 	for _, f := range fieldIds {
-		if !util.Contains(model.DefinedMeta, fieldIds) {
+		if util.Contains(model.DefinedMeta, fieldIds) {
 			continue
 		}
 		fieldsIds = append(fieldsIds, f)
