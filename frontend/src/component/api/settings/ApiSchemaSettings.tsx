@@ -24,7 +24,7 @@ import store from "../../../store";
 
 const ApiSchemaSettings = () => {
 
-    const cancelRef = useRef<HTMLButtonElement>(null)
+    const cancelRef = useRef<HTMLButtonElement|null>(null)
 
     const params = useParams<"id">()
 
@@ -131,7 +131,7 @@ const ApiSchemaSettings = () => {
                     優先度の値が小さい項目ほど先頭に描画されます.
                 </chakra.p>
                 {
-                    fields.map((e, i) => {
+                    fields.sort((a,b)=> a.priority - b.priority).map((e, i) => {
                         return <Box pt="10px" pb="10px">
                             <Flex borderWidth="1px" p="10px 26px 10px 26px" bgColor="white" w={"100%"}>
                                 <Box pr={"5px"}>
