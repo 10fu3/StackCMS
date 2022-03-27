@@ -142,6 +142,7 @@ const ContentsList = ()=>{
                                         paddingBottom:"10px",
                                         width:"100%",
                                         cursor:"pointer",
+                                        maxHeight: "100px",
                                     }}>
                                     {
                                         <Center style={{
@@ -192,18 +193,22 @@ const ContentsList = ()=>{
                                                     paddingRight:5,
                                                     paddingLeft:5,
                                                 }}>
-                                                <Box overflow="hidden">
+                                                <Box maxHeight="80px" overflow="hidden">
                                                     {
                                                         (typeof e[i.field_name]) === "object" ? (()=>{
                                                             const r = (e[i.field_name] as string[])
-                                                            if(r && r.length > 0){
-                                                                return <chakra.ul>
-                                                                    {
-                                                                        r.map(i=><chakra.li style={{listStyleType:"disc"}}>・{i}</chakra.li>)
-                                                                    }
-                                                                </chakra.ul>
-                                                            }
-                                                            return ""
+                                                            // if(r && r.length > 0){
+                                                            //     return <chakra.ul>
+                                                            //         {
+                                                            //             r.map(i=><chakra.li style={{listStyleType:"disc"}}>・{i}</chakra.li>)
+                                                            //         }
+                                                            //     </chakra.ul>
+                                                            // }
+                                                            // return ""
+                                                            return <Box>
+                                                                <chakra.p style={{maxHeight:"100px"}} fontWeight="">
+                                                                    {`${r.length}件の参照`}
+                                                                </chakra.p></Box>
                                                         })() : <Box>
                                                             <chakra.p style={{maxHeight:"100px"}} fontWeight="">
                                                                 {String(e[i.field_name] ? e[i.field_name] : "")}
