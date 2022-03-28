@@ -207,7 +207,7 @@ const ContentsList = ()=>{
                                                             // return ""
                                                             return <Box>
                                                                 <chakra.p style={{maxHeight:"100px"}} fontWeight="">
-                                                                    {`${r.length}件の参照`}
+                                                                    {r ? `${r.length}件の参照` : ''}
                                                                 </chakra.p></Box>
                                                         })() : <Box>
                                                             <chakra.p style={{maxHeight:"100px"}} fontWeight="">
