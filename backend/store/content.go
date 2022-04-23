@@ -125,18 +125,6 @@ func (d *Db) buildQuery(
 				}()
 			}(),
 		})
-
-		if query.Count.Limit > 0 {
-			parent = append(parent, bson.M{
-				"$limit": query.Count.Limit,
-			})
-		}
-
-		if query.Count.Offset > 0 {
-			parent = append(parent, bson.M{
-				"$skip": query.Count.Offset,
-			})
-		}
 	}
 
 	thisApiFields := fieldCache[apiId]
@@ -215,6 +203,20 @@ func (d *Db) buildQuery(
 		parent = append(parent, bson.M{
 			"$match": query.Filter,
 		})
+	}
+
+	if query != nil {
+		if query.Count.Limit > 0 {
+			parent = append(parent, bson.M{
+				"$limit": query.Count.Limit,
+			})
+		}
+
+		if query.Count.Offset > 0 {
+			parent = append(parent, bson.M{
+				"$skip": query.Count.Offset,
+			})
+		}
 	}
 
 	return parent
