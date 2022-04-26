@@ -6,7 +6,6 @@ import {
     AlertDialogHeader,
     AlertDialogOverlay, Button
 } from "@chakra-ui/react";
-import {Box} from "@chakra-ui/layout";
 import React, {useRef} from "react";
 
 export interface AlertInterface{

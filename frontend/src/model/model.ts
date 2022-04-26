@@ -1,9 +1,17 @@
+export interface ClientEntity{
+    client_id:string,
+    client_name:string,
+    client_secret:string,
+    client_ability?:string[],
+}
+
 export interface FieldType{
     id:string,
     field_name:string,
     api_id:string,
     type:string,
     relation_api?:string
+    priority: number
 }
 
 export interface UpdateUserEntity {
@@ -13,19 +21,21 @@ export interface UpdateUserEntity {
     role: string[]
 }
 
-export interface RelationField extends FieldType{
-    id:string
-    field_name:string
-    api_id:string
-    type:string
-    relation_api?:string
-}
+// export interface RelationField extends FieldType{
+//     id:string
+//     field_name:string
+//     api_id:string
+//     type:string
+//     relation_api?:string
+//     priority: number
+// }
 
 export interface NormalField extends FieldType{
     id:string
     field_name:string
     api_id:string
     type:string
+    priority: number
 }
 
 export interface Role{
@@ -36,6 +46,7 @@ export interface Role{
 }
 
 export interface Api{
+    preview_url:string
     unique_id:string
     api_id: string
     is_single: boolean
@@ -67,4 +78,5 @@ export interface ContentMeta{
     updated_by:string
     publish_will:string
     stop_will:string
+    draft_key?:string
 }

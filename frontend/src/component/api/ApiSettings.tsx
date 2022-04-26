@@ -70,11 +70,6 @@ const ApiSettings = ()=>{
                         </Button>
                     </Link>
                 </Box>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme="green">
-                        追加
-                    </Button>
-                </Box>
             </Flex>
         </Center>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>

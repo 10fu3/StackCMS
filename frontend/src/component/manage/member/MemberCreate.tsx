@@ -17,7 +17,7 @@ const MemberCreate = ()=>{
 
     const handleCreate = ()=>{
         (async ()=>{
-            setResult(await CMSApi.createUser(mail,name,password))
+            setResult(await CMSApi.User.create(mail,name,password))
         })()
     }
 

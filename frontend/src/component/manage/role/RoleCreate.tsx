@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import {Link, useNavigate} from "react-router-dom";
 import {ArrowBackIcon} from "@chakra-ui/icons";
-import {TextEditor} from "../../content/ContentEditorComponent";
 import {CMSApi} from "../../../api/cms";
 
 const RoleCreatePage:React.FC<{}> = (props)=>{
@@ -29,7 +28,7 @@ const RoleCreatePage:React.FC<{}> = (props)=>{
             return
         }
         (async ()=>{
-            setFailed(!(await CMSApi.createRole(name)))
+            setFailed(!(await CMSApi.Role.create(name)))
         })()
     }
 

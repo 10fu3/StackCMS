@@ -1,5 +1,5 @@
 import {Box, Center} from "@chakra-ui/layout";
-import {Button, chakra, Flex, Spacer} from "@chakra-ui/react";
+import {Button, chakra, Flex, Spacer, VStack} from "@chakra-ui/react";
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {getProfile} from "../store/auth";
@@ -22,7 +22,12 @@ const ProfilePage = ()=>{
 
     useEffect(()=>{
         (async ()=>{
-            const filterUsers = (await CMSApi.getUsers()).filter(u=>u.user_id === params.id);
+            const r = (await CMSApi.User.getAll())
+            if(!r){
+                window.location.href = "/login"
+                return
+            }
+            const filterUsers = r.filter(u=>u.user_id === params.id);
             if(filterUsers.length !== 1){
                 setUser(profile)
                 return
@@ -46,9 +51,9 @@ const ProfilePage = ()=>{
         </Center>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
-            <Box w="100%" pt="10px" pb="20px" pl={5} pr={5} overflow="auto" h={"100%"}>
-                <Center h="100%">
-                    <Box p={5} w="500px" bgColor="white" borderWidth="1px" borderRadius="3px">
+            <Box w="100%" pb="20px" pl={5} pr={5} overflow="auto" h={"100%"}>
+                <VStack pt={"20px"} w={"100%"}>
+                    <Box p={5} maxW="500px" w="100%" bgColor="white" borderWidth="1px" borderRadius="3px">
                         <chakra.p fontSize={20} pl={4}>
                             プロフィール
                         </chakra.p>
@@ -94,7 +99,7 @@ const ProfilePage = ()=>{
                                 <Center pt={5}>
                                     <Button w={"full"} onClick={()=>{
                                         (async ()=>{
-                                            if(await CMSApi.deleteUser(user?.user_id ? user?.user_id : "")){
+                                            if(await CMSApi.User.delete(user?.user_id ? user?.user_id : "")){
                                                 nav(-1)
                                             }
                                         })()}
@@ -118,7 +123,7 @@ const ProfilePage = ()=>{
                             </Box>
                         </Box>
                     </Box>
-                </Center>
+                </VStack>
             </Box>
         </Box>
     </Box>

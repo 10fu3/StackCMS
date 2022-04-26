@@ -67,6 +67,7 @@ const RoleDetailPage = ()=>{
 
     const abilityCategoryMap:{[id:string]:string} = {
         "Api":"API",
+        "Client":"クライアント",
         "Content":"コンテンツ",
         "Self":"自分",
         "User":"ユーザー",
@@ -81,15 +82,13 @@ const RoleDetailPage = ()=>{
 
         setRoleName(r && r.name ? r.name : "")
 
-        console.log(r.abilities)
-
         setRoleAbility(r.abilities)
 
     },[params.role_id])
 
     const handleDelete = ()=>{
         (async ()=>{
-            const result = await CMSApi.deleteRole(role?.id ? role.id : "")
+            const result = await CMSApi.Role.delete(role?.id ? role.id : "")
             setFailed(!result)
         })()
     }

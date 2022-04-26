@@ -9,51 +9,53 @@ import {
     AlertDialogBody,
     AlertDialogContent, AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogOverlay, Button, chakra, Flex, Spacer
+    AlertDialogOverlay, Button, chakra, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, useToast
 } from "@chakra-ui/react";
-import {ArrowBackIcon} from "@chakra-ui/icons";
+import {
+    AddIcon,
+    ArrowBackIcon,
+    CheckIcon,
+    DeleteIcon,
+    EditIcon,
+    HamburgerIcon,
+    RepeatIcon,
+    ViewIcon
+} from "@chakra-ui/icons";
 import {BooleanEditor, NumberEditor, RelationEditor, TextEditor} from "./ContentEditorComponent";
-import {getContents} from "../../store/contents";
+import {getContents, setContents} from "../../store/contents";
 import NotFound from "../NotFound";
 import {ContentMeta} from "../../model/model";
+import {getApis} from "../../store/apis";
+import store from "../../store";
 
 const ContentsEditor  = ()=>{
     const params = useParams<"id"|"contents_id">()
 
-    const fields = useSelector(getFields)[params.id ? params.id : ""]
+    const fields = useSelector(getFields)[params.id ? params.id : ""].map(i=>{return Object.assign({},i)}).sort((a,b)=> a.priority - b.priority)
 
-    const [contents,setContents] = useState<{[id:string]:any}>({})
+    const api = useSelector(getApis).filter(i=>i.api_id === params.id)
 
     const [sendFaultResult,setSendFaultResult] = useState<boolean|undefined>(undefined)
 
-    const cancelRef = useRef<HTMLButtonElement>(null)
+    const cancelRef = useRef<HTMLButtonElement|null>(null)
 
-    const editContents = useSelector(getContents).filter((i)=>{
-        return i["_id"] === params.contents_id
-    })
+    const [displayContent,setDisplayContent] = useState<{[key:string]:any}>((()=>{
+        const r = useSelector(getContents).filter((i)=>{
+            return i["_id"] === params.contents_id
+        })
+        if(r.length > 0){
+            return Object.assign({},r[0])
+        }
+        return {}
+    })())
 
     const nav = useNavigate()
 
-    useEffect(()=>{
-
-        if(editContents.length > 0){
-            let contents: {[id:string]:any} = Object.assign({},editContents[0])
-            for (const f of fields) {
-                const r:ContentMeta[] = contents[f.field_name]
-                console.log(r)
-                if((typeof r) !== "object") {
-                    continue
-                }
-                contents[f.field_name] = r.map(i=>i._id)
-            }
-            setContents(contents)
-        }
-    },[])
+    const toast = useToast()
 
     const handleDelete = ()=>{
         (async ()=>{
-            const r = (await CMSApi.
-            deleteContents(params.id ? params.id : "",
+            const r = (await CMSApi.Content.deleteById(params.id ? params.id : "",
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
@@ -65,34 +67,70 @@ const ContentsEditor  = ()=>{
     const handleUpdate = ()=>{
         (async ()=>{
             setSendFaultResult(undefined)
-            const r = (await CMSApi.
-            updateContents(params.id ? params.id : "",
+            const r = (await CMSApi.Content.update(params.id ? params.id : "",
                 params.contents_id ? params.contents_id : "",
-                contents))
+                displayContent))
             setSendFaultResult(!r)
             if(r){
-                nav(-1)
+                (async ()=>{
+                    const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
+                    if(newContent){
+                        setDisplayContent(newContent)
+                    }
+                })()
+                toast({
+                    title: 'Success!',
+                    description: "コンテンツの更新に成功しました",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                })
             }
         })()
+    }
+
+    const handleGoPreview = ()=>{
+        if(api.length === 1 && api[0].preview_url && api[0].preview_url.length > 0){
+            let link = api[0].preview_url.replaceAll("{API_ID}",api[0].api_id).replaceAll("{CONTENT_ID}",displayContent["_id"])
+            if(displayContent["draft_key"]){
+                link = link.replaceAll("{DRAFT_KEY}",displayContent["draft_key"])
+            }
+            window.open(link)
+            return
+        }
+        alert("APIにプレビュー用のURLが設定されていません.")
     }
 
     const handleChangePublish = ()=>{
 
-        const publishFlag = !(contents as ContentMeta).published_at;
+        const publishFlag = !(displayContent as ContentMeta).published_at;
 
         (async ()=>{
             setSendFaultResult(undefined)
-            const r = (await CMSApi.
-            changePublishStatus(publishFlag,params.id ? params.id : "",
+            const r = (await CMSApi.Content.changePublishStatus(publishFlag,params.id ? params.id : "",
                 params.contents_id ? params.contents_id : ""))
             setSendFaultResult(!r)
             if(r){
-                nav(-1)
+                (async ()=>{
+                    const newContent = await CMSApi.Content.getByContentId(params.id ? params.id : "", params.contents_id ? params.contents_id : "")
+                    if(newContent){
+                        setDisplayContent(newContent)
+                    }
+                })()
+                toast({
+                    title: 'Success!',
+                    description: `コンテンツの公開状態を${!publishFlag ? "\"公開\"" : "\"非公開\""}に変更しました`,
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                })
             }
         })()
     }
 
-    if(editContents.length === 0){
+    if(useSelector(getContents).filter((i)=>{
+        return i["_id"] === params.contents_id
+    }).length === 0){
         return <NotFound/>
     }
 
@@ -127,38 +165,47 @@ const ContentsEditor  = ()=>{
             </AlertDialogOverlay>
         </AlertDialog>
 
-        <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
-            <Flex w={"100%"}>
-                <Center>
-                    <Link to={`/api/${params.id}`}>
-                        <ArrowBackIcon/>
-                    </Link>
-                </Center>
-                <Center>
-                    <Box pl={4}>
-                        <chakra.p fontWeight="bold">{params.id} / 編集</chakra.p>
-                    </Box>
-                </Center>
-                <Spacer/>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme="red" onClick={handleDelete}>
-                        削除
-                    </Button>
-                </Box>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme={(contents as ContentMeta).published_at ? "yellow" : "blue"} onClick={handleChangePublish}>
-                        {
-                            (contents as ContentMeta).published_at ? "下書きに戻す" : "公開する"
-                        }
-                    </Button>
-                </Box>
-                <Box pl={2} pr={2}>
-                    <Button colorScheme="green" onClick={handleUpdate}>
-                        更新
-                    </Button>
-                </Box>
-            </Flex>
-        </Center>
+        <Box pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
+            <Center h={"100%"}>
+                <Flex w={"100%"}>
+                    <Center>
+                        <Link to={`/api/${params.id}`}>
+                            <ArrowBackIcon/>
+                        </Link>
+                    </Center>
+                    <Center>
+                        <Box pl={4}>
+                            <chakra.p fontWeight="bold">{params.id} / 編集</chakra.p>
+                        </Box>
+                    </Center>
+                    <Spacer/>
+                    <Menu>
+                        <MenuButton
+                            as={IconButton}
+                            aria-label='Options'
+                            icon={<HamburgerIcon />}
+                            variant='outline'
+                        />
+                        <MenuList>
+                            <MenuItem icon={<DeleteIcon color={"#E53E3E"}/>} onClick={handleDelete}>
+                                削除
+                            </MenuItem>
+                            <MenuItem icon={<ViewIcon/>} onClick={handleGoPreview}>
+                                下書きをプレビュー
+                            </MenuItem>
+                            <MenuItem icon={(displayContent as ContentMeta).published_at ? <EditIcon color={"#319795"}/> : <CheckIcon color={"#3182ce"}/>} onClick={handleChangePublish}>
+                                {
+                                    (displayContent as ContentMeta).published_at ? "下書きに戻す" : "公開"
+                                }
+                            </MenuItem>
+                            <MenuItem icon={<RepeatIcon color={"#38A169"}/>} color="green" onClick={handleUpdate}>
+                                更新
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                </Flex>
+            </Center>
+        </Box>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
             <Box w="100%" pb="20px" pt={5} pl={1} pr={1} overflow="auto" h={"100%"}>
@@ -175,33 +222,33 @@ const ContentsEditor  = ()=>{
                                         (()=>{
                                             if("string" === f.type){
                                                 return <TextEditor
-                                                    value={contents[f.field_name]}
+                                                    value={displayContent[f.field_name]}
                                                     onChange={(e)=>{
-                                                        const c = {...contents}
+                                                        const c = {...displayContent}
                                                         c[f.field_name] = e
-                                                        setContents(c)
+                                                        setDisplayContent(c)
                                                     }}/>
                                             }
                                             if("number" === f.type){
-                                                return <NumberEditor value={contents[f.field_name]}
+                                                return <NumberEditor value={displayContent[f.field_name]}
                                                                      onChange={(e)=>{
-                                                                         const c = {...contents}
+                                                                         const c = {...displayContent}
                                                                          c[f.field_name] = e
-                                                                         setContents(c)
+                                                                         setDisplayContent(c)
                                                                      }}/>
                                             }
                                             if("boolean" === f.type){
-                                                return <BooleanEditor value={contents[f.field_name]} onChange={(e)=>{
-                                                    const c = {...contents}
-                                                    c[f.field_name] = e
-                                                    setContents(c)
+                                                return <BooleanEditor value={displayContent[f.field_name]} onChange={(e)=>{
+                                                    const c = {...displayContent}
+                                                    c[f.field_name] = String(c[f.field_name]) !== "true"
+                                                    setDisplayContent(c)
                                                 }}/>
                                             }
                                             if("relation" === f.type){
                                                 return <RelationEditor
                                                     apiId={f.relation_api ? f.relation_api : ""}
                                                     onClickItem={(i,e)=>{
-                                                        let c: {[id:string]:any} = Object.assign({},contents)
+                                                        let c: {[id:string]:any} = Object.assign({},displayContent)
                                                         const relations = c[f.field_name] as string[]
                                                         if(relations){
                                                             if(relations.includes(e._id)){
@@ -212,9 +259,9 @@ const ContentsEditor  = ()=>{
                                                         }else{
                                                             c[f.field_name] = [e._id]
                                                         }
-                                                        setContents(c)
+                                                        setDisplayContent(c)
                                                     }}
-                                                    selected={contents[f.field_name] as string[]}
+                                                    selected={displayContent[f.field_name] as string[]}
                                                 />
                                             }
                                         })()

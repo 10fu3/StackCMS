@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import Top from "./component/Top";
 import {Routes, Route, Navigate} from "react-router-dom";
 import PrivateRoute from "./component/auth/PrivateRoute";
 import LoginPage from "./component/Login";
-import {isAuthSelector} from "./store/auth";
+import {isAuthSelector, setCurrentUser} from "./store/auth";
 import NotFound from "./component/NotFound";
 import {useSelector} from "react-redux";
 import DisplayList from "./component/DisplayList";
@@ -24,6 +24,11 @@ import ProfilePage from "./component/ProfilePage";
 import RoleEditPage from "./component/manage/role/RoleEdit";
 import MemberCreate from "./component/manage/member/MemberCreate";
 import ProfileUpdatePage from "./component/manage/member/MemberUpdate";
+import ClientList from "./component/manage/client/ClientList";
+import ClientCreate from "./component/manage/client/ClientCreate";
+import ClientDetail from "./component/manage/client/ClientDetail";
+import ClientEdit from "./component/manage/client/ClientEdit";
+import ApiPreviewSettings from "./component/api/settings/ApiPreviewSettings";
 
 const App:React.FC = ()=>{
   return useSelector(isAuthSelector) ? <Routes>
@@ -39,6 +44,10 @@ const App:React.FC = ()=>{
         <Route path="manage/role/create" element={<RoleCreatePage/>}/>
         <Route path="manage/role/:role_id" element={<RoleDetailPage/>}/>
         <Route path="manage/role/:role_id/edit" element={<RoleEditPage/>}/>
+        <Route path="manage/client" element={<ClientList/>}/>
+        <Route path="manage/client/:client_id" element={<ClientDetail/>}/>
+        <Route path="manage/client/:client_id/edit" element={<ClientEdit/>}/>
+        <Route path="manage/client/create" element={<ClientCreate/>}/>
         {/*コンテンツ(API)ページ*/}
         <Route path="api" element={<DisplayList category={"api"}/>}/>
         <Route path="api/create" element={<ApiCreate/>}/>
@@ -51,7 +60,7 @@ const App:React.FC = ()=>{
         <Route path="api/:id/settings/" element={<ApiSettings/>}>
           <Route path="" element={<Box>1</Box>}/>
           <Route path="schema" element={<ApiSchemaSettings/>}/>
-          <Route path="preview" element={<Box>2</Box>}/>
+          <Route path="preview" element={<ApiPreviewSettings/>}/>
           <Route path="webhook" element={<Box>3</Box>}/>
           <Route path="delete" element={<ApiDeleteSettings/>}/>
         </Route>

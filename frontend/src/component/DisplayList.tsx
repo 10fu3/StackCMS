@@ -32,24 +32,19 @@ const ContentListItem:React.FC<{parentId:string,item:ListContent}> = (props) => 
 
 const DisplayList:React.FC<{category:string}> = (props)=>{
 
-    const data:{[id:string]:ListItem} = useSelector(getDisplay)
-
-    const params = useParams<|"id"|"settings">()
-
     useEffect(()=>{
-        store.dispatch(setCurrentUser())
         store.dispatch(setApis())
     },[])
 
-    const self = useSelector(getProfile)
+    const data:{[id:string]:ListItem}|undefined = useSelector(getDisplay)
 
-    useEffect(()=>{
-        if(!self){
-            window.location.href = "/login"
-        }
-    },[self,params])
+    const params = useParams<|"id"|"settings">()
 
-    if(data && params && !params.id){
+    if(!data){
+        window.location.href = "/login"
+    }
+
+    if(data && params && !params.id && data[props.category]){
         return <Box overflow="auto" style={{backgroundColor:"#f0f9ff",height:"100%",width:"100%",padding:"60px 40px"}}>
             {
                 <div style={{width:"100%",maxWidth:"1120px",letterSpacing:0.2}}>

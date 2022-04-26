@@ -1,5 +1,5 @@
 import {Box, Center} from "@chakra-ui/layout";
-import {Button, chakra, Flex, Spacer, Table} from "@chakra-ui/react";
+import {Button, chakra, Divider, Flex, Spacer, Table} from "@chakra-ui/react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {CSSProperties, useEffect, useState} from "react";
 import {getContents, setContents} from "../../store/contents";
@@ -9,6 +9,7 @@ import {ContentMeta, FieldType} from "../../model/model";
 import {toJapaneseFromFieldType} from "../../api/cms";
 import store from "../../store";
 import {getApis} from "../../store/apis";
+import { Virtuoso } from "react-virtuoso";
 
 const ContentsList = ()=>{
 
@@ -23,7 +24,6 @@ const ContentsList = ()=>{
     const nav = useNavigate()
 
     const unionCellCss:CSSProperties = {
-        padding:20,
         overflow:"hidden",
     }
 
@@ -40,6 +40,10 @@ const ContentsList = ()=>{
         if(!rawFields[params.id]){
             return
         }
+        if(!contents){
+            window.location.href = "/login"
+            return
+        }
         let inputs:FieldType[] = []
         for (const f of rawFields[params.id]) {
             let input = Object.assign({},f)
@@ -52,10 +56,10 @@ const ContentsList = ()=>{
             }
             inputs.push(input)
         }
-        setFields(inputs)
+        setFields(inputs.map(i=>Object.assign({},{...i})).sort((a,b)=> a.priority - b.priority))
     },[rawFields])
 
-    return rawFields[params.id ? params.id : ""] ? <Box w={"100%"} h={"100vh"}>
+    return rawFields[params.id ? params.id : ""] ? <Box w={"100%"} h={"100vh"} wordBreak={"break-all"}>
         <Center pl={5} pr={5} w={"100%"} h={"64px"} bgColor={"#f7faff"}>
             <Flex w={"100%"}>
                 <Center>
@@ -82,25 +86,24 @@ const ContentsList = ()=>{
         </Center>
         <Box w={"100%"} h={"1px"} bgColor={"#e2e2e2"}/>
         <Box w={"100%"} pl={2} pr={2} h={"calc(100vh - 65px)"} bgColor={"#f0f9ff"}>
-            <Box w="100%" pt="10px" pb="20px" pl={5} pr={5} overflow="auto" h={"100%"}>
-                <Box w="100%">
-                    <chakra.table style={{width:"100%",tableLayout:"fixed"}}>
-                        <chakra.thead style={{width:"100%"}}>
-                        <chakra.tr>
-                            <chakra.th style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
-                                <Box>
+            <Box w="100%" h={"100%"} pb="20px" pl={5} pr={5}>
+                <Box w="100%" h={"100%"}>
+                    <Box style={{width:"100%",maxHeight:"56px",overflowY:"scroll"}}>
+                        <Flex style={{width:"100%",maxHeight:"56px",fontSize:"12px"}}>
+                            <Box style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
+                                <Center h={"100%"}>
                                     ステータス
-                                </Box>
-                            </chakra.th>
+                                </Center>
+                            </Box>
                             {
                                 fields.map((e)=>{
-                                    return <chakra.th style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length}+1)`}}>
-                                        <Box>
+                                    return <Box style={{padding:10,width:`calc( 100%/ ${rawFields[String(params.id)].length+1})`}}>
+                                        <Center>
                                             {
                                                 e.field_name
                                             }
-                                        </Box>
-                                        <Box color="#777">
+                                        </Center>
+                                        <Center fontSize="10px" fontWeight="bold" color="#777">
                                             {
                                                 (()=> {
                                                     if (!(e.type === "relation" && e.relation_api)) {
@@ -110,38 +113,39 @@ const ContentsList = ()=>{
                                                     }
                                                     return e.relation_api ? <Center>
                                                         <Flex>
-                                                            参照先: <Link to={'/api/' + e.relation_api}>
-                                                            <Box textDecoration="underline">
-                                                                {
-                                                                    e.relation_api
-                                                                }
-                                                            </Box>
-                                                        </Link>
+                                                            <Link to={'/api/' + e.relation_api}>
+                                                                <Box textDecoration="underline">
+                                                                    参照先:{
+                                                                        e.relation_api
+                                                                    }
+                                                                </Box>
+                                                            </Link>
                                                         </Flex>
                                                     </Center> : <></>
                                                 })()
                                             }
-                                        </Box>
-                                    </chakra.th>
+                                        </Center>
+                                    </Box>
                                 })
                             }
-                        </chakra.tr>
-                        </chakra.thead>
-                    </chakra.table>
-                    <table style={{width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed"}}>
-                        <tbody style={{width:"100%"}}>
-                        {
-                            contents ? contents.map((e,j)=>{
-                                return <tr
+                        </Flex>
+                    </Box>
+                    <Box style={{height: 'calc(100% - 56px)',paddingTop:20,width:"100%",borderCollapse:"separate",borderSpacing:"0 10px",tableLayout:"fixed",fontSize:"13px"}}>
+                        <Virtuoso style={{height: '100%',width:"100%"}} totalCount={contents ? contents.length : 0} itemContent={
+                            i => {
+                                let e = contents[i]
+                                return <Flex
                                     onClick={()=>{
                                         nav(`/api/${params.id}/${e["_id"]}`)
                                     }}
                                     style={{
+                                        paddingBottom:"10px",
                                         width:"100%",
                                         cursor:"pointer",
+                                        maxHeight: "100px",
                                     }}>
                                     {
-                                        <th style={{
+                                        <Center style={{
                                             backgroundColor:"white",
                                             width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
                                             borderRadius:"5px 0 0 5px",
@@ -150,25 +154,28 @@ const ContentsList = ()=>{
                                             borderLeft: "1px solid #e7e7e7",
                                             borderRight: "0px",
                                             borderWidth: 1,
-                                            height:100,
                                         }}>
-                                            <Center>
+                                            <Center style={{
+                                                paddingRight:5,
+                                                paddingLeft:5,
+                                            }}>
                                                 <Box pl={3} borderLeft={`5px solid ${e["published_at"] ? "#008a74" : "#0087ff"}`}>
                                                     {
                                                         e["published_at"] ? <Box>
-                                                            <Box>公開済み</Box>
-                                                            <Box>{new Date(e["published_at"]).toLocaleString()}</Box></Box> :
+                                                                <Box>公開済み</Box>
+                                                                <Box>{new Date(e["published_at"]).toLocaleString()}</Box></Box> :
                                                             "下書き"
                                                     }
                                                 </Box>
                                             </Center>
-                                        </th>
+                                        </Center>
                                     }
                                     {
-                                        rawFields[params.id !== undefined ? params.id : ""].map((i,j)=>{
+                                        fields.map((i,j)=>{
                                             const fs = rawFields[params.id !== undefined ? params.id : ""]
-                                            return <chakra.th
+                                            return <Center
                                                 style={{
+                                                    //overflow: "hidden",
                                                     backgroundColor:"white",
                                                     ...unionCellCss,
                                                     width:`calc( 100% / ${rawFields[String(params.id)].length+1})`,
@@ -182,28 +189,39 @@ const ContentsList = ()=>{
                                                     borderBottom: "1px solid #e7e7e7",
                                                     borderRight: j === fs.length-1 ? "1px solid #e7e7e7" : "",
                                                     fontWeight:"normal",
+                                                    minHeight:"60px",
+                                                    paddingRight:5,
+                                                    paddingLeft:5,
                                                 }}>
-                                                {
-                                                    (typeof e[i.field_name]) === "object" ? (()=>{
-                                                        const r = (e[i.field_name] as ContentMeta[])
-                                                        if(r && r.length > 0){
-                                                            return <ul style={{maxHeight:"100px"}}>
-                                                                {
-                                                                    r.map(i=> i && i._id ? <li>{i._id}</li> : <Box/>)
-                                                                }
-                                                            </ul>
-                                                        }
-                                                        return ""
-                                                    })() : <Box><chakra.p style={{maxHeight:"100px"}} fontWeight="">{e[i.field_name]}</chakra.p></Box>
-                                                }
-                                            </chakra.th>
+                                                <Box maxHeight="80px" overflow="hidden">
+                                                    {
+                                                        (typeof e[i.field_name]) === "object" ? (()=>{
+                                                            const r = (e[i.field_name] as string[])
+                                                            // if(r && r.length > 0){
+                                                            //     return <chakra.ul>
+                                                            //         {
+                                                            //             r.map(i=><chakra.li style={{listStyleType:"disc"}}>・{i}</chakra.li>)
+                                                            //         }
+                                                            //     </chakra.ul>
+                                                            // }
+                                                            // return ""
+                                                            return <Box>
+                                                                <chakra.p style={{maxHeight:"100px"}} fontWeight="">
+                                                                    {r ? `${r.length}件の参照` : ''}
+                                                                </chakra.p></Box>
+                                                        })() : <Box>
+                                                            <chakra.p style={{maxHeight:"100px"}} fontWeight="">
+                                                                {String(e[i.field_name] ? e[i.field_name] : "")}
+                                                            </chakra.p></Box>
+                                                    }
+                                                </Box>
+                                            </Center>
                                         })
                                     }
-                                </tr>
-                            }) : <></>
-                        }
-                        </tbody>
-                    </table>
+                                </Flex>
+                            }
+                        }/>
+                    </Box>
                 </Box>
             </Box>
         </Box>

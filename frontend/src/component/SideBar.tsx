@@ -19,28 +19,12 @@ const SideBar:React.FC = ()=>{
 
     const list = useSelector(getDisplay)
 
-    const user = useSelector(getProfile)
-
     useLocationChange(()=>{
         setParams(window.location.pathname.split("/").filter(e=>e.length > 0))
     })
 
-    useEffect(()=>{
-        store.dispatch(setCurrentUser())
-        if(!user){
-            window.location.href = "/login"
-            return
-        }
-    },[params[0],params[1],params[2],params[3]])
-
-    useEffect(()=>{
-        store.dispatch(setApis())
-        store.dispatch(setUsers())
-        store.dispatch(setRoles())
-    },[])
-
     return <Box h={"100vh"}>
-        <Box h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">
+        <Box w={"200px"} h={"calc(100vh - 64px)"} p={"8px 16px 8px 16px"} color={"white"} overflow="auto">
             {
                 list ?
                     index.map((e)=> {
@@ -62,13 +46,13 @@ const SideBar:React.FC = ()=>{
                                     }
                                 </Flex>
                             </chakra.dt>
-                            <chakra.dd>
+                            <chakra.dd fontSize={"13px"}>
                                 {
                                     list[e].item.map((j,i)=>{
                                         return <chakra.ul>
                                             <chakra.li
                                                 pt={"10px"}
-                                                pl={"20px"}
+                                                pl={"10px"}
                                                 mr={"20px"}
                                                 pb={"10px"}
                                                 mt={"1.5px"}
@@ -109,7 +93,6 @@ const SideBar:React.FC = ()=>{
                 <Center h={"100%"} color="white">
                     {
                         (()=>{
-                            // eslint-disable-next-line react-hooks/rules-of-hooks
                             const a = useSelector(getProfile)
                             return a ? <Flex>"<div style={{fontWeight:"bold"}}>{a.nick_name}</div>"としてログイン中</Flex> : <p>未ログイン</p>
                         })()

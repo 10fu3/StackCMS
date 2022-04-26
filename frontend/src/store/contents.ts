@@ -18,7 +18,7 @@ export const getContents = (state:State)=> {
 export function setContents(apiId:string){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            const r = await CMSApi.getContent(apiId)
+            const r = await CMSApi.Content.getByApiId(apiId)
             dispatch(slice.actions.setContents(r));
         })()
     }
@@ -29,6 +29,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setContents: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return Object.assign({}, state, { contents: action.payload });
         },
     },

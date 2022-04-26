@@ -48,8 +48,10 @@ export function setLogin(mail:string,password:string){
     return function(dispatch:Dispatch) {
         (async ()=>{
             const user = await login(mail, password);
-            // ログイン後にユーザー情報をストアに格納する
-            dispatch(slice.actions.setProfile(user));
+            if(user){
+                // ログイン後にユーザー情報をストアに格納する
+                dispatch(slice.actions.setProfile(user));
+            }
         })()
     }
 }

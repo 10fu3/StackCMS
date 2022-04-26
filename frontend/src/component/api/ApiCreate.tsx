@@ -1,8 +1,8 @@
 import {Box, Center} from "@chakra-ui/layout";
 import {ReactElement, useEffect, useRef, useState} from "react";
-import {Api, ApplyApiData} from "../../model/model";
+import {ApplyApiData} from "../../model/model";
 import ApiCreateName from "./ApiCreateName";
-import apis, {setApis} from "../../store/apis";
+import {setApis} from "../../store/apis";
 import {Button, Flex, Spacer} from "@chakra-ui/react";
 import ApiCreateType from "./ApiCreateType";
 import ApiCreateField from "./ApiCreateField";
@@ -20,7 +20,7 @@ import store from "../../store";
 import {setCurrentUser} from "../../store/auth";
 import {setUsers} from "../../store/users";
 import {setRoles} from "../../store/roles";
-import {setContents} from "../../store/contents";
+import {useNavigate} from "react-router-dom";
 
 export const isCompletePage = (api:ApplyApiData, index:number) => {
     switch (index){
@@ -82,6 +82,8 @@ export const isCompleteCreateApi = (api:ApplyApiData)=>{
 
 const ApiCreate = ()=>{
 
+    const nav = useNavigate()
+
     const [nowPage,setPage] = useState(0)
 
     const handleNext = ()=>{
@@ -102,13 +104,10 @@ const ApiCreate = ()=>{
             setIsOpenComplete(true)
         }else{
             (async ()=>{
-                const result = await CMSApi.createApi(api)
+                const result = await CMSApi.Api.create(api)
                 if(result){
                     setErrorMessage([])
-                    store.dispatch(setCurrentUser())
                     store.dispatch(setApis())
-                    store.dispatch(setUsers())
-                    store.dispatch(setRoles())
                 }else{
                     setErrorMessage(["通信エラーが発生しました"])
                 }
@@ -139,7 +138,10 @@ const ApiCreate = ()=>{
 
     const [isOpenComplete, setIsOpenComplete] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string[]>([])
-    const onCompleteClose = () => setIsOpenComplete(false)
+    const onCompleteClose = () => {
+        nav("/api")
+        setIsOpenComplete(false)
+    }
     const cancelRef = useRef<HTMLButtonElement>(null)
 
     return <Box w={"100%"} h={"100%"}>

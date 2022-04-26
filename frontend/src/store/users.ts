@@ -11,7 +11,7 @@ export const getUsers = (state:{ users:User[] }):User[] => {
 export function setUsers(){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            const users = await CMSApi.getUsers()
+            const users = await CMSApi.User.getAll()
             dispatch(slice.actions.setUsers(users));
         })()
     }
@@ -22,6 +22,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setUsers: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return [
                 ...action.payload
             ];

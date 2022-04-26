@@ -11,7 +11,7 @@ export const getRoles = (state:{ roles:Role[] }):Role[] => {
 export function setRoles(){
     return function(dispatch:Dispatch) {
         (async ()=>{
-            const roles = await CMSApi.getRoles()
+            const roles = await CMSApi.Role.get()
             dispatch(slice.actions.setRoles(roles));
         })()
     }
@@ -22,6 +22,9 @@ const slice = createSlice({
     initialState,
     reducers: {
         setRoles: (state, action) => {
+            if(!action.payload){
+                return undefined
+            }
             return [
                 ...action.payload
             ];

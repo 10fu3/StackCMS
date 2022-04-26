@@ -44,7 +44,7 @@ const ProfileUpdatePage = ()=>{
 
     const handleApply = ()=>{
         (async ()=>{
-            await CMSApi.updateUser(params.id ? params.id : "",updateData)
+            await CMSApi.User.update(params.id ? params.id : "",updateData)
             store.dispatch(setUsers())
             nav(-1)
         })()
@@ -95,7 +95,7 @@ const ProfileUpdatePage = ()=>{
                                 </Box>
                                 <Box mt={2} p={2} borderWidth={1}>
                                     <Flex m={2}>
-                                        <chakra.p value={updateData.password} fontWeight="bold">パスワード</chakra.p> :
+                                        <chakra.p fontWeight="bold">パスワード</chakra.p> :
                                     </Flex>
                                     <Box p={2}>
                                         <Input value={updateData.password} onChange={(e)=>{handleChange("password",e.target.value)}}/>

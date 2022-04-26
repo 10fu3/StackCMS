@@ -6,6 +6,7 @@ import apiReducer from "./apis"
 import contentsReducer from "./contents";
 import rolesReducer from "./roles";
 import usersReducer from "./users"
+import clientsReducer from "./clients"
 
 const reducer = combineReducers({
     auth: authReducer,
@@ -13,6 +14,7 @@ const reducer = combineReducers({
     contents: contentsReducer,
     roles: rolesReducer,
     users: usersReducer,
+    clients: clientsReducer,
 });
 
 const store = configureStore({ reducer });
