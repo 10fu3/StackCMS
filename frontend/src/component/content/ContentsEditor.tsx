@@ -198,7 +198,7 @@ const ContentsEditor  = ()=>{
                                     (displayContent as ContentMeta).published_at ? "下書きに戻す" : "公開"
                                 }
                             </MenuItem>
-                            <MenuItem icon={<RepeatIcon color={"#38A169"}/>} colorScheme="green" onClick={handleUpdate}>
+                            <MenuItem icon={<RepeatIcon color={"#38A169"}/>} color="green" onClick={handleUpdate}>
                                 更新
                             </MenuItem>
                         </MenuList>
