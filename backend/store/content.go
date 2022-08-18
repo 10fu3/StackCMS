@@ -101,7 +101,6 @@ func (d *Db) buildQueryField(
 				return true
 			}
 			for _, s := range query.Fields {
-				fmt.Println(nestedFieldName, s)
 				if len(nestedFieldName) < len(s) && !strings.HasPrefix(s, nestedFieldName) {
 					return false
 				}
