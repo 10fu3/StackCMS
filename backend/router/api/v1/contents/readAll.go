@@ -5,6 +5,7 @@ import (
 	"StackCMS/routerUtil"
 	"StackCMS/store"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -12,7 +13,8 @@ import (
 )
 
 func buildQuery(
-	fields map[string]bool, apiId string,
+	fields []string,
+	apiId string,
 	userFilter map[string]interface{},
 	isDraft bool,
 	offset int64,
@@ -50,7 +52,7 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 	filterParam := ctx.Query("filter")
 
 	if err := json.Unmarshal([]byte(filterParam), &filter); err != nil {
-		//fmt.Println(err.Error())
+		fmt.Println(err.Error())
 	}
 
 	//filter["api_id"] = ctx.Param("api_id")
@@ -73,16 +75,12 @@ func convertToQuery(apiId string, serverFilter map[string]interface{}, ctx *gin.
 		return &key
 	}()
 
-	fields := func() map[string]bool {
-		s := strings.Split(ctx.Query("fields"), ",")
-		if len(s) == 1 && s[0] == "" {
-			return map[string]bool{}
+	fields := func() []string {
+		fieldNames := strings.Split(ctx.Query("fields"), ",")
+		if len(fieldNames) == 1 && len(fieldNames[0]) == 0 {
+			return []string{}
 		}
-		r := map[string]bool{}
-		for _, f := range s {
-			r[f] = true
-		}
-		return r
+		return fieldNames
 	}()
 
 	offset := func() int64 {

@@ -47,16 +47,12 @@ func Read() gin.HandlerFunc {
 					},
 					ApiId:  api.UniqueId,
 					Filter: filter,
-					Fields: func() map[string]bool {
-						s := strings.Split(ctx.Query("fields"), ",")
-						if len(s) == 1 && s[0] == "" {
-							return map[string]bool{}
+					Fields: func() []string {
+						fieldNames := strings.Split(ctx.Query("fields"), ",")
+						if len(fieldNames) == 1 && len(fieldNames[0]) == 0 {
+							return []string{}
 						}
-						r := map[string]bool{}
-						for _, f := range s {
-							r[f] = true
-						}
-						return r
+						return fieldNames
 					}(),
 					GetMeta:  true,
 					GetDraft: isGetDraft,
